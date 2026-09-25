@@ -1,0 +1,149 @@
+---
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Lettore from '../../components/Lettore.astro';
+import Segnaposto from '../../components/Segnaposto.astro';
+import { url } from '../../lib/url';
+import { elencoClassi } from '../../lib/testo';
+
+export async function getStaticPaths() {
+  const argomenti = await getCollection('argomenti');
+  return argomenti.map((argomento) => {
+    const [cartellaMateria, slug] = argomento.id.split('/');
+    if (cartellaMateria !== argomento.data.materia.id) {
+      throw new Error(
+        `argomenti/${argomento.id}: la cartella è "${cartellaMateria}" ma argomento.yaml dice materia: ${argomento.data.materia.id}`,
+      );
+    }
+    return { params: { materia: cartellaMateria, argomento: slug }, props: { argomento } };
+  });
+}
+
+interface Props {
+  argomento: CollectionEntry<'argomenti'>;
+}
+const { argomento } = Astro.props;
+const { data } = argomento;
+
+const materia = (await getEntry(data.materia))!;
+const passaggi = await getEntry('passaggi', argomento.id);
+if (!passaggi) throw new Error(`argomenti/${argomento.id}: manca passaggi.yaml`);
+
+const note = await getEntry('note', argomento.id);
+const Note = note ? (await render(note)).Content : null;
+
+// Ogni argomento può avere il suo Animazione.astro nella propria cartella.
+const moduli = import.meta.glob<{ default: any }>('/argomenti/*/*/Animazione.astro', { eager: true });
+const Animazione = moduli[`/argomenti/${argomento.id}/Animazione.astro`]?.default;
+---
+
+<Base
+  titolo={data.titolo}
+  descrizione={data.sottotitolo}
+  percorso={[{ nome: materia.data.nome, href: url(`${materia.id}/`) }, { nome: data.titolo }]}
+>
+  <div class="contenitore contenitore--largo">
+    <header class="intestazione" style={`--colore: var(--${materia.id})`}>
+      <h1>{data.titolo}</h1>
+      <p class="sottotitolo">{data.sottotitolo}</p>
+      <p class="info">
+        <span class="badge">{elencoClassi(data.classi)}</span>
+        <span class="badge">{data.durata_minuti} min</span>
+        {data.stato !== 'pubblicato' && <span class="badge badge--bozza">Bozza: contenuti da revisionare</span>}
+      </p>
+    </header>
+
+    <Lettore passaggi={passaggi.data.passaggi}>
+      {Animazione ? <Animazione /> : <Segnaposto passaggi={passaggi.data.passaggi} />}
+    </Lettore>
+
+    <p class="aiuto">Tastiera: <kbd>→</kbd> o <kbd>spazio</kbd> avanti · <kbd>←</kbd> indietro · <kbd>R</kbd> ripeti · <kbd>T</kbd> spiegazione · <kbd>F</kbd> schermo intero</p>
+
+    <section class="obiettivi">
+      <h2>Alla fine saprai</h2>
+      <ul>{data.obiettivi.map((o) => <li>{o}</li>)}</ul>
+    </section>
+
+    {
+      Note && (
+        <details class="note">
+          <summary>Note per l'insegnante</summary>
+          <div class="note__corpo">
+            <Note />
+          </div>
+        </details>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .intestazione {
+    padding-block: 32px 24px;
+  }
+  .intestazione h1 {
+    font-size: clamp(40px, 5vw, 56px);
+  }
+  .sottotitolo {
+    margin: 8px 0 0;
+    font-size: 22px;
+    color: var(--testo-2);
+  }
+  .info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0 0;
+  }
+  .aiuto {
+    margin: 12px 0 0;
+    font-size: 16px;
+    color: var(--testo-2);
+  }
+  kbd {
+    font-family: inherit;
+    font-weight: 700;
+    padding: 0 6px;
+    border: 1px solid var(--bordo);
+    border-radius: 6px;
+    background: var(--superficie);
+  }
+  @media (hover: none) {
+    .aiuto {
+      display: none;
+    }
+  }
+  .obiettivi {
+    margin-top: 40px;
+  }
+  .obiettivi h2,
+  .note summary {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .obiettivi ul {
+    margin: 12px 0 0;
+    padding-left: 1.2em;
+  }
+  .note {
+    margin-top: 32px;
+    padding: 20px 24px;
+    background: var(--superficie);
+    border: 2px solid var(--bordo);
+    border-radius: var(--raggio);
+  }
+  .note summary {
+    cursor: pointer;
+    min-height: var(--tocco);
+    display: flex;
+    align-items: center;
+  }
+  .note__corpo :global(h2) {
+    font-size: 20px;
+    margin-top: 20px;
+  }
+  .note__corpo :global(ul) {
+    margin: 8px 0 0;
+    padding-left: 1.2em;
+  }
+</style>

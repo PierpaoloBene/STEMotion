@@ -1,0 +1,142 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import IconaMateria from '../../components/IconaMateria.astro';
+import { url } from '../../lib/url';
+import { elencoClassi } from '../../lib/testo';
+
+export async function getStaticPaths() {
+  const materie = await getCollection('materie');
+  return materie.map((materia) => ({ params: { materia: materia.id }, props: { materia } }));
+}
+
+interface Props {
+  materia: CollectionEntry<'materie'>;
+}
+const { materia } = Astro.props;
+
+const argomenti = (await getCollection('argomenti'))
+  .filter((a) => a.data.materia.id === materia.id)
+  .sort((a, b) => a.data.titolo.localeCompare(b.data.titolo, 'it'));
+
+// Raggruppa per area, nell'ordine definito in src/data/materie.yaml.
+const gruppi = materia.data.aree
+  .map((area) => ({ nome: area.nome, voci: argomenti.filter((a) => a.data.area === area.id) }))
+  .filter((g) => g.voci.length > 0);
+const senzaArea = argomenti.filter((a) => !materia.data.aree.some((area) => area.id === a.data.area));
+if (senzaArea.length) gruppi.push({ nome: 'Altri argomenti', voci: senzaArea });
+
+const slug = (a: CollectionEntry<'argomenti'>) => a.id.split('/')[1];
+---
+
+<Base titolo={materia.data.nome} descrizione={materia.data.descrizione} percorso={[{ nome: materia.data.nome }]}>
+  <section class="intestazione contenitore" style={`--colore: var(--${materia.id})`}>
+    <IconaMateria materia={materia.id} />
+    <div>
+      <h1>{materia.data.nome}</h1>
+      <p>{materia.data.descrizione}</p>
+    </div>
+  </section>
+
+  <div class="contenitore">
+    {
+      gruppi.length === 0 && (
+        <p class="vuoto">Gli argomenti di {materia.data.nome.toLowerCase()} sono in arrivo.</p>
+      )
+    }
+    {
+      gruppi.map((g) => (
+        <section class="gruppo">
+          <h2>{g.nome}</h2>
+          <ul class="argomenti">
+            {g.voci.map((a) => (
+              <li>
+                <a class="argomento" href={url(`${materia.id}/${slug(a)}/`)} style={`--colore: var(--${materia.id})`}>
+                  <span class="argomento__titolo">{a.data.titolo}</span>
+                  <span class="argomento__sottotitolo">{a.data.sottotitolo}</span>
+                  <span class="argomento__info">
+                    <span class="badge">{elencoClassi(a.data.classi)}</span>
+                    <span class="badge">{a.data.durata_minuti} min</span>
+                    {a.data.stato !== 'pubblicato' && <span class="badge badge--bozza">Bozza</span>}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .intestazione {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-block: 48px 32px;
+  }
+  .intestazione :global(.icona-materia) {
+    color: var(--colore);
+    width: 72px;
+    height: 72px;
+  }
+  .intestazione h1 {
+    font-size: clamp(40px, 5vw, 56px);
+  }
+  .intestazione p {
+    margin: 8px 0 0;
+    color: var(--testo-2);
+  }
+  .gruppo + .gruppo {
+    margin-top: 40px;
+  }
+  .gruppo h2 {
+    font-size: 26px;
+    margin-bottom: 16px;
+  }
+  .argomenti {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .argomento {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    height: 100%;
+    padding: 24px;
+    background: var(--superficie);
+    border: 2px solid var(--bordo);
+    border-left: 8px solid var(--colore);
+    border-radius: var(--raggio);
+    color: var(--testo);
+    text-decoration: none;
+  }
+  .argomento:hover {
+    border-color: var(--colore);
+  }
+  .argomento__titolo {
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .argomento__sottotitolo {
+    color: var(--testo-2);
+  }
+  .argomento__info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 12px;
+  }
+  .vuoto {
+    padding: 32px;
+    border: 2px dashed var(--bordo);
+    border-radius: var(--raggio);
+    color: var(--testo-2);
+  }
+</style>

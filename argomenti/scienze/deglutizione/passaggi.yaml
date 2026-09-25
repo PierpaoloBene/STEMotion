@@ -1,0 +1,54 @@
+passaggi:
+  - id: masticazione
+    fase: orale
+    titolo: Il bolo
+    breve: Denti e saliva trasformano il cibo in bolo.
+    spiegazione: >
+      I denti sminuzzano il cibo e la saliva lo inumidisce.
+      Si forma una pallina morbida chiamata **bolo**, facile da inghiottire.
+      Questa fase è **volontaria**: decidiamo noi quando deglutire.
+
+  - id: spinta-lingua
+    fase: orale
+    titolo: La spinta della lingua
+    breve: La lingua spinge il bolo verso la faringe.
+    spiegazione: >
+      La lingua si solleva contro il palato e spinge il bolo all'indietro,
+      verso la **faringe**, il tratto in cui si incrociano la via del cibo
+      e quella dell'aria.
+
+  - id: chiusura-vie-aeree
+    fase: faringea
+    titolo: Le vie dell'aria si chiudono
+    breve: L'epiglottide chiude la laringe, il palato chiude il naso.
+    spiegazione: >
+      Da qui tutto avviene in automatico, con un **riflesso**.
+      Il palato molle si alza e chiude il passaggio verso il naso.
+      La laringe si solleva e l'**epiglottide** si abbassa come un coperchio.
+      Per un istante il respiro si ferma: il bolo non può finire nei polmoni.
+
+  - id: ingresso-esofago
+    fase: faringea
+    titolo: Il bolo entra nell'esofago
+    breve: Il bolo scivola nell'esofago.
+    spiegazione: >
+      L'ingresso dell'**esofago** si apre e il bolo ci entra.
+      Subito dopo l'epiglottide si rialza e si torna a respirare.
+
+  - id: peristalsi
+    fase: esofagea
+    titolo: La peristalsi
+    breve: Onde di contrazione spingono il bolo verso lo stomaco.
+    spiegazione: >
+      I muscoli dell'esofago si contraggono uno dopo l'altro, come un'onda.
+      Questo movimento si chiama **peristalsi** e spinge il bolo in basso.
+      Funziona anche a testa in giù: non è la gravità a far scendere il cibo.
+
+  - id: stomaco
+    fase: esofagea
+    titolo: Nello stomaco
+    breve: Il cardias si apre e il bolo entra nello stomaco.
+    spiegazione: >
+      In fondo all'esofago c'è un anello di muscolo, il **cardias**.
+      Si apre per far passare il bolo e poi si richiude,
+      così il contenuto dello stomaco non risale.

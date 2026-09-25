@@ -135,10 +135,30 @@ Sezioni fisse, anche brevi:
 
 ## 4. `Animazione.astro` — l'animazione
 
+È l'unico file con codice. Finché manca, al suo posto il sito mostra un segnaposto con il titolo del passaggio.
+
+**Come riceve il passaggio corrente.** Il lettore mette l'animazione dentro un contenitore che ha sempre:
+
+- `data-passaggio="<id>"`: l'`id` del passaggio corrente, preso da `passaggi.yaml`;
+- `data-indice="<n>"`: la sua posizione, da 0.
+
+Il modo preferito è disegnare ogni stato **solo con CSS**, a partire da questi attributi:
+
+```css
+[data-passaggio='chiusura-vie-aeree'] .epiglottide {
+  transform: rotate(35deg);
+  transition: transform 1.2s ease-in-out;
+}
+```
+
+Se serve JavaScript (simulazioni, trascinamenti), a ogni cambio il contenitore emette l'evento `cambiapassaggio` con `detail = { indice, id, precedente, ripeti }`.
+
 Regole tecniche:
 
-- Riceve come input **solo il numero del passaggio corrente** e disegna lo stato di quel passaggio. Nessuno stato nascosto: dal passaggio 5 si può tornare al 2 e il risultato è identico ad arrivarci dall'inizio.
+- Lo stato dipende **solo dal passaggio corrente**. Nessuno stato nascosto: dal passaggio 5 si può tornare al 2 e il risultato è identico ad arrivarci dall'inizio.
 - Anima la **transizione** verso lo stato del passaggio, poi si ferma.
+- Il pulsante "Ripeti" riporta per un istante il contenitore al passaggio precedente senza transizioni e poi torna a quello corrente: con le transizioni CSS funziona da solo.
+- Riempie il contenitore (`width: 100%; height: 100%`) e si adatta sia al 16:10 della LIM sia al 4:3 del telefono.
 - Usa i componenti SVG condivisi (organi, oggetti) invece di ridisegnarli.
 - Nessuna libreria esterna caricata da internet.
 
@@ -146,6 +166,7 @@ Regole tecniche:
 
 ## Checklist prima della pubblicazione
 
+- [ ] `npm run build` termina senza errori (i file YAML vengono controllati automaticamente)
 - [ ] `argomento.yaml` compilato, `stato: da-revisionare`
 - [ ] Ogni passaggio ha `breve` e `spiegazione`, e l'animazione li rispecchia
 - [ ] Con il testo nascosto l'animazione si capisce ancora

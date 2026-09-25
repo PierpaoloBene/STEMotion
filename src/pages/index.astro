@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import IconaMateria from '../components/IconaMateria.astro';
+import { url } from '../lib/url';
+
+const materie = (await getCollection('materie')).sort((a, b) => a.data.ordine - b.data.ordine);
+const argomenti = await getCollection('argomenti');
+const conta = (id: string) => argomenti.filter((a) => a.data.materia.id === id).length;
+---
+
+<Base>
+  <section class="eroe contenitore">
+    <h1>Guardiamo dentro le cose.</h1>
+    <p>Animazioni interattive, un passo alla volta, per capire come è fatto e come funziona il mondo. Per la classe e per studiare a casa.</p>
+  </section>
+
+  <section class="contenitore" aria-labelledby="titolo-materie">
+    <h2 id="titolo-materie" class="solo-lettori">Materie</h2>
+    <ul class="materie">
+      {
+        materie.map((m) => {
+          const n = conta(m.id);
+          return (
+            <li>
+              <a class="materia" href={url(`${m.id}/`)} style={`--colore: var(--${m.id})`}>
+                <IconaMateria materia={m.id} />
+                <span class="materia__nome">{m.data.nome}</span>
+                <span class="materia__descrizione">{m.data.descrizione}</span>
+                <span class="materia__conta">{n === 0 ? 'Argomenti in arrivo' : n === 1 ? '1 argomento' : `${n} argomenti`}</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .eroe {
+    padding-block: 56px 40px;
+  }
+  .eroe h1 {
+    font-size: clamp(40px, 6vw, 64px);
+    max-width: 16ch;
+  }
+  .eroe p {
+    margin: 16px 0 0;
+    max-width: 44ch;
+    color: var(--testo-2);
+    font-size: 22px;
+  }
+  .materie {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .materia {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    padding: 28px;
+    background: var(--superficie);
+    border: 2px solid var(--bordo);
+    border-top: 10px solid var(--colore);
+    border-radius: var(--raggio);
+    color: var(--testo);
+    text-decoration: none;
+    transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  }
+  .materia:hover {
+    transform: translateY(-3px);
+    border-color: var(--colore);
+  }
+  .materia :global(.icona-materia) {
+    color: var(--colore);
+    margin-bottom: 8px;
+  }
+  .materia__nome {
+    font-size: 32px;
+    font-weight: 700;
+  }
+  .materia__descrizione {
+    color: var(--testo-2);
+  }
+  .materia__conta {
+    margin-top: auto;
+    padding-top: 12px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+</style>

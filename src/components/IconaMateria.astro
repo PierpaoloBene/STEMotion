@@ -1,0 +1,47 @@
+---
+// Pittogrammi originali per le materie. Usano currentColor.
+interface Props {
+  materia: string;
+}
+const { materia } = Astro.props;
+---
+
+<svg class="icona-materia" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  {
+    materia === 'scienze' && (
+      <>
+        <path d="M19 6h10M21 6v13L10 38a3 3 0 0 0 2.6 4.5h22.8A3 3 0 0 0 38 38L27 19V6" />
+        <path d="M15 30h18" />
+        <circle cx="22" cy="36" r="1.5" fill="currentColor" />
+        <circle cx="28" cy="34" r="1.5" fill="currentColor" />
+      </>
+    )
+  }
+  {
+    materia === 'matematica' && (
+      <>
+        <path d="M8 40L24 8l16 32z" />
+        <path d="M24 8v32" stroke-dasharray="3 4" />
+        <path d="M24 36h4v4" />
+      </>
+    )
+  }
+  {
+    materia === 'fisica' && (
+      <>
+        <path d="M8 8h32" />
+        <path d="M24 8l9 24" />
+        <circle cx="34.5" cy="36" r="5" fill="currentColor" />
+        <path d="M24 8v24" stroke-dasharray="3 4" opacity="0.5" />
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .icona-materia {
+    width: 56px;
+    height: 56px;
+    flex: none;
+  }
+</style>

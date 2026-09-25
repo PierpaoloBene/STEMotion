@@ -1,0 +1,115 @@
+---
+import '@fontsource/atkinson-hyperlegible/400.css';
+import '@fontsource/atkinson-hyperlegible/700.css';
+import '../styles/global.css';
+import { url } from '../lib/url';
+
+interface Props {
+  titolo?: string;
+  descrizione?: string;
+  /** Briciole di pane: [{ nome, href }] dopo "Home" */
+  percorso?: { nome: string; href?: string }[];
+}
+
+const NOME_SITO = 'Animazioni ai raggi X';
+const { titolo, descrizione = 'Animazioni interattive per capire scienze, matematica e fisica alle scuole medie.', percorso = [] } = Astro.props;
+const titoloPagina = titolo ? `${titolo} · ${NOME_SITO}` : NOME_SITO;
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={descrizione} />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <title>{titoloPagina}</title>
+  </head>
+  <body>
+    <header class="testata">
+      <div class="contenitore testata__riga">
+        <a class="marchio" href={url()}>
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"></rect><path d="M10 9l12 14M22 9L10 23" stroke="#8EC9F0" stroke-width="4" stroke-linecap="round"></path></svg>
+          <span>{NOME_SITO}</span>
+        </a>
+        {
+          percorso.length > 0 && (
+            <nav aria-label="Sei qui" class="briciole">
+              <ol>
+                {percorso.map((p) => (
+                  <li>{p.href ? <a href={p.href}>{p.nome}</a> : <span aria-current="page">{p.nome}</span>}</li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="piede">
+      <div class="contenitore">
+        <p>Nessun account, nessun cookie, nessun dato raccolto.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .testata {
+    border-bottom: 1px solid var(--bordo);
+    background: var(--superficie);
+  }
+  .testata__riga {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+    min-height: 72px;
+    padding-block: 8px;
+  }
+  .marchio {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: var(--tocco);
+    color: var(--testo);
+    font-weight: 700;
+    font-size: 22px;
+    text-decoration: none;
+  }
+  .marchio svg {
+    width: 36px;
+    height: 36px;
+    flex: none;
+  }
+  .briciole ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    color: var(--testo-2);
+  }
+  .briciole li + li::before {
+    content: '›';
+    margin-inline: 6px;
+  }
+  .briciole a {
+    color: var(--testo-2);
+  }
+  main {
+    min-height: 60vh;
+  }
+  .piede {
+    margin-top: 64px;
+    border-top: 1px solid var(--bordo);
+    color: var(--testo-2);
+    font-size: 16px;
+  }
+</style>
