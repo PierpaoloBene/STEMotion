@@ -44,21 +44,19 @@ Tema **chiaro** di default: sulla LIM proiettata rende molto meglio del tema scu
 
 ### Colore per materia
 
-Ogni materia ha un colore che la identifica in landing, intestazioni e badge. **Non** va usato dentro le animazioni per altri significati.
+Ogni materia ha un colore che la identifica in landing, intestazioni e badge. **Non** va usato dentro le animazioni per altri significati. Le sottomaterie (per esempio fisica o anatomia dentro scienze) usano il colore della loro materia.
 
 | Materia | Token | Valore |
 |---|---|---|
 | Scienze | `--scienze` | `#1F9E6E` (verde) |
 | Matematica | `--matematica` | `#2F5BEA` (blu) |
-| Fisica | `--fisica` | `#E07A1F` (arancio) |
 
-Il colore base di scienze e fisica **non** ha abbastanza contrasto per scriverci sopra in bianco (3,4:1 e 3,0:1). Per questo ogni materia ha due varianti:
+Il colore base di scienze **non** ha abbastanza contrasto per scriverci sopra in bianco (3,4:1). Per questo ogni materia ha due varianti:
 
 | Materia | Scuro: testo bianco sopra, testo colorato su sfondo chiaro | Tinta: sfondo di sezioni e pannelli |
 |---|---|---|
 | Scienze | `--scienze-scuro` `#177A55` | `--scienze-tinta` `#E3F4EC` |
 | Matematica | `--matematica-scuro` `#2F5BEA` | `--matematica-tinta` `#E8EEFD` |
-| Fisica | `--fisica-scuro` `#A8560F` | `--fisica-tinta` `#FCEEDF` |
 
 Il colore base resta per bordi, icone e decorazioni; per testi e pulsanti pieni si usa lo scuro.
 

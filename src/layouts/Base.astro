@@ -13,7 +13,7 @@ interface Props {
 }
 
 const NOME_SITO = 'Animazioni ai raggi X';
-const { titolo, descrizione = 'Animazioni interattive per capire scienze, matematica e fisica alle scuole medie.', materia } = Astro.props;
+const { titolo, descrizione = 'Animazioni interattive per capire scienze e matematica alle scuole medie.', materia } = Astro.props;
 const titoloPagina = titolo ? `${titolo} · ${NOME_SITO}` : NOME_SITO;
 const materie = (await getCollection('materie')).sort((a, b) => a.data.ordine - b.data.ordine);
 ---

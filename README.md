@@ -1,6 +1,6 @@
 # Animazioni ai raggi X
 
-Animazioni interattive per le scuole medie: scienze, matematica e fisica viste "ai raggi X", un passo alla volta.
+Animazioni interattive per le scuole medie: scienze e matematica viste "ai raggi X", un passo alla volta.
 Pensato per l'insegnante che spiega sulla LIM e per lo studente che ripassa a casa.
 
 ## Avviare il sito in locale
@@ -18,7 +18,7 @@ Poi apri http://localhost:4321/animazioni-ai-raggi-x/
 
 ```
 argomenti/<materia>/<argomento>/   un argomento = una cartella (vedi docs/STRUTTURA-ARGOMENTO.md)
-src/data/materie.yaml              elenco delle materie e delle loro aree
+src/data/materie.yaml              elenco delle materie e delle loro sottomaterie (aree)
 src/components/Lettore.astro       il lettore a passaggi comune a tutti gli argomenti
 src/pages/                         landing, pagina materia, pagina argomento
 docs/                              guida di stile e struttura di un argomento

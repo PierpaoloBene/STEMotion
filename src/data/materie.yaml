@@ -1,14 +1,16 @@
 # Le materie del sito. `ordine` decide la posizione nella landing.
-# `aree` raggruppa gli argomenti nella pagina della materia (campo `area` di argomento.yaml).
+# `aree` sono le sottomaterie: raggruppano gli argomenti nella pagina della materia
+# (campo `area` di argomento.yaml), nell'ordine in cui sono scritte qui.
 - id: scienze
   ordine: 1
   nome: Scienze
-  descrizione: Il corpo umano, i viventi, la materia e le sue trasformazioni.
+  descrizione: Il corpo umano, i viventi, le forze e le trasformazioni della materia.
   aree:
-    - { id: anatomia, nome: Corpo umano }
     - { id: biologia, nome: Biologia }
-    - { id: chimica, nome: Chimica }
-    - { id: scienze-della-terra, nome: Scienze della Terra }
+    - { id: anatomia, nome: Anatomia }
+    - { id: fisica, nome: Fisica }
+    - { id: chimica-organica, nome: Chimica organica }
+    - { id: chimica-inorganica, nome: Chimica inorganica }
 
 - id: matematica
   ordine: 2
@@ -17,13 +19,4 @@
   aree:
     - { id: aritmetica, nome: Aritmetica }
     - { id: geometria, nome: Geometria }
-    - { id: relazioni-funzioni, nome: Relazioni e funzioni }
-
-- id: fisica
-  ordine: 3
-  nome: Fisica
-  descrizione: Forze, movimento ed energia, per capire come funziona il mondo.
-  aree:
-    - { id: meccanica, nome: Forze e movimento }
-    - { id: energia, nome: Energia e calore }
-    - { id: luce-suono, nome: Luce e suono }
+    - { id: algebra, nome: Algebra }

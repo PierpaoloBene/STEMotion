@@ -21,7 +21,7 @@ argomenti/
 titolo: La deglutizione
 sottotitolo: Come il cibo passa dalla bocca allo stomaco
 materia: scienze
-area: anatomia                 # anatomia, chimica, biologia, ... (per le scienze)
+area: anatomia                 # sottomateria, una di quelle in src/data/materie.yaml
 classi: [2]                    # classi della media in cui si affronta di solito
 modello: passaggi              # passaggi | simulazione | confronto
 durata_minuti: 10              # tempo indicativo in classe

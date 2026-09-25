@@ -9,14 +9,11 @@
 
   --scienze: #1f9e6e;
   --matematica: #2f5bea;
-  --fisica: #e07a1f;
   /* Varianti: "scuro" per testo bianco sopra o testo colorato, "tinta" per gli sfondi */
   --scienze-scuro: #177a55;
   --matematica-scuro: #2f5bea;
-  --fisica-scuro: #a8560f;
   --scienze-tinta: #e3f4ec;
   --matematica-tinta: #e8eefd;
-  --fisica-tinta: #fceedf;
 
   /* Colori con significato fisso, per le animazioni */
   --arterioso: #d7263d;
@@ -102,11 +99,6 @@ button {
   --colore: var(--matematica);
   --scuro: var(--matematica-scuro);
   --tinta: var(--matematica-tinta);
-}
-[data-materia='fisica'] {
-  --colore: var(--fisica);
-  --scuro: var(--fisica-scuro);
-  --tinta: var(--fisica-tinta);
 }
 
 /* Etichetta a pillola per le informazioni (classe, durata, stato) */
