@@ -138,7 +138,7 @@ Regole:
 ## 7. Illustrazioni
 
 - **Solo SVG originali**, disegnati per il sito. Niente immagini prese da libri, siti o banche immagini.
-- **Stile: illustrazione da atlante.** Realistica e dettagliata come le tavole di un atlante scolastico, ma sempre leggibile dal fondo dell'aula. Anatomia chiara ma non splatter.
+- **Stile: illustrazione da atlante.** Disegni schematici ma ricchi di dettagli, come le tavole di un atlante scolastico: forme semplificate e pulite, con volume e strati dei tessuti. Non è uno stile realistico o fotografico. Deve restare leggibile dal fondo dell'aula. Anatomia chiara ma non splatter.
   - **Volume con le sfumature.** Ogni forma ha una sfumatura morbida (lineare o radiale) che ne suggerisce il volume. La luce viene sempre **dall'alto a sinistra**: lati illuminati più chiari, lati in ombra più scuri.
   - **Ombreggiatura sì, ombre portate no.** Si scurisce l'interno di una forma o una cavità; non si proiettano ombre sullo sfondo e non si usano effetti di bagliore o sfocatura.
   - **Contorni** di 1,5–2,5 px nel tono scuro del colore del tessuto (non nero puro), così le forme restano separate anche proiettate sulla LIM.
