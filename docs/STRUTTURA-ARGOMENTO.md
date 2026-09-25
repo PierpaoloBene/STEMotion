@@ -8,7 +8,6 @@ argomenti/
     └── deglutizione/
         ├── argomento.yaml      # scheda: chi, cosa, per quale classe
         ├── passaggi.yaml       # la spiegazione, passo per passo
-        ├── quiz.yaml           # verifica per lo studente a casa
         ├── insegnante.md       # note didattiche per l'insegnante
         └── Animazione.astro    # l'animazione interattiva
 ```
@@ -112,30 +111,7 @@ Per ogni passaggio l'animazione deve mostrare **esattamente** ciò che dice il t
 
 ---
 
-## 3. `quiz.yaml` — la verifica
-
-3–5 domande a scelta multipla. Ogni risposta ha una spiegazione, anche quelle sbagliate: sbagliare deve insegnare qualcosa.
-
-```yaml
-domande:
-  - domanda: Che cosa impedisce al cibo di entrare nella laringe?
-    opzioni:
-      - testo: L'epiglottide
-        corretta: true
-        spiegazione: Esatto! Si abbassa come un coperchio sulla laringe.
-      - testo: La lingua
-        spiegazione: La lingua spinge il bolo, ma non chiude le vie dell'aria.
-      - testo: Il cardias
-        spiegazione: Il cardias è in fondo all'esofago, all'ingresso dello stomaco.
-      - testo: La gravità
-        spiegazione: La gravità non chiude niente: serve una "porta" fatta di tessuto.
-```
-
-Almeno una domanda deve toccare la **misconcezione più comune** dell'argomento (vedi note per l'insegnante).
-
----
-
-## 4. `insegnante.md` — note didattiche
+## 3. `insegnante.md` — note didattiche
 
 Sezioni fisse, anche brevi:
 
@@ -157,7 +133,7 @@ Sezioni fisse, anche brevi:
 
 ---
 
-## 5. `Animazione.astro` — l'animazione
+## 4. `Animazione.astro` — l'animazione
 
 Regole tecniche:
 
@@ -176,5 +152,4 @@ Regole tecniche:
 - [ ] Avanti/indietro/salto a un passaggio danno sempre lo stesso risultato
 - [ ] Provata su telefono in verticale e a schermo intero 16:9
 - [ ] Colori e font rispettano la guida di stile
-- [ ] Quiz con almeno una domanda sulla misconcezione principale
 - [ ] **Contenuti verificati da un insegnante** → `revisionato_da` compilato, `stato: pubblicato`

@@ -21,7 +21,7 @@ Questa guida vale per **ogni** argomento del sito. Chi crea un nuovo argomento (
 - **Termini tecnici:** si usano quelli corretti (*epiglottide*, non "la valvolina"), ma la prima volta vanno in **grassetto** e spiegati subito con parole semplici.
 - **Registro:**
   - testi dei passaggi → terza persona, descrittivi ("La lingua spinge il bolo verso la gola.")
-  - quiz e inviti all'interazione → seconda persona singolare ("Trascina il bolo…", "Secondo te…?")
+  - inviti all'interazione → seconda persona singolare ("Trascina il bolo…", "Secondo te…?")
 - **Niente** ironia, riferimenti a meme, emoji nei testi didattici.
 - **Unità di misura** del Sistema Internazionale, con lo spazio tra numero e unità (`37 °C`, `5 m/s`).
 
