@@ -8,6 +8,9 @@
  * - a ogni cambio viene emesso sul palco l'evento `cambiapassaggio`
  *   con detail { indice, id, precedente, ripeti } → per le animazioni che usano JS.
  * Lo stato dipende solo dal passaggio corrente: nessuno stato nascosto.
+ *
+ * Interfaccia "a storie" (guida di stile, §5): barre in alto, tocchi sul palco
+ * nel modello `passaggi`, lettore a tutto schermo sul telefono, schermata finale.
  */
 import { testoInline } from '../lib/testo';
 
@@ -18,19 +21,57 @@ interface Passaggio {
   breve: string;
   spiegazione: string;
 }
-interface Props {
-  passaggi: Passaggio[];
+interface Link {
+  titolo: string;
+  href: string;
 }
-const { passaggi } = Astro.props;
+interface Props {
+  /** Id dell'argomento (es. "scienze/deglutizione"), per ricordare i progressi nel browser. */
+  id: string;
+  passaggi: Passaggio[];
+  titolo: string;
+  modello: 'passaggi' | 'simulazione' | 'confronto';
+  /** Argomento consigliato dopo questo, se c'è. */
+  prossimo?: Link | null;
+  /** Pagina della materia, per la schermata finale quando manca il prossimo argomento. */
+  materia: Link;
+}
+const { id, passaggi, titolo, modello, prossimo, materia } = Astro.props;
 const n = passaggi.length;
+const tocchi = modello === 'passaggi';
 ---
 
-<section class="lettore" data-lettore data-ids={JSON.stringify(passaggi.map((p) => p.id))} aria-label="Animazione">
+<section class="lettore" data-lettore data-argomento={id} data-titolo={titolo} data-modello={modello} data-ids={JSON.stringify(passaggi.map((p) => p.id))} aria-label={`Animazione: ${titolo}`}>
+  <div class="lettore__barra">
+    <ol class="barre">
+      {
+        passaggi.map((p, i) => (
+          <li>
+            <button type="button" class="barra" data-vai={i} aria-label={`Passaggio ${i + 1}: ${p.titolo}`} aria-current={i === 0 ? 'step' : undefined}>
+              <span />
+            </button>
+          </li>
+        ))
+      }
+    </ol>
+    <button type="button" class="tasto tasto--icona lettore__chiudi" data-azione="chiudi" title="Chiudi (Esc)" aria-label="Chiudi">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+  </div>
+
   <div class="lettore__palco" data-palco data-passaggio={passaggi[0].id} data-indice="0">
     <slot />
   </div>
 
-  <div class="lettore__testi" aria-live="polite">
+  <div class="lettore__inizia" data-azione="inizia">
+    <button type="button" class="tasto tasto--primario tasto--grande" data-azione="inizia">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"></path></svg>
+      <span>Inizia</span>
+    </button>
+    <p>{n} passaggi{tocchi && ' · tocca a destra per andare avanti, a sinistra per tornare indietro'}</p>
+  </div>
+
+  <div class="lettore__testi" id="lettore-testi" aria-live="polite">
     {
       passaggi.map((p, i) => (
         <article class="passaggio" data-i={i} hidden={i !== 0}>
@@ -44,6 +85,55 @@ const n = passaggi.length;
         </article>
       ))
     }
+    <button type="button" class="espandi" data-azione="espandi" aria-expanded="false" aria-controls="lettore-testi">
+      <span class="espandi__apri">Leggi la spiegazione</span>
+      <span class="espandi__chiudi">Riduci</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </div>
+
+  <div class="lettore__fine" data-fine hidden tabindex="-1" aria-labelledby="lettore-fine-titolo">
+    <h2 id="lettore-fine-titolo">Hai visto tutti i {n} passaggi</h2>
+    <div class="fine__azioni">
+      <button type="button" class="tasto" data-azione="rivedi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v5h5"></path></svg>
+        <span>Rivedi dall'inizio</span>
+      </button>
+      <button type="button" class="tasto" data-azione="condividi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5"></path><path d="M5 13v6h14v-6"></path></svg>
+        <span>Condividi</span>
+      </button>
+    </div>
+    <p class="fine__esito" data-esito aria-live="polite"></p>
+    {
+      prossimo ? (
+        <a class="prossimo" href={prossimo.href}>
+          <span class="prossimo__etichetta">Prossimo argomento</span>
+          <span class="prossimo__titolo">{prossimo.titolo}</span>
+        </a>
+      ) : (
+        <a class="prossimo" href={materia.href}>
+          <span class="prossimo__etichetta">Continua a esplorare</span>
+          <span class="prossimo__titolo">Altri argomenti di {materia.titolo}</span>
+        </a>
+      )
+    }
+    <h3 class="fine__sottotitolo">Ripassa i passaggi</h3>
+    <ol class="riepilogo">
+      {
+        passaggi.map((p, i) => (
+          <li>
+            <button type="button" class="riepilogo__voce" data-vai={i}>
+              <span class="riepilogo__numero" aria-hidden="true">{i + 1}</span>
+              <span class="riepilogo__testo">
+                <strong>{p.titolo}</strong>
+                <span>{p.breve}</span>
+              </span>
+            </button>
+          </li>
+        ))
+      }
+    </ol>
   </div>
 
   <nav class="lettore__comandi" aria-label="Comandi dell'animazione">
@@ -52,20 +142,8 @@ const n = passaggi.length;
       <span class="tasto__etichetta">Indietro</span>
     </button>
 
-    <ol class="pallini">
-      {
-        passaggi.map((p, i) => (
-          <li>
-            <button type="button" class="pallino" data-vai={i} aria-label={`Passaggio ${i + 1}: ${p.titolo}`} aria-current={i === 0 ? 'step' : undefined}>
-              <span />
-            </button>
-          </li>
-        ))
-      }
-    </ol>
-
-    <button type="button" class="tasto tasto--primario" data-azione="avanti" title="Avanti (→ o spazio)">
-      <span class="tasto__etichetta">Avanti</span>
+    <button type="button" class="tasto tasto--primario tasto--avanti" data-azione="avanti" title="Avanti (→ o spazio)">
+      <span>Avanti</span>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
     </button>
 
@@ -87,6 +165,8 @@ const n = passaggi.length;
   type Dettaglio = { indice: number; id: string; precedente: number | null; ripeti: boolean };
 
   const CHIAVE_TESTO = 'raggi-x:spiegazione';
+  const CHIAVE_ULTIMO = 'raggi-x:ultimo';
+  const CHIAVE_VISTI = 'raggi-x:visti';
   const leggi = (k: string) => {
     try {
       return localStorage.getItem(k);
@@ -102,40 +182,105 @@ const n = passaggi.length;
     }
   };
 
+  // Stesso limite del CSS: sotto questa larghezza il lettore si apre a tutto schermo.
+  const stretto = matchMedia('(max-width: 899px)');
+  // I tocchi su questi elementi appartengono all'animazione, non cambiano passaggio.
+  const INTERATTIVI = '[data-interattivo], button, a, input, select, textarea, label';
+
   function avvia(radice: HTMLElement) {
     const palco = radice.querySelector<HTMLElement>('[data-palco]')!;
     const articoli = [...radice.querySelectorAll<HTMLElement>('.passaggio')];
-    const pallini = [...radice.querySelectorAll<HTMLButtonElement>('[data-vai]')];
+    const barre = [...radice.querySelectorAll<HTMLButtonElement>('.barra')];
+    const fineEl = radice.querySelector<HTMLElement>('[data-fine]')!;
+    const esitoEl = radice.querySelector<HTMLElement>('[data-esito]')!;
     const elencoId = JSON.parse(radice.dataset.ids ?? '[]') as string[];
     const n = articoli.length;
-    const btnIndietro = radice.querySelector<HTMLButtonElement>('[data-azione="indietro"]')!;
-    const btnAvanti = radice.querySelector<HTMLButtonElement>('[data-azione="avanti"]')!;
-    const btnTesto = radice.querySelector<HTMLButtonElement>('[data-azione="testo"]')!;
-    const btnSchermo = radice.querySelector<HTMLButtonElement>('[data-azione="schermo"]')!;
+    const tocchi = radice.dataset.modello === 'passaggi';
+    const btn = (azione: string) => radice.querySelector<HTMLButtonElement>(`button[data-azione="${azione}"]`)!;
+    const btnIndietro = btn('indietro');
+    const btnAvanti = btn('avanti');
+    const btnRipeti = btn('ripeti');
+    const btnTesto = btn('testo');
+    const btnSchermo = btn('schermo');
+    const btnEspandi = btn('espandi');
 
     let indice = 0;
+    let fine = false;
+    let pronto = false; // i progressi si salvano solo dopo un'azione, non all'apertura
+
+    // Progressi solo nel browser (guida di stile, §9): servono a "Continua" e alla spunta "Visto".
+    function ricorda() {
+      if (!pronto) return;
+      const id = radice.dataset.argomento!;
+      const ultimo = { id, titolo: radice.dataset.titolo, href: location.pathname, passo: indice + 1, n, fine };
+      scrivi(CHIAVE_ULTIMO, JSON.stringify(ultimo));
+      if (!fine) return;
+      let visti: string[] = [];
+      try {
+        visti = JSON.parse(leggi(CHIAVE_VISTI) ?? '[]');
+      } catch {
+        /* memoria illeggibile: si riparte */
+      }
+      if (!visti.includes(id)) scrivi(CHIAVE_VISTI, JSON.stringify([...visti, id]));
+    }
+
+    function aggiornaIndirizzo() {
+      // Conserva lo stato della cronologia: serve a chiudere il lettore col tasto "indietro".
+      history.replaceState(history.state, '', fine ? '#fine' : `#p${indice + 1}`);
+    }
+
+    function aggiornaComandi() {
+      articoli.forEach((a, k) => (a.hidden = k !== indice));
+      barre.forEach((b, k) => {
+        if (k === indice && !fine) b.setAttribute('aria-current', 'step');
+        else b.removeAttribute('aria-current');
+        b.classList.toggle('fatto', fine || k < indice);
+      });
+      radice.classList.toggle('lettore--fine', fine);
+      fineEl.hidden = !fine;
+      btnIndietro.disabled = !fine && indice === 0;
+      btnAvanti.disabled = fine;
+      btnRipeti.disabled = fine;
+      aggiornaIndirizzo();
+      ricorda();
+    }
 
     function imposta(i: number, ripeti = false) {
-      const precedente = ripeti ? indice : indice === i ? null : indice;
+      const prima = indice;
+      const eraFine = fine;
       indice = Math.max(0, Math.min(n - 1, i));
+      fine = false;
+      const precedente = ripeti ? prima : indice === prima ? null : prima;
+      aggiornaComandi();
+      // Dalla schermata finale il palco è già sull'ultimo passaggio: se non cambia, niente evento.
+      if (eraFine && !ripeti && palco.dataset.indice === String(indice)) return;
       palco.dataset.passaggio = elencoId[indice];
       palco.dataset.indice = String(indice);
-      articoli.forEach((a, k) => (a.hidden = k !== indice));
-      pallini.forEach((p, k) => {
-        if (k === indice) p.setAttribute('aria-current', 'step');
-        else p.removeAttribute('aria-current');
-        p.classList.toggle('fatto', k < indice);
-      });
-      btnIndietro.disabled = indice === 0;
-      btnAvanti.disabled = indice === n - 1;
-      history.replaceState(null, '', `#p${indice + 1}`);
       const detail: Dettaglio = { indice, id: elencoId[indice], precedente, ripeti };
       palco.dispatchEvent(new CustomEvent('cambiapassaggio', { detail, bubbles: true }));
     }
 
+    // La schermata finale non tocca il palco, che resta sull'ultimo passaggio.
+    function mostraFine() {
+      indice = n - 1;
+      fine = true;
+      esitoEl.textContent = '';
+      aggiornaComandi();
+      fineEl.scrollTop = 0;
+      fineEl.focus({ preventScroll: true });
+    }
+
+    const avanti = () => {
+      if (fine) return;
+      if (indice === n - 1) mostraFine();
+      else imposta(indice + 1);
+    };
+    const indietro = () => imposta(fine ? n - 1 : indice - 1);
+
     // Ripeti: riporta per un istante il palco allo stato precedente, senza transizioni,
     // poi torna al passaggio corrente così la transizione riparte.
     function ripeti() {
+      if (fine) return;
       palco.classList.add('senza-transizioni');
       if (indice > 0) {
         palco.dataset.passaggio = elencoId[indice - 1];
@@ -155,26 +300,126 @@ const n = passaggi.length;
       scrivi(CHIAVE_TESTO, visibile ? 'si' : 'no');
     }
 
+    function espandi(aperto: boolean) {
+      radice.classList.toggle('lettore--espanso', aperto);
+      btnEspandi.setAttribute('aria-expanded', String(aperto));
+    }
+
     function schermoIntero() {
       if (document.fullscreenElement) document.exitFullscreen();
       else radice.requestFullscreen?.();
     }
 
+    async function condividi() {
+      const indirizzo = location.href.split('#')[0];
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: document.title, url: indirizzo });
+        } catch {
+          /* condivisione annullata */
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(indirizzo);
+        esitoEl.textContent = 'Link copiato: ora puoi incollarlo dove vuoi.';
+      } catch {
+        esitoEl.textContent = `Copia questo link: ${indirizzo}`;
+      }
+    }
+
+    // --- Lettore a tutto schermo sul telefono ---
+
+    // Rende inerte tutto il resto della pagina, così il focus resta nel lettore.
+    function inerteAttorno(attivo: boolean) {
+      let el: HTMLElement = radice;
+      while (el.parentElement && el !== document.body) {
+        for (const fratello of el.parentElement.children) {
+          if (fratello !== el && fratello instanceof HTMLElement) fratello.inert = attivo;
+        }
+        el = el.parentElement;
+      }
+    }
+
+    function apri() {
+      if (radice.classList.contains('lettore--immersivo')) return;
+      radice.classList.add('lettore--immersivo');
+      document.documentElement.classList.add('blocca-scorrimento');
+      inerteAttorno(true);
+      // Una voce nella cronologia: il tasto "indietro" del telefono chiude il lettore.
+      history.pushState({ lettore: true }, '', location.href);
+      btnAvanti.focus({ preventScroll: true });
+    }
+
+    function esci() {
+      if (!radice.classList.contains('lettore--immersivo')) return;
+      if (document.fullscreenElement) document.exitFullscreen();
+      radice.classList.remove('lettore--immersivo');
+      document.documentElement.classList.remove('blocca-scorrimento');
+      inerteAttorno(false);
+      aggiornaIndirizzo();
+      radice.scrollIntoView({ block: 'nearest' });
+    }
+
+    const chiudi = () => (history.state?.lettore ? history.back() : esci());
+
+    window.addEventListener('popstate', () => {
+      if (!history.state?.lettore) esci();
+    });
+
+    // --- Tocchi e scorrimenti sul palco (solo modello "passaggi") ---
+
+    let inizioX = NaN;
+    let inizioY = NaN;
+    if (tocchi) {
+      palco.addEventListener('pointerdown', (e) => {
+        const suInterattivo = (e.target as Element).closest(INTERATTIVI);
+        inizioX = suInterattivo ? NaN : e.clientX;
+        inizioY = e.clientY;
+      });
+      palco.addEventListener('pointerup', (e) => {
+        const dx = e.clientX - inizioX;
+        const dy = e.clientY - inizioY;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) {
+          if (dx < 0) avanti();
+          else indietro();
+        }
+      });
+      palco.addEventListener('click', (e) => {
+        if (Number.isNaN(inizioX) || fine) return;
+        // Un dito che si è spostato è uno scorrimento, già gestito in pointerup.
+        if (Math.hypot(e.clientX - inizioX, e.clientY - inizioY) > 20) return;
+        const r = palco.getBoundingClientRect();
+        if (e.clientX - r.left < r.width / 3) indietro();
+        else avanti();
+      });
+    }
+
     radice.addEventListener('click', (e) => {
-      const t = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
+      const bersaglio = e.target as HTMLElement;
+      if (bersaglio.closest('[data-azione="inizia"]')) return apri();
+      const t = bersaglio.closest<HTMLButtonElement>('button');
       if (!t) return;
       if (t.dataset.vai) return imposta(Number(t.dataset.vai));
       switch (t.dataset.azione) {
         case 'indietro':
-          return imposta(indice - 1);
+          return indietro();
         case 'avanti':
-          return imposta(indice + 1);
+          return avanti();
         case 'ripeti':
           return ripeti();
         case 'testo':
           return impostaTesto(radice.classList.contains('lettore--lezione'));
+        case 'espandi':
+          return espandi(!radice.classList.contains('lettore--espanso'));
         case 'schermo':
           return schermoIntero();
+        case 'rivedi':
+          return imposta(0);
+        case 'condividi':
+          return condividi();
+        case 'chiudi':
+          return chiudi();
       }
     });
 
@@ -185,16 +430,17 @@ const n = passaggi.length;
       if (bersaglio.closest('input, textarea, select, [contenteditable]')) return;
       const tasto = e.key.toLowerCase();
       const mappa: Record<string, () => void> = {
-        arrowright: () => imposta(indice + 1),
-        pagedown: () => imposta(indice + 1),
-        ' ': () => imposta(indice + 1),
-        arrowleft: () => imposta(indice - 1),
-        pageup: () => imposta(indice - 1),
+        arrowright: avanti,
+        pagedown: avanti,
+        ' ': avanti,
+        arrowleft: indietro,
+        pageup: indietro,
         r: ripeti,
         t: () => impostaTesto(radice.classList.contains('lettore--lezione')),
         f: schermoIntero,
+        escape: () => radice.classList.contains('lettore--immersivo') && chiudi(),
       };
-      if (tasto === ' ' && bersaglio.closest('button')) return; // lo spazio su un pulsante lo attiva già
+      if (tasto === ' ' && bersaglio.closest('button, a')) return; // lo spazio su un pulsante lo attiva già
       const azione = mappa[tasto];
       if (azione) {
         e.preventDefault();
@@ -209,8 +455,20 @@ const n = passaggi.length;
 
     radice.classList.add('lettore--attivo');
     impostaTesto(leggi(CHIAVE_TESTO) !== 'no');
-    const daIndirizzo = Number(location.hash.match(/^#p(\d+)$/)?.[1]);
-    imposta(Number.isFinite(daIndirizzo) && daIndirizzo > 0 ? daIndirizzo - 1 : 0);
+
+    // Un link a un passaggio (#p3) o alla fine (#fine) riapre il lettore lì.
+    function daIndirizzo() {
+      const hash = location.hash;
+      const numero = Number(hash.match(/^#p(\d+)$/)?.[1]);
+      if (hash === '#fine') {
+        imposta(n - 1);
+        mostraFine();
+      } else imposta(numero > 0 ? numero - 1 : 0);
+      return hash === '#fine' || numero > 0;
+    }
+    window.addEventListener('hashchange', daIndirizzo);
+    if (daIndirizzo() && stretto.matches) apri();
+    pronto = true;
   }
 
   document.querySelectorAll<HTMLElement>('[data-lettore]').forEach(avvia);
@@ -220,23 +478,81 @@ const n = passaggi.length;
   .lettore {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'palco' 'testi' 'comandi';
-    gap: 0;
+    grid-template-areas: 'barra' 'palco' 'testi' 'comandi';
     background: var(--superficie);
-    border: 2px solid var(--bordo);
     border-radius: var(--raggio);
-    overflow: hidden;
+    box-shadow: var(--ombra-alta);
+    /* clip e non hidden: hidden rompe position: sticky della barra dei comandi */
+    overflow: clip;
   }
 
   @media (min-width: 900px) {
     .lettore {
       grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
-      grid-template-areas: 'palco testi' 'comandi comandi';
+      grid-template-areas: 'barra barra' 'palco testi' 'comandi comandi';
     }
     .lettore__testi {
       border-left: 2px solid var(--bordo);
     }
   }
+
+  /* --- Barre di avanzamento --- */
+
+  .lettore__barra {
+    grid-area: barra;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-inline: 20px;
+  }
+  .barre {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .barre li {
+    flex: 1;
+    min-width: 0;
+  }
+  .barra {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--tocco);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .barra span {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--bordo);
+    transition:
+      background 0.3s ease-in-out,
+      height 0.3s ease-in-out;
+  }
+  .barra:hover span {
+    background: var(--testo-2);
+  }
+  .barra.fatto span {
+    background: var(--accento);
+  }
+  /* Il passaggio corrente è più spesso: si riconosce anche senza colore. */
+  .barra[aria-current='step'] span {
+    height: 14px;
+    background: var(--accento);
+  }
+  .lettore:not(.lettore--immersivo) .lettore__chiudi {
+    display: none;
+  }
+
+  /* --- Palco --- */
 
   .lettore__palco {
     grid-area: palco;
@@ -245,6 +561,36 @@ const n = passaggi.length;
     background: var(--sfondo);
     overflow: hidden;
   }
+  .lettore--attivo[data-modello='passaggi'] .lettore__palco {
+    cursor: pointer;
+    touch-action: pan-y pinch-zoom;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Anteprima con "Inizia": solo sul telefono, prima di aprire il lettore. */
+  .lettore__inizia {
+    grid-area: palco;
+    z-index: 3;
+    display: none;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgb(250 250 247 / 0.9);
+    backdrop-filter: blur(4px);
+    text-align: center;
+    cursor: pointer;
+  }
+  .lettore__inizia p {
+    margin: 0;
+    max-width: 30ch;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--testo);
+  }
+
+  /* --- Testi --- */
 
   .lettore__testi {
     grid-area: testi;
@@ -276,22 +622,175 @@ const n = passaggi.length;
     display: none;
   }
 
+  .espandi {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--tocco);
+    margin-top: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--accento);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .espandi svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s ease-in-out;
+  }
+  .espandi__chiudi,
+  .lettore--espanso .espandi__apri {
+    display: none;
+  }
+  .lettore--espanso .espandi__chiudi {
+    display: inline;
+  }
+  .lettore--espanso .espandi svg {
+    transform: rotate(180deg);
+  }
+
   /* Senza JavaScript si vedono tutti i passaggi, come un testo normale. */
   .lettore:not(.lettore--attivo) .passaggio[hidden] {
     display: block;
     margin-top: 32px;
   }
-  .lettore:not(.lettore--attivo) .lettore__comandi {
+  .lettore:not(.lettore--attivo) :is(.lettore__barra, .lettore__comandi) {
     display: none;
   }
+
+  /* --- Schermata finale --- */
+
+  .lettore__fine {
+    grid-row: palco-start / testi-end;
+    grid-column: palco-start / testi-end;
+    z-index: 4;
+    /* Non allarga la griglia: occupa lo spazio di palco e testi e scorre dentro. */
+    contain: size;
+    overflow-y: auto;
+    padding: 32px;
+    background: var(--superficie);
+  }
+  .lettore__fine[hidden] {
+    display: none;
+  }
+  .lettore__fine:focus {
+    outline: none;
+  }
+  .lettore--fine :is(.lettore__palco, .lettore__testi) {
+    visibility: hidden;
+  }
+  .lettore__fine h2 {
+    font-size: clamp(28px, 4vw, 40px);
+  }
+  .fine__sottotitolo {
+    margin-top: 32px;
+    font-size: 22px;
+  }
+  .riepilogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px 16px;
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+  }
+  .riepilogo__voce {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    min-height: var(--tocco);
+    padding: 10px 12px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+  }
+  .riepilogo__voce:hover {
+    border-color: var(--bordo);
+  }
+  .riepilogo__numero {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accento);
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .riepilogo__testo {
+    display: grid;
+    gap: 2px;
+  }
+  .riepilogo__testo span {
+    color: var(--testo-2);
+    font-size: 18px;
+  }
+  .fine__azioni {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .fine__esito {
+    margin: 8px 0 0;
+    font-size: 16px;
+    color: var(--testo-2);
+    overflow-wrap: anywhere;
+  }
+  .fine__esito:empty {
+    display: none;
+  }
+  .prossimo {
+    display: grid;
+    gap: 2px;
+    margin-top: 24px;
+    padding: 16px 20px;
+    border-radius: var(--raggio);
+    background: var(--radiografia);
+    color: #fff;
+    text-decoration: none;
+    transition: transform 0.25s ease-in-out;
+  }
+  .prossimo:hover {
+    transform: translateY(-3px);
+  }
+  .prossimo__etichetta {
+    color: var(--aria);
+  }
+  .prossimo__etichetta {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .prossimo__titolo {
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .prossimo__titolo::after {
+    content: ' →';
+  }
+
+  /* --- Comandi --- */
 
   .lettore__comandi {
     grid-area: comandi;
     position: sticky;
     bottom: 0;
-    z-index: 2;
+    z-index: 5;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 12px;
@@ -307,9 +806,9 @@ const n = passaggi.length;
     gap: 8px;
     min-width: var(--tocco);
     min-height: var(--tocco);
-    padding: 0 20px;
+    padding: 0 24px;
     border: 2px solid var(--bordo);
-    border-radius: 12px;
+    border-radius: 999px;
     background: var(--superficie);
     font-weight: 700;
     cursor: pointer;
@@ -327,7 +826,17 @@ const n = passaggi.length;
     border-color: var(--accento);
     color: #fff;
   }
+  .tasto--avanti {
+    min-width: 180px;
+  }
+  .tasto--grande {
+    min-height: 72px;
+    padding: 0 36px;
+    border-radius: 999px;
+    font-size: 26px;
+  }
   .tasto--icona {
+    width: var(--tocco);
     padding: 0;
   }
   .tasto svg {
@@ -339,43 +848,12 @@ const n = passaggi.length;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
+  .tasto--grande svg {
+    fill: currentColor;
+  }
   .tasto[aria-pressed='false'] {
     color: var(--testo-2);
     border-style: dashed;
-  }
-
-  .pallini {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .pallino {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: var(--tocco);
-    padding: 0;
-    border: 0;
-    background: none;
-    cursor: pointer;
-  }
-  .pallino span {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 2px solid var(--testo-2);
-    transition: transform 0.2s ease-in-out, background 0.2s ease-in-out;
-  }
-  .pallino.fatto span {
-    background: var(--testo-2);
-  }
-  .pallino[aria-current='step'] span {
-    background: var(--accento);
-    border-color: var(--accento);
-    transform: scale(1.35);
   }
 
   .lettore__extra {
@@ -388,27 +866,25 @@ const n = passaggi.length;
       position: absolute;
       right: 16px;
     }
-    .lettore__comandi {
-      position: relative;
-    }
   }
 
-  @media (max-width: 520px) {
+  /* --- Telefono --- */
+
+  @media (max-width: 899px) {
     .lettore__palco {
       aspect-ratio: 4 / 3;
     }
     .lettore__comandi {
       gap: 8px;
-    }
-    .pallini {
-      order: -1;
-      flex-basis: 100%;
-    }
-    .pallino {
-      width: 36px;
+      padding: 8px 12px;
     }
     .tasto {
       padding: 0 12px;
+    }
+    .tasto--avanti {
+      flex: 1;
+      min-width: 0;
+      max-width: 320px;
     }
     .tasto__etichetta {
       position: absolute;
@@ -418,26 +894,88 @@ const n = passaggi.length;
       clip-path: inset(50%);
     }
     .lettore__testi {
-      padding: 20px 16px;
+      padding: 16px 16px 8px;
     }
     .passaggio__titolo {
       font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .lettore__fine {
+      padding: 24px 16px;
+    }
+
+    /* La spiegazione si apre a richiesta, così l'animazione resta grande. */
+    .lettore--attivo:not(.lettore--lezione) .espandi {
+      display: inline-flex;
+    }
+    .lettore--attivo:not(.lettore--espanso) .passaggio__spiegazione {
+      display: none;
+    }
+
+    /* Anteprima: solo palco e "Inizia" finché il lettore non si apre. */
+    .lettore--attivo:not(.lettore--immersivo, .lettore--schermo) .lettore__inizia {
+      display: grid;
+    }
+    .lettore--attivo:not(.lettore--immersivo, .lettore--schermo) :is(.lettore__barra, .lettore__testi, .lettore__comandi, .lettore__fine) {
+      display: none;
     }
   }
 
-  /* Schermo intero: il palco si prende tutto lo spazio disponibile. */
-  .lettore--schermo {
-    border: 0;
-    border-radius: 0;
+  /* --- A tutto schermo: lettore del telefono e schermo intero --- */
+
+  .lettore--immersivo {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
     height: 100vh;
-    grid-template-rows: minmax(0, 1fr) auto;
+    height: 100dvh;
   }
+  .lettore--immersivo,
+  .lettore--schermo {
+    border-radius: 0;
+    box-shadow: none;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+  .lettore--schermo {
+    height: 100vh;
+  }
+  .lettore--immersivo .lettore__palco,
   .lettore--schermo .lettore__palco {
     aspect-ratio: auto;
   }
+  .lettore--immersivo .lettore__chiudi {
+    display: inline-flex;
+    border-color: transparent;
+  }
   @media (max-width: 899px) {
+    .lettore--immersivo,
     .lettore--schermo {
-      grid-template-rows: minmax(0, 1fr) auto auto;
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+    }
+    .lettore--immersivo .lettore__testi,
+    .lettore--schermo .lettore__testi {
+      max-height: 55vh;
+      max-height: 55dvh;
+      overflow-y: auto;
+      border-top: 2px solid var(--bordo);
+    }
+    .lettore--immersivo .lettore__barra {
+      padding-right: 4px;
+    }
+  }
+  /* Telefono in orizzontale: palco e testo affiancati, come sulla LIM. */
+  @media (max-width: 899px) and (orientation: landscape) and (max-height: 500px) {
+    .lettore--immersivo,
+    .lettore--schermo {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      grid-template-areas: 'barra barra' 'palco testi' 'comandi comandi';
+    }
+    .lettore--immersivo .lettore__testi,
+    .lettore--schermo .lettore__testi {
+      max-height: none;
+      border-top: 0;
+      border-left: 2px solid var(--bordo);
     }
   }
 </style>

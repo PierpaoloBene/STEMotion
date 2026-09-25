@@ -54,7 +54,8 @@ const passaggi = defineCollection({
           spiegazione: z.string(),
         }),
       )
-      .min(1),
+      .min(1)
+      .max(12, 'Al massimo 12 passaggi (guida di stile, §5).'),
   }),
 });
 

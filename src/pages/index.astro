@@ -2,96 +2,392 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import IconaMateria from '../components/IconaMateria.astro';
+import SchedaArgomento from '../components/SchedaArgomento.astro';
 import { url } from '../lib/url';
 
 const materie = (await getCollection('materie')).sort((a, b) => a.data.ordine - b.data.ordine);
-const argomenti = await getCollection('argomenti');
-const conta = (id: string) => argomenti.filter((a) => a.data.materia.id === id).length;
+const argomenti = (await getCollection('argomenti')).sort((a, b) => a.data.titolo.localeCompare(b.data.titolo, 'it'));
+const diMateria = (id: string) => argomenti.filter((a) => a.data.materia.id === id);
+const nomeArea = (materia: string, area?: string) =>
+  materie.find((m) => m.id === materia)?.data.aree.find((a) => a.id === area)?.nome;
+const conta = (n: number) => (n === 0 ? 'in arrivo' : n === 1 ? '1 argomento' : `${n} argomenti`);
+
+// In evidenza: per ora il primo argomento in ordine alfabetico.
+const inEvidenza = argomenti[0];
 ---
 
 <Base>
-  <section class="eroe contenitore">
-    <h1>Guardiamo dentro le cose.</h1>
-    <p>Animazioni interattive, un passo alla volta, per capire come è fatto e come funziona il mondo. Per la classe e per studiare a casa.</p>
+  <section class="eroe contenitore contenitore--largo">
+    <div class="eroe__testo">
+      <p class="eroe__occhiello">Scienze · Matematica · Fisica</p>
+      <h1>Guardiamo <span class="eroe__evidenza">dentro</span> le cose.</h1>
+      <p class="eroe__descrizione">Animazioni interattive, un passo alla volta, per capire come è fatto e come funziona il mondo. In classe sulla LIM o a casa dal telefono.</p>
+    </div>
+    {
+      inEvidenza && (
+        <div class="eroe__evidenza-scheda">
+          <p class="eroe__etichetta">In evidenza</p>
+          <SchedaArgomento argomento={inEvidenza} area={nomeArea(inEvidenza.data.materia.id, inEvidenza.data.area)} />
+        </div>
+      )
+    }
   </section>
 
-  <section class="contenitore" aria-labelledby="titolo-materie">
+  <section class="contenitore contenitore--largo" aria-labelledby="titolo-materie">
     <h2 id="titolo-materie" class="solo-lettori">Materie</h2>
-    <ul class="materie">
+    <ul class="bolle">
       {
-        materie.map((m) => {
-          const n = conta(m.id);
-          return (
-            <li>
-              <a class="materia" href={url(`${m.id}/`)} style={`--colore: var(--${m.id})`}>
+        materie.map((m) => (
+          <li>
+            <a class="bolla" href={url(`${m.id}/`)} data-materia={m.id}>
+              <span class="bolla__anello">
                 <IconaMateria materia={m.id} />
-                <span class="materia__nome">{m.data.nome}</span>
-                <span class="materia__descrizione">{m.data.descrizione}</span>
-                <span class="materia__conta">{n === 0 ? 'Argomenti in arrivo' : n === 1 ? '1 argomento' : `${n} argomenti`}</span>
-              </a>
-            </li>
-          );
-        })
+              </span>
+              <span class="bolla__nome">{m.data.nome}</span>
+              <span class="bolla__conta">{conta(diMateria(m.id).length)}</span>
+            </a>
+          </li>
+        ))
       }
     </ul>
   </section>
+
+  <section class="contenitore contenitore--largo continua" data-continua hidden aria-labelledby="titolo-continua">
+    <h2 id="titolo-continua" class="riga__titolo">Continua da dove eri</h2>
+    <a class="continua__scheda" data-continua-link href="#">
+      <span class="continua__icona" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"></path></svg>
+      </span>
+      <span class="continua__testo">
+        <strong data-continua-titolo></strong>
+        <span data-continua-passo></span>
+        <span class="continua__barra"><span data-continua-barra></span></span>
+      </span>
+    </a>
+  </section>
+
+  {
+    materie.map((m) => {
+      const voci = diMateria(m.id);
+      return (
+        <section class="riga contenitore contenitore--largo" data-materia={m.id} aria-labelledby={`titolo-${m.id}`}>
+          <div class="riga__testata">
+            <h2 id={`titolo-${m.id}`} class="riga__titolo">
+              <span class="riga__pallino" aria-hidden="true" />
+              {m.data.nome}
+            </h2>
+            {voci.length > 0 && (
+              <a class="riga__tutti" href={url(`${m.id}/`)}>
+                Vedi tutti
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </a>
+            )}
+          </div>
+          <ul class="scorrevole">
+            {voci.map((a) => (
+              <li>
+                <SchedaArgomento argomento={a} area={nomeArea(m.id, a.data.area)} />
+              </li>
+            ))}
+            {voci.length === 0 && (
+              <li>
+                <div class="in-arrivo">
+                  <IconaMateria materia={m.id} />
+                  <span>Gli argomenti di {m.data.nome.toLowerCase()} sono in arrivo.</span>
+                </div>
+              </li>
+            )}
+          </ul>
+        </section>
+      );
+    })
+  }
 </Base>
 
+<script>
+  // "Continua da dove eri": l'ultimo argomento lasciato a metà, salvato dal lettore solo nel browser.
+  type Ultimo = { id: string; titolo: string; href: string; passo: number; n: number; fine: boolean };
+  let ultimo: Ultimo | null = null;
+  try {
+    ultimo = JSON.parse(localStorage.getItem('raggi-x:ultimo') ?? 'null');
+  } catch {
+    /* niente memoria */
+  }
+  const sezione = document.querySelector<HTMLElement>('[data-continua]');
+  if (sezione && ultimo && !ultimo.fine && ultimo.passo > 1) {
+    sezione.querySelector<HTMLAnchorElement>('[data-continua-link]')!.href = `${ultimo.href}#p${ultimo.passo}`;
+    sezione.querySelector('[data-continua-titolo]')!.textContent = ultimo.titolo;
+    sezione.querySelector('[data-continua-passo]')!.textContent = `Passaggio ${ultimo.passo} di ${ultimo.n}`;
+    sezione.querySelector<HTMLElement>('[data-continua-barra]')!.style.width = `${(ultimo.passo / ultimo.n) * 100}%`;
+    sezione.hidden = false;
+  }
+</script>
+
 <style>
+  /* --- Apertura --- */
+
   .eroe {
-    padding-block: 56px 40px;
+    display: grid;
+    gap: 32px;
+    align-items: center;
+    padding-block: 48px 32px;
+  }
+  @media (min-width: 900px) {
+    .eroe {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 64px;
+      padding-block: 64px 40px;
+    }
+  }
+  .eroe__occhiello {
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--testo-2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
   .eroe h1 {
-    font-size: clamp(40px, 6vw, 64px);
-    max-width: 16ch;
+    font-size: clamp(44px, 7vw, 88px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    max-width: 12ch;
   }
-  .eroe p {
-    margin: 16px 0 0;
-    max-width: 44ch;
+  /* "dentro" in negativo, come una radiografia */
+  .eroe__evidenza {
+    display: inline-block;
+    padding: 0 0.18em 0.04em;
+    border-radius: 0.2em;
+    background: var(--radiografia);
+    color: var(--aria);
+  }
+  .eroe__descrizione {
+    margin: 20px 0 0;
+    max-width: 40ch;
     color: var(--testo-2);
     font-size: 22px;
   }
-  .materie {
+  .eroe__evidenza-scheda {
+    width: min(100%, 320px);
+  }
+  .eroe__etichetta {
+    margin: 0 0 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--testo-2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  @media (max-width: 899px) {
+    /* Sul telefono l'evidenza è già nella riga della sua materia. */
+    .eroe__evidenza-scheda {
+      display: none;
+    }
+  }
+
+  /* --- Bolle delle materie, come le storie --- */
+
+  .bolle {
+    display: flex;
+    gap: 16px;
     list-style: none;
     margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    padding: 8px 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
-  .materia {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    height: 100%;
-    padding: 28px;
-    background: var(--superficie);
-    border: 2px solid var(--bordo);
-    border-top: 10px solid var(--colore);
-    border-radius: var(--raggio);
+  .bolla {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    width: 132px;
+    padding-block: 4px;
     color: var(--testo);
     text-decoration: none;
-    transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    text-align: center;
   }
-  .materia:hover {
-    transform: translateY(-3px);
-    border-color: var(--colore);
+  .bolla__anello {
+    display: grid;
+    place-items: center;
+    width: 112px;
+    height: 112px;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    background: var(--tinta);
+    /* anello nel colore della materia, staccato da un bordo bianco */
+    box-shadow:
+      0 0 0 4px var(--superficie),
+      0 0 0 8px var(--colore);
+    transition: transform 0.25s ease-in-out;
   }
-  .materia :global(.icona-materia) {
-    color: var(--colore);
-    margin-bottom: 8px;
+  .bolla:hover .bolla__anello {
+    transform: scale(1.05);
   }
-  .materia__nome {
-    font-size: 32px;
+  .bolla__anello :global(.icona-materia) {
+    width: 56px;
+    height: 56px;
+    color: var(--scuro);
+  }
+  .bolla__nome {
+    font-size: 20px;
     font-weight: 700;
   }
-  .materia__descrizione {
+  .bolla__conta {
+    font-size: 16px;
     color: var(--testo-2);
   }
-  .materia__conta {
-    margin-top: auto;
-    padding-top: 12px;
+
+  /* --- Continua --- */
+
+  .continua {
+    margin-top: 32px;
+  }
+  .continua[hidden] {
+    display: none;
+  }
+  .continua__scheda {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 560px;
+    margin-top: 16px;
+    padding: 16px 20px;
+    border-radius: var(--raggio);
+    background: var(--superficie);
+    box-shadow: var(--ombra);
+    color: var(--testo);
+    text-decoration: none;
+    transition: box-shadow 0.25s ease-in-out;
+  }
+  .continua__scheda:hover {
+    box-shadow: var(--ombra-alta);
+  }
+  .continua__icona {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accento);
+  }
+  .continua__icona svg {
+    width: 24px;
+    height: 24px;
+    fill: #fff;
+  }
+  .continua__testo {
+    display: grid;
+    gap: 2px;
+    flex: 1;
+  }
+  .continua__testo strong {
+    font-size: 22px;
+  }
+  .continua__testo span {
+    color: var(--testo-2);
+    font-size: 16px;
+  }
+  .continua__barra {
+    display: block;
+    height: 8px;
+    margin-top: 6px;
+    border-radius: 999px;
+    background: var(--bordo);
+    overflow: hidden;
+  }
+  .continua__barra span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accento);
+  }
+
+  /* --- Righe per materia --- */
+
+  .riga {
+    margin-top: 48px;
+  }
+  .riga__testata {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .riga__titolo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: clamp(28px, 3.5vw, 36px);
+  }
+  .riga__pallino {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--colore);
+  }
+  .riga__tutti {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--tocco);
+    color: var(--scuro);
     font-weight: 700;
-    font-size: 18px;
+    text-decoration: none;
+  }
+  .riga__tutti:hover {
+    text-decoration: underline;
+  }
+  .riga__tutti svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Card affiancate che scorrono in orizzontale, come un carosello. */
+  .scorrevole {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 260px;
+    gap: 20px;
+    list-style: none;
+    margin: 0 calc(-1 * var(--margine));
+    padding: 8px var(--margine) 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--margine);
+  }
+  .scorrevole li {
+    scroll-snap-align: start;
+  }
+  @media (max-width: 519px) {
+    .scorrevole {
+      grid-auto-columns: 72%;
+      gap: 14px;
+    }
+  }
+
+  .in-arrivo {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    height: 100%;
+    min-height: 200px;
+    padding: 24px;
+    border: 3px dashed var(--colore);
+    border-radius: var(--raggio);
+    background: var(--tinta);
+    color: var(--testo);
+    font-weight: 700;
+    text-align: center;
+  }
+  .in-arrivo :global(.icona-materia) {
+    color: var(--scuro);
   }
 </style>

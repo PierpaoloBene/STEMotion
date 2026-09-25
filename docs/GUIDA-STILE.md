@@ -52,6 +52,16 @@ Ogni materia ha un colore che la identifica in landing, intestazioni e badge. **
 | Matematica | `--matematica` | `#2F5BEA` (blu) |
 | Fisica | `--fisica` | `#E07A1F` (arancio) |
 
+Il colore base di scienze e fisica **non** ha abbastanza contrasto per scriverci sopra in bianco (3,4:1 e 3,0:1). Per questo ogni materia ha due varianti:
+
+| Materia | Scuro: testo bianco sopra, testo colorato su sfondo chiaro | Tinta: sfondo di sezioni e pannelli |
+|---|---|---|
+| Scienze | `--scienze-scuro` `#177A55` | `--scienze-tinta` `#E3F4EC` |
+| Matematica | `--matematica-scuro` `#2F5BEA` | `--matematica-tinta` `#E8EEFD` |
+| Fisica | `--fisica-scuro` `#A8560F` | `--fisica-tinta` `#FCEEDF` |
+
+Il colore base resta per bordi, icone e decorazioni; per testi e pulsanti pieni si usa lo scuro.
+
 ### Colori con significato fisso (dentro le animazioni)
 
 Lo stesso concetto ha **sempre** lo stesso colore, in tutto il sito:
@@ -87,18 +97,32 @@ Lo stesso concetto ha **sempre** lo stesso colore, in tutto il sito:
 
 ## 5. Interfaccia di un argomento
 
+Il lettore funziona come le "storie" dei social che gli studenti usano ogni giorno: contenuto a tutto schermo, un tocco per andare avanti, barre di avanzamento in alto. Resta però sempre chi guarda a decidere il ritmo (principio 2): niente avanza da solo.
+
 Ogni pagina argomento ha gli **stessi controlli nella stessa posizione**:
 
-- **◀ Indietro** · **▶ Avanti** · **↺ Ripeti passaggio**: in basso, sempre visibili.
-- **Indicatore di avanzamento**: pallini, uno per passaggio, cliccabili.
-- **Testo sì/no**: nasconde i testi (modalità lezione per la LIM).
+- **Barre di avanzamento** in alto: una per passaggio, piene fino a quello corrente. Si toccano per saltare a un passaggio.
+- **◀ Indietro** · **▶ Avanti** · **↺ Ripeti passaggio**: in basso, sempre visibili, a portata di pollice.
+- **Testo sì/no**: nasconde le spiegazioni (modalità lezione per la LIM).
 - **Schermo intero.**
+
+**Tocchi sul palco.** Nel modello `passaggi` si può toccare l'animazione: il terzo sinistro torna indietro, il resto va avanti. Anche scorrere il dito a destra o a sinistra cambia passaggio. Negli altri modelli (`simulazione`, `confronto`) il palco non reagisce ai tocchi, per non disturbare cursori e trascinamenti.
+
+**Telefono (schermo stretto).** La pagina mostra titolo, informazioni e un'anteprima dell'animazione con il pulsante **Inizia**. Da lì il lettore occupa tutto lo schermo: barre in alto, animazione, pannello del testo, comandi in basso. **✕ Chiudi**, il tasto `Esc` e il tasto "indietro" del telefono tornano alla pagina. Nel pannello del testo si vedono sempre titolo e frase `breve`; la `spiegazione` si apre con **Leggi la spiegazione**, così l'animazione resta grande.
+
+**Schermata finale.** Dopo l'ultimo passaggio, **Avanti** apre una schermata di chiusura con:
+
+- il riepilogo dei passaggi (titolo e frase breve; ognuno riporta al suo passaggio);
+- **Rivedi dall'inizio**;
+- **Condividi**: usa la condivisione del telefono o, se non c'è, copia il link;
+- il **prossimo argomento** da vedere, oppure il ritorno alla materia. Non si apre mai da solo.
 
 Regole:
 
-- Area toccabile minima **56 × 56 px** (le LIM sono poco precise).
-- Tastiera: `→` / `Spazio` avanti, `←` indietro, `R` ripeti, `T` testo, `F` schermo intero. Così funziona anche con il telecomando da presentazione.
+- Area toccabile minima **56 × 56 px** (le LIM sono poco precise) per tutti i comandi. Unica eccezione ammessa: le barre di avanzamento, che sono una scorciatoia. Sono alte 56 px e si dividono la larghezza. Per questo un argomento non supera **12 passaggi**.
+- Tastiera: `→` / `Spazio` avanti, `←` indietro, `R` ripeti, `T` testo, `F` schermo intero, `Esc` chiude il lettore a tutto schermo del telefono. Così funziona anche con il telecomando da presentazione.
 - Funziona da **telefono in verticale** (studenti a casa) fino alla **LIM 16:9** (classe).
+- Cosa **non** si prende dai social: avanzamento o riproduzione automatica, scorrimento infinito, like e contatori, notifiche, serie di giorni consecutivi. Creano dipendenza e richiederebbero di raccogliere dati.
 
 ---
 
@@ -109,7 +133,7 @@ Regole:
 - **Easing morbido** (`ease-in-out`), niente rimbalzi o effetti "cartone animato" che distraggono.
 - Nessun lampeggio più veloce di 3 volte al secondo.
 - Rispettare `prefers-reduced-motion`: in quel caso ogni passaggio mostra direttamente lo stato finale.
-- **Interazione:** quando lo studente deve fare qualcosa (trascinare, muovere un cursore), l'elemento interattivo ha un bordo tratteggiato `--accento` e un'indicazione testuale di cosa fare.
+- **Interazione:** quando lo studente deve fare qualcosa (trascinare, muovere un cursore), l'elemento interattivo ha un bordo tratteggiato `--accento` e un'indicazione testuale di cosa fare. Nel codice ha l'attributo `data-interattivo`, così i tocchi su di lui non cambiano passaggio.
 
 ---
 
@@ -127,3 +151,29 @@ Regole:
 - Nessun login, nessun cookie di tracciamento, nessuna analitica che raccolga dati personali.
 - Nessuna risorsa caricata da servizi esterni (font, librerie, immagini): tutto nel repo.
 - Ogni animazione ha una descrizione testuale dei passaggi leggibile dagli screen reader.
+
+---
+
+## 9. Identità visiva
+
+Il sito deve piacere a ragazzi abituati ai social senza perdere leggibilità sulla LIM. Le regole dei paragrafi 3 e 4 restano valide; questa sezione dice come usarle.
+
+- **Forme morbide.** Card e lettore con angoli di 24 px (`--raggio`); pulsanti e etichette a pillola (angoli completamente arrotondati); pulsanti con sola icona rotondi.
+- **Profondità leggera.** Le card e il lettore hanno un'ombra morbida (`--ombra`), che si alza al passaggio del mouse (`--ombra-alta`). Le ombre sono **solo nell'interfaccia**: nelle illustrazioni restano vietate (§7).
+- **Colore a blocchi.** Le pagine di una materia e dei suoi argomenti hanno in cima una fascia con la **tinta** della materia. Il colore della materia compare anche come pallino nella navigazione e come anello nelle "bolle" delle materie in home. Sulle tinte il testo resta `--testo`; testo colorato solo con la variante scura.
+- **Navigazione.** In testata, oltre al marchio, le materie come pulsanti a pillola sempre raggiungibili. Niente briciole di pane: la fascia della pagina ha un link per tornare alla materia.
+- **Testi dell'interfaccia.** Seconda persona, brevi e diretti ("Inizia", "Continua da dove eri", "Vedi tutti"). Niente emoji, neanche nell'interfaccia: le icone sono SVG originali.
+
+### Copertine ed effetto raggi X
+
+Ogni argomento ha una **copertina** (formato 4:5, come un post) che mostra l'oggetto **da fuori**. Al passaggio del mouse o quando la card riceve il focus, una linea di scansione scende e rivela la **radiografia**: lo stesso oggetto visto **da dentro**, su fondo scuro. È il segno di riconoscimento del sito.
+
+- La scansione dura 1,2 s, `ease-in-out`, avviene una volta sola e si inverte quando il mouse esce. Nessun ciclo.
+- Sugli schermi senza mouse (telefono, tablet, LIM) la copertina mostra subito la radiografia: lì il passaggio del mouse non esiste.
+- Con `prefers-reduced-motion` la radiografia compare senza movimento.
+- Nella radiografia valgono i colori con significato fisso (§3): il cibo è ocra, l'aria azzurra, e così via.
+- Niente testo dentro la copertina: il titolo sta nella card.
+
+### Memoria nel browser
+
+Per dare continuità senza account, il sito ricorda **solo nel browser** (`localStorage`) quali argomenti sono stati visti fino alla fine e a che passaggio ci si è fermati. Serve per la spunta **Visto** sulle card (sempre icona **e** testo) e per **Continua da dove eri** in home. Nessun dato lascia il dispositivo; se il browser non lo permette, il sito funziona lo stesso.

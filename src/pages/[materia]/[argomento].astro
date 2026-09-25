@@ -35,39 +35,84 @@ const Note = note ? (await render(note)).Content : null;
 // Ogni argomento può avere il suo Animazione.astro nella propria cartella.
 const moduli = import.meta.glob<{ default: any }>('/argomenti/*/*/Animazione.astro', { eager: true });
 const Animazione = moduli[`/argomenti/${argomento.id}/Animazione.astro`]?.default;
+
+// Prossimo argomento per la schermata finale: prima uno che ha questo tra i prerequisiti,
+// altrimenti il successivo in ordine alfabetico nella stessa materia.
+const slug = (a: CollectionEntry<'argomenti'>) => a.id.split('/')[1];
+const stessaMateria = (await getCollection('argomenti'))
+  .filter((a) => a.data.materia.id === materia.id)
+  .sort((a, b) => a.data.titolo.localeCompare(b.data.titolo, 'it'));
+const dopo =
+  stessaMateria.find((a) => a.data.prerequisiti.includes(slug(argomento))) ??
+  stessaMateria[stessaMateria.findIndex((a) => a.id === argomento.id) + 1];
+const prossimo = dopo ? { titolo: dopo.data.titolo, href: url(`${materia.id}/${slug(dopo)}/`) } : null;
 ---
 
-<Base
-  titolo={data.titolo}
-  descrizione={data.sottotitolo}
-  percorso={[{ nome: materia.data.nome, href: url(`${materia.id}/`) }, { nome: data.titolo }]}
->
-  <div class="contenitore contenitore--largo">
-    <header class="intestazione" style={`--colore: var(--${materia.id})`}>
+<Base titolo={data.titolo} descrizione={data.sottotitolo} materia={materia.id}>
+  <section class="fascia" data-materia={materia.id}>
+    <div class="contenitore contenitore--largo">
+      <a class="indietro" href={url(`${materia.id}/`)}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+        {materia.data.nome}
+      </a>
       <h1>{data.titolo}</h1>
       <p class="sottotitolo">{data.sottotitolo}</p>
       <p class="info">
         <span class="badge">{elencoClassi(data.classi)}</span>
         <span class="badge">{data.durata_minuti} min</span>
+        <span class="badge">{passaggi.data.passaggi.length} passaggi</span>
         {data.stato !== 'pubblicato' && <span class="badge badge--bozza">Bozza: contenuti da revisionare</span>}
       </p>
-    </header>
+    </div>
+  </section>
 
-    <Lettore passaggi={passaggi.data.passaggi}>
+  <div class="contenitore contenitore--largo corpo" data-materia={materia.id}>
+    <Lettore
+      id={argomento.id}
+      passaggi={passaggi.data.passaggi}
+      titolo={data.titolo}
+      modello={data.modello}
+      prossimo={prossimo}
+      materia={{ titolo: materia.data.nome, href: url(`${materia.id}/`) }}
+    >
       {Animazione ? <Animazione /> : <Segnaposto passaggi={passaggi.data.passaggi} />}
     </Lettore>
 
     <p class="aiuto">Tastiera: <kbd>→</kbd> o <kbd>spazio</kbd> avanti · <kbd>←</kbd> indietro · <kbd>R</kbd> ripeti · <kbd>T</kbd> spiegazione · <kbd>F</kbd> schermo intero</p>
 
-    <section class="obiettivi">
-      <h2>Alla fine saprai</h2>
-      <ul>{data.obiettivi.map((o) => <li>{o}</li>)}</ul>
-    </section>
+    <div class="schede">
+      <section class="riquadro">
+        <h2>Alla fine saprai</h2>
+        <ul class="obiettivi">
+          {
+            data.obiettivi.map((o) => (
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                <span>{o}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+      {
+        data.parole_chiave.length > 0 && (
+          <section class="riquadro">
+            <h2>Parole chiave</h2>
+            <ul class="parole">
+              {data.parole_chiave.map((p) => <li>{p}</li>)}
+            </ul>
+          </section>
+        )
+      }
+    </div>
 
     {
       Note && (
-        <details class="note">
-          <summary>Note per l'insegnante</summary>
+        <details class="riquadro note">
+          <summary>
+            Note per l'insegnante
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+          </summary>
           <div class="note__corpo">
             <Note />
           </div>
@@ -78,16 +123,42 @@ const Animazione = moduli[`/argomenti/${argomento.id}/Animazione.astro`]?.defaul
 </Base>
 
 <style>
-  .intestazione {
-    padding-block: 32px 24px;
+  .fascia {
+    background: var(--tinta);
+    padding-block: 16px 72px;
   }
-  .intestazione h1 {
-    font-size: clamp(40px, 5vw, 56px);
+  .indietro {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: var(--tocco);
+    margin-left: -8px;
+    padding: 0 16px 0 8px;
+    border-radius: 999px;
+    color: var(--scuro);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .indietro:hover {
+    background: var(--superficie);
+  }
+  .indietro svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .fascia h1 {
+    margin-top: 4px;
+    font-size: clamp(40px, 5.5vw, 64px);
+    letter-spacing: -0.03em;
   }
   .sottotitolo {
     margin: 8px 0 0;
     font-size: 22px;
-    color: var(--testo-2);
   }
   .info {
     display: flex;
@@ -95,6 +166,19 @@ const Animazione = moduli[`/argomenti/${argomento.id}/Animazione.astro`]?.defaul
     gap: 8px;
     margin: 16px 0 0;
   }
+  .info .badge {
+    border-color: transparent;
+    color: var(--testo);
+  }
+  .info .badge--bozza {
+    border-color: var(--testo-2);
+  }
+
+  /* Il lettore sale sopra la fascia colorata. */
+  .corpo {
+    margin-top: -48px;
+  }
+
   .aiuto {
     margin: 12px 0 0;
     font-size: 16px;
@@ -113,30 +197,93 @@ const Animazione = moduli[`/argomenti/${argomento.id}/Animazione.astro`]?.defaul
       display: none;
     }
   }
-  .obiettivi {
+
+  .schede {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
     margin-top: 40px;
   }
-  .obiettivi h2,
+  .riquadro {
+    padding: 24px 28px;
+    background: var(--superficie);
+    border-radius: var(--raggio);
+    box-shadow: var(--ombra);
+  }
+  .riquadro h2,
   .note summary {
     font-size: 24px;
     font-weight: 700;
   }
-  .obiettivi ul {
-    margin: 12px 0 0;
-    padding-left: 1.2em;
+  .obiettivi {
+    display: grid;
+    gap: 12px;
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
   }
+  .obiettivi li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .obiettivi svg {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    margin-top: 2px;
+    border-radius: 50%;
+    background: var(--tinta);
+    fill: none;
+    stroke: var(--scuro);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .parole {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+  }
+  .parole li {
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: var(--tinta);
+    font-weight: 700;
+  }
+
   .note {
-    margin-top: 32px;
-    padding: 20px 24px;
-    background: var(--superficie);
-    border: 2px solid var(--bordo);
-    border-radius: var(--raggio);
+    margin-top: 24px;
   }
   .note summary {
-    cursor: pointer;
-    min-height: var(--tocco);
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: var(--tocco);
+    cursor: pointer;
+    list-style: none;
+  }
+  .note summary::-webkit-details-marker {
+    display: none;
+  }
+  .note summary svg {
+    width: 28px;
+    height: 28px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s ease-in-out;
+  }
+  .note[open] summary svg {
+    transform: rotate(180deg);
   }
   .note__corpo :global(h2) {
     font-size: 20px;

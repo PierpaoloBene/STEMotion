@@ -2,8 +2,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import IconaMateria from '../../components/IconaMateria.astro';
-import { url } from '../../lib/url';
-import { elencoClassi } from '../../lib/testo';
+import SchedaArgomento from '../../components/SchedaArgomento.astro';
 
 export async function getStaticPaths() {
   const materie = await getCollection('materie');
@@ -26,40 +25,57 @@ const gruppi = materia.data.aree
 const senzaArea = argomenti.filter((a) => !materia.data.aree.some((area) => area.id === a.data.area));
 if (senzaArea.length) gruppi.push({ nome: 'Altri argomenti', voci: senzaArea });
 
-const slug = (a: CollectionEntry<'argomenti'>) => a.id.split('/')[1];
+// Filtri per classe: solo le classi che hanno almeno un argomento.
+const classi = [1, 2, 3].filter((c) => argomenti.some((a) => a.data.classi.includes(c)));
+const n = argomenti.length;
 ---
 
-<Base titolo={materia.data.nome} descrizione={materia.data.descrizione} percorso={[{ nome: materia.data.nome }]}>
-  <section class="intestazione contenitore" style={`--colore: var(--${materia.id})`}>
-    <IconaMateria materia={materia.id} />
-    <div>
-      <h1>{materia.data.nome}</h1>
-      <p>{materia.data.descrizione}</p>
+<Base titolo={materia.data.nome} descrizione={materia.data.descrizione} materia={materia.id}>
+  <section class="fascia" data-materia={materia.id}>
+    <div class="contenitore contenitore--largo fascia__riga">
+      <span class="fascia__icona">
+        <IconaMateria materia={materia.id} />
+      </span>
+      <div>
+        <h1>{materia.data.nome}</h1>
+        <p class="fascia__descrizione">{materia.data.descrizione}</p>
+        <p class="fascia__conta">{n === 0 ? 'Argomenti in arrivo' : n === 1 ? '1 argomento' : `${n} argomenti`}</p>
+      </div>
     </div>
   </section>
 
-  <div class="contenitore">
+  <div class="contenitore contenitore--largo" data-materia={materia.id}>
+    {
+      classi.length > 1 && (
+        <div class="filtri" role="group" aria-label="Filtra per classe" data-filtri hidden>
+          <button type="button" class="pillola filtro" data-classe="" aria-pressed="true">
+            Tutte
+          </button>
+          {classi.map((c) => (
+            <button type="button" class="pillola filtro" data-classe={c} aria-pressed="false">
+              Classe {c}ª
+            </button>
+          ))}
+        </div>
+      )
+    }
+
     {
       gruppi.length === 0 && (
-        <p class="vuoto">Gli argomenti di {materia.data.nome.toLowerCase()} sono in arrivo.</p>
+        <div class="vuoto">
+          <IconaMateria materia={materia.id} />
+          <p>Gli argomenti di {materia.data.nome.toLowerCase()} sono in arrivo.</p>
+        </div>
       )
     }
     {
       gruppi.map((g) => (
-        <section class="gruppo">
+        <section class="gruppo" data-gruppo>
           <h2>{g.nome}</h2>
-          <ul class="argomenti">
+          <ul class="griglia">
             {g.voci.map((a) => (
               <li>
-                <a class="argomento" href={url(`${materia.id}/${slug(a)}/`)} style={`--colore: var(--${materia.id})`}>
-                  <span class="argomento__titolo">{a.data.titolo}</span>
-                  <span class="argomento__sottotitolo">{a.data.sottotitolo}</span>
-                  <span class="argomento__info">
-                    <span class="badge">{elencoClassi(a.data.classi)}</span>
-                    <span class="badge">{a.data.durata_minuti} min</span>
-                    {a.data.stato !== 'pubblicato' && <span class="badge badge--bozza">Bozza</span>}
-                  </span>
-                </a>
+                <SchedaArgomento argomento={a} />
               </li>
             ))}
           </ul>
@@ -69,74 +85,147 @@ const slug = (a: CollectionEntry<'argomenti'>) => a.id.split('/')[1];
   </div>
 </Base>
 
+<script>
+  document.querySelectorAll<HTMLElement>('[data-filtri]').forEach((filtri) => {
+    const pulsanti = [...filtri.querySelectorAll<HTMLButtonElement>('[data-classe]')];
+    filtri.hidden = false;
+    filtri.addEventListener('click', (e) => {
+      const scelto = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-classe]');
+      if (!scelto) return;
+      const classe = scelto.dataset.classe!;
+      pulsanti.forEach((p) => p.setAttribute('aria-pressed', String(p === scelto)));
+      document.querySelectorAll<HTMLElement>('[data-gruppo]').forEach((gruppo) => {
+        let visibili = 0;
+        gruppo.querySelectorAll<HTMLElement>('[data-classi]').forEach((scheda) => {
+          const mostra = !classe || scheda.dataset.classi!.split(' ').includes(classe);
+          scheda.parentElement!.hidden = !mostra;
+          if (mostra) visibili++;
+        });
+        gruppo.hidden = visibili === 0;
+      });
+    });
+  });
+</script>
+
 <style>
-  .intestazione {
+  .fascia {
+    background: var(--tinta);
+  }
+  .fascia__riga {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding-block: 48px 32px;
+    gap: 28px;
+    padding-block: 48px;
   }
-  .intestazione :global(.icona-materia) {
-    color: var(--colore);
-    width: 72px;
-    height: 72px;
+  .fascia__icona {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--superficie);
+    box-shadow:
+      0 0 0 6px var(--tinta),
+      0 0 0 10px var(--colore);
   }
-  .intestazione h1 {
-    font-size: clamp(40px, 5vw, 56px);
+  .fascia__icona :global(.icona-materia) {
+    width: 64px;
+    height: 64px;
+    color: var(--scuro);
   }
-  .intestazione p {
+  .fascia h1 {
+    font-size: clamp(44px, 6vw, 72px);
+    letter-spacing: -0.03em;
+  }
+  .fascia__descrizione {
     margin: 8px 0 0;
-    color: var(--testo-2);
+    max-width: 48ch;
+    font-size: 22px;
   }
-  .gruppo + .gruppo {
+  .fascia__conta {
+    margin: 12px 0 0;
+    font-weight: 700;
+    color: var(--scuro);
+  }
+  @media (max-width: 599px) {
+    .fascia__riga {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      padding-block: 32px;
+    }
+    .fascia__icona {
+      width: 88px;
+      height: 88px;
+      margin-left: 10px; /* lascia spazio all'anello */
+    }
+    .fascia__icona :global(.icona-materia) {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  .filtri {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+  .filtri[hidden] {
+    display: none;
+  }
+  .filtro[aria-pressed='true'] {
+    background: var(--scuro);
+    border-color: var(--scuro);
+    color: #fff;
+  }
+
+  .gruppo {
     margin-top: 40px;
   }
+  .gruppo[hidden] {
+    display: none;
+  }
   .gruppo h2 {
-    font-size: 26px;
+    font-size: 28px;
     margin-bottom: 16px;
   }
-  .argomenti {
+  .griglia {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
   }
-  .argomento {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    height: 100%;
-    padding: 24px;
-    background: var(--superficie);
-    border: 2px solid var(--bordo);
-    border-left: 8px solid var(--colore);
+  .griglia li[hidden] {
+    display: none;
+  }
+  /* Telefono: due colonne, come la griglia di un profilo. */
+  @media (max-width: 519px) {
+    .griglia {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+  }
+
+  .vuoto {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    margin-top: 40px;
+    padding: 48px 24px;
+    border: 3px dashed var(--colore);
     border-radius: var(--raggio);
-    color: var(--testo);
-    text-decoration: none;
-  }
-  .argomento:hover {
-    border-color: var(--colore);
-  }
-  .argomento__titolo {
-    font-size: 26px;
+    background: var(--tinta);
+    text-align: center;
     font-weight: 700;
   }
-  .argomento__sottotitolo {
-    color: var(--testo-2);
+  .vuoto :global(.icona-materia) {
+    color: var(--scuro);
   }
-  .argomento__info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: auto;
-    padding-top: 12px;
-  }
-  .vuoto {
-    padding: 32px;
-    border: 2px dashed var(--bordo);
-    border-radius: var(--raggio);
-    color: var(--testo-2);
+  .vuoto p {
+    margin: 0;
   }
 </style>

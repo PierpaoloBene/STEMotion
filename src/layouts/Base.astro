@@ -2,18 +2,20 @@
 import '@fontsource/atkinson-hyperlegible/400.css';
 import '@fontsource/atkinson-hyperlegible/700.css';
 import '../styles/global.css';
+import { getCollection } from 'astro:content';
 import { url } from '../lib/url';
 
 interface Props {
   titolo?: string;
   descrizione?: string;
-  /** Briciole di pane: [{ nome, href }] dopo "Home" */
-  percorso?: { nome: string; href?: string }[];
+  /** Materia della pagina: evidenziata nella navigazione. */
+  materia?: string;
 }
 
 const NOME_SITO = 'Animazioni ai raggi X';
-const { titolo, descrizione = 'Animazioni interattive per capire scienze, matematica e fisica alle scuole medie.', percorso = [] } = Astro.props;
+const { titolo, descrizione = 'Animazioni interattive per capire scienze, matematica e fisica alle scuole medie.', materia } = Astro.props;
 const titoloPagina = titolo ? `${titolo} · ${NOME_SITO}` : NOME_SITO;
+const materie = (await getCollection('materie')).sort((a, b) => a.data.ordine - b.data.ordine);
 ---
 
 <!doctype html>
@@ -27,22 +29,25 @@ const titoloPagina = titolo ? `${titolo} · ${NOME_SITO}` : NOME_SITO;
   </head>
   <body>
     <header class="testata">
-      <div class="contenitore testata__riga">
+      <div class="contenitore contenitore--largo testata__riga">
         <a class="marchio" href={url()}>
-          <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"></rect><path d="M10 9l12 14M22 9L10 23" stroke="#8EC9F0" stroke-width="4" stroke-linecap="round"></path></svg>
-          <span>{NOME_SITO}</span>
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#16233F"></rect><path d="M10 9l12 14M22 9L10 23" stroke="#8EC9F0" stroke-width="4" stroke-linecap="round"></path></svg>
+          <span>Animazioni <span class="marchio__raggi">ai raggi X</span></span>
         </a>
-        {
-          percorso.length > 0 && (
-            <nav aria-label="Sei qui" class="briciole">
-              <ol>
-                {percorso.map((p) => (
-                  <li>{p.href ? <a href={p.href}>{p.nome}</a> : <span aria-current="page">{p.nome}</span>}</li>
-                ))}
-              </ol>
-            </nav>
-          )
-        }
+        <nav class="menu" aria-label="Materie">
+          <ul>
+            {
+              materie.map((m) => (
+                <li>
+                  <a class="menu__voce" href={url(`${m.id}/`)} data-materia={m.id} aria-current={m.id === materia ? 'page' : undefined}>
+                    <span class="menu__pallino" aria-hidden="true" />
+                    {m.data.nome}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
       </div>
     </header>
 
@@ -51,8 +56,8 @@ const titoloPagina = titolo ? `${titolo} · ${NOME_SITO}` : NOME_SITO;
     </main>
 
     <footer class="piede">
-      <div class="contenitore">
-        <p>Nessun account, nessun cookie, nessun dato raccolto.</p>
+      <div class="contenitore contenitore--largo piede__riga">
+        <p class="piede__marchio">Animazioni ai raggi X</p>
       </div>
     </footer>
   </body>
@@ -60,16 +65,20 @@ const titoloPagina = titolo ? `${titolo} · ${NOME_SITO}` : NOME_SITO;
 
 <style>
   .testata {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 255 255 / 0.9);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--bordo);
-    background: var(--superficie);
   }
   .testata__riga {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px 24px;
-    min-height: 72px;
-    padding-block: 8px;
+    justify-content: space-between;
+    gap: 4px 24px;
+    padding-block: 6px;
   }
   .marchio {
     display: inline-flex;
@@ -80,36 +89,98 @@ const titoloPagina = titolo ? `${titolo} · ${NOME_SITO}` : NOME_SITO;
     font-weight: 700;
     font-size: 22px;
     text-decoration: none;
+    letter-spacing: -0.01em;
   }
   .marchio svg {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     flex: none;
   }
-  .briciole ol {
+  .marchio__raggi {
+    color: var(--accento);
+  }
+  .menu ul {
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+    gap: 8px;
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+  .menu__voce {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: var(--tocco);
+    padding: 0 18px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    color: var(--testo);
+    font-weight: 700;
     font-size: 18px;
-    color: var(--testo-2);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background 0.2s ease-in-out,
+      border-color 0.2s ease-in-out;
   }
-  .briciole li + li::before {
-    content: '›';
-    margin-inline: 6px;
+  .menu__voce:hover {
+    background: var(--tinta);
   }
-  .briciole a {
-    color: var(--testo-2);
+  .menu__voce[aria-current='page'] {
+    background: var(--tinta);
+    border-color: var(--scuro);
   }
+  .menu__pallino {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--colore);
+  }
+
+  /* Telefono: le materie diventano una riga che scorre sotto il marchio. */
+  @media (max-width: 719px) {
+    /* Due righe di testata fissa ruberebbero troppo schermo al telefono. */
+    .testata {
+      position: static;
+    }
+    .testata__riga {
+      padding-inline: 0;
+    }
+    .marchio {
+      padding-inline: var(--margine);
+    }
+    .menu {
+      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .menu ul {
+      padding: 0 var(--margine) 6px;
+      width: max-content;
+    }
+    .menu__voce {
+      padding: 0 14px;
+    }
+  }
+
   main {
     min-height: 60vh;
   }
   .piede {
-    margin-top: 64px;
-    border-top: 1px solid var(--bordo);
-    color: var(--testo-2);
+    margin-top: 80px;
+    background: var(--radiografia);
+    color: #d8e2f0;
     font-size: 16px;
+  }
+  .piede__riga {
+    padding-block: 32px;
+  }
+  .piede p {
+    margin: 0;
+  }
+  .piede__marchio {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
   }
 </style>

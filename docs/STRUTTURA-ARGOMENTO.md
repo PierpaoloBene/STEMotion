@@ -9,6 +9,7 @@ argomenti/
         ├── argomento.yaml      # scheda: chi, cosa, per quale classe
         ├── passaggi.yaml       # la spiegazione, passo per passo
         ├── insegnante.md       # note didattiche per l'insegnante
+        ├── copertina.svg       # la copertina "ai raggi X" per le card
         └── Animazione.astro    # l'animazione interattiva
 ```
 
@@ -155,6 +156,7 @@ Se serve JavaScript (simulazioni, trascinamenti), a ogni cambio il contenitore e
 
 Regole tecniche:
 
+- Nel modello `passaggi` un tocco sul palco cambia passaggio (vedi guida di stile, §5). Gli elementi che lo studente deve toccare o trascinare hanno l'attributo `data-interattivo`. Anche `button`, `a`, `input` e `select` sono esclusi in automatico.
 - Lo stato dipende **solo dal passaggio corrente**. Nessuno stato nascosto: dal passaggio 5 si può tornare al 2 e il risultato è identico ad arrivarci dall'inizio.
 - Anima la **transizione** verso lo stato del passaggio, poi si ferma.
 - Il pulsante "Ripeti" riporta per un istante il contenitore al passaggio precedente senza transizioni e poi torna a quello corrente: con le transizioni CSS funziona da solo.
@@ -164,11 +166,31 @@ Regole tecniche:
 
 ---
 
+## 5. `copertina.svg` — la copertina
+
+Mostra l'oggetto da fuori e, con l'effetto raggi X, da dentro (guida di stile, §9). Finché manca, la card mostra l'icona della materia.
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori"><!-- l'oggetto visto da fuori, su sfondo trasparente --></g>
+  <g class="dentro"><!-- la radiografia: fondo scuro a tutta copertina, poi l'interno --></g>
+</svg>
+```
+
+- `viewBox="0 0 400 500"`, senza `width` e `height`: si adatta alla card.
+- Due soli gruppi di primo livello, `fuori` e `dentro`. Il sito rivela `dentro` sopra `fuori` con la scansione.
+- Lo sfondo di `fuori` è trasparente: sotto c'è la tinta della materia. `dentro` ha un rettangolo `#16233F` a tutta copertina.
+- Stesso stile delle illustrazioni (§7): piatto, contorni 2–3 px, niente testo, niente ombre.
+
+---
+
 ## Checklist prima della pubblicazione
 
 - [ ] `npm run build` termina senza errori (i file YAML vengono controllati automaticamente)
 - [ ] `argomento.yaml` compilato, `stato: da-revisionare`
 - [ ] Ogni passaggio ha `breve` e `spiegazione`, e l'animazione li rispecchia
+- [ ] Al massimo 12 passaggi
+- [ ] `copertina.svg` con i gruppi `fuori` e `dentro`
 - [ ] Con il testo nascosto l'animazione si capisce ancora
 - [ ] Avanti/indietro/salto a un passaggio danno sempre lo stesso risultato
 - [ ] Provata su telefono in verticale e a schermo intero 16:9

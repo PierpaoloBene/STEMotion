@@ -1,0 +1,224 @@
+---
+/**
+ * Card di un argomento con la copertina "ai raggi X" (guida di stile, §9).
+ * La copertina è argomenti/<materia>/<slug>/copertina.svg; se manca, si vede l'icona della materia.
+ */
+import type { CollectionEntry } from 'astro:content';
+import IconaMateria from './IconaMateria.astro';
+import { url } from '../lib/url';
+import { elencoClassi } from '../lib/testo';
+
+interface Props {
+  argomento: CollectionEntry<'argomenti'>;
+  /** Nome dell'area, mostrato sopra il titolo. */
+  area?: string;
+}
+const { argomento, area } = Astro.props;
+const { data } = argomento;
+const materia = data.materia.id;
+
+const copertine = import.meta.glob<string>('/argomenti/*/*/copertina.svg', { query: '?raw', import: 'default', eager: true });
+const copertina = copertine[`/argomenti/${argomento.id}/copertina.svg`];
+---
+
+<a
+  class="scheda"
+  href={url(`${argomento.id}/`)}
+  data-materia={materia}
+  data-argomento={argomento.id}
+  data-classi={data.classi.join(' ')}
+>
+  <span class="scheda__copertina" class:list={{ 'scheda__copertina--vuota': !copertina }}>
+    {copertina ? <Fragment set:html={copertina} /> : <IconaMateria materia={materia} />}
+    <span class="scheda__visto" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+      Visto
+    </span>
+  </span>
+  <span class="scheda__corpo">
+    {area && <span class="scheda__area">{area}</span>}
+    <span class="scheda__titolo">{data.titolo}</span>
+    <span class="scheda__sottotitolo">{data.sottotitolo}</span>
+    <span class="scheda__info">
+      <span>{elencoClassi(data.classi)}</span>
+      <span aria-hidden="true">·</span>
+      <span>{data.durata_minuti} min</span>
+      {data.stato !== 'pubblicato' && <span class="badge badge--bozza">Bozza</span>}
+    </span>
+  </span>
+</a>
+
+<script>
+  // Spunta "Visto" sugli argomenti finiti: l'elenco sta solo nel browser.
+  let visti: string[] = [];
+  try {
+    visti = JSON.parse(localStorage.getItem('raggi-x:visti') ?? '[]');
+  } catch {
+    /* niente memoria: nessuna spunta */
+  }
+  document.querySelectorAll<HTMLElement>('.scheda[data-argomento]').forEach((s) => {
+    if (!visti.includes(s.dataset.argomento!)) return;
+    s.querySelector<HTMLElement>('.scheda__visto')!.hidden = false;
+  });
+</script>
+
+<style>
+  .scheda {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--superficie);
+    border-radius: var(--raggio);
+    box-shadow: var(--ombra);
+    color: var(--testo);
+    text-decoration: none;
+    overflow: clip;
+    transition:
+      box-shadow 0.25s ease-in-out,
+      transform 0.25s ease-in-out;
+  }
+  .scheda:hover,
+  .scheda:focus-visible {
+    box-shadow: var(--ombra-alta);
+    transform: translateY(-4px);
+  }
+
+  /* --- Copertina ed effetto raggi X --- */
+
+  .scheda__copertina {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    background: var(--tinta);
+    overflow: hidden;
+  }
+  .scheda__copertina > :global(svg:not(.icona-materia)) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .scheda__copertina :global(.dentro) {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1.2s ease-in-out;
+  }
+  /* La linea di scansione scende insieme alla radiografia. */
+  .scheda__copertina::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 4px;
+    background: var(--aria);
+    box-shadow: 0 0 16px 4px rgb(142 201 240 / 0.7);
+    opacity: 0;
+    transition:
+      top 1.2s ease-in-out,
+      opacity 0.3s ease-in-out;
+  }
+  .scheda:is(:hover, :focus-visible) .scheda__copertina :global(.dentro) {
+    clip-path: inset(0 0 0 0);
+  }
+  .scheda:is(:hover, :focus-visible) .scheda__copertina:not(.scheda__copertina--vuota)::after {
+    top: calc(100% - 4px);
+    opacity: 1;
+  }
+  /* Senza mouse la scansione non si può attivare: si vede subito la radiografia. */
+  @media (hover: none) {
+    .scheda__copertina :global(.dentro) {
+      clip-path: none;
+    }
+    .scheda__copertina::after {
+      display: none;
+    }
+  }
+
+  .scheda__copertina--vuota {
+    display: grid;
+    place-items: center;
+  }
+  .scheda__copertina--vuota :global(.icona-materia) {
+    width: 40%;
+    height: 40%;
+    color: var(--scuro);
+  }
+
+  .scheda__visto {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px 4px 8px;
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--testo);
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: var(--ombra);
+  }
+  .scheda__visto[hidden] {
+    display: none;
+  }
+  .scheda__visto svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* --- Testo --- */
+
+  .scheda__corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    padding: 16px 18px 18px;
+  }
+  .scheda__area {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--scuro);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .scheda__titolo {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .scheda__sottotitolo {
+    color: var(--testo-2);
+    font-size: 18px;
+    line-height: 1.4;
+  }
+  .scheda__info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--testo-2);
+  }
+
+  @media (max-width: 519px) {
+    .scheda__corpo {
+      padding: 12px 14px 14px;
+    }
+    .scheda__titolo {
+      font-size: 20px;
+    }
+    .scheda__sottotitolo {
+      display: none;
+    }
+  }
+</style>

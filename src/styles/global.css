@@ -10,6 +10,13 @@
   --scienze: #1f9e6e;
   --matematica: #2f5bea;
   --fisica: #e07a1f;
+  /* Varianti: "scuro" per testo bianco sopra o testo colorato, "tinta" per gli sfondi */
+  --scienze-scuro: #177a55;
+  --matematica-scuro: #2f5bea;
+  --fisica-scuro: #a8560f;
+  --scienze-tinta: #e3f4ec;
+  --matematica-tinta: #e8eefd;
+  --fisica-tinta: #fceedf;
 
   /* Colori con significato fisso, per le animazioni */
   --arterioso: #d7263d;
@@ -19,9 +26,15 @@
   --cibo: #c98b3f;
   --aria: #8ec9f0;
 
-  --raggio: 16px;
+  /* Forme (guida di stile, §9) */
+  --raggio: 24px;
+  --raggio-piccolo: 14px;
+  --ombra: 0 1px 2px rgb(29 29 31 / 0.06), 0 8px 24px rgb(29 29 31 / 0.08);
+  --ombra-alta: 0 2px 4px rgb(29 29 31 / 0.08), 0 18px 40px rgb(29 29 31 / 0.14);
+  --radiografia: #16233f;
   --tocco: 56px; /* area toccabile minima */
   --larghezza: 1200px;
+  --margine: clamp(16px, 4vw, 48px); /* spazio ai lati della pagina */
 
   color-scheme: light;
 }
@@ -51,6 +64,7 @@ h2,
 h3 {
   line-height: 1.15;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 a {
@@ -71,19 +85,40 @@ button {
   width: 100%;
   max-width: var(--larghezza);
   margin-inline: auto;
-  padding-inline: 16px;
+  padding-inline: var(--margine);
 }
 
 .contenitore--largo {
   max-width: 1600px;
 }
 
+/* Colori della materia: basta impostare data-materia su un contenitore. */
+[data-materia='scienze'] {
+  --colore: var(--scienze);
+  --scuro: var(--scienze-scuro);
+  --tinta: var(--scienze-tinta);
+}
+[data-materia='matematica'] {
+  --colore: var(--matematica);
+  --scuro: var(--matematica-scuro);
+  --tinta: var(--matematica-tinta);
+}
+[data-materia='fisica'] {
+  --colore: var(--fisica);
+  --scuro: var(--fisica-scuro);
+  --tinta: var(--fisica-tinta);
+}
+
+/* Etichetta a pillola per le informazioni (classe, durata, stato) */
 .badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 16px;
   font-weight: 700;
-  padding: 2px 10px;
+  padding: 4px 12px;
   border-radius: 999px;
+  background: var(--superficie);
   border: 2px solid var(--bordo);
   color: var(--testo-2);
   white-space: nowrap;
@@ -92,6 +127,40 @@ button {
 .badge--bozza {
   border-color: var(--testo-2);
   border-style: dashed;
+}
+
+/* Pulsante o link a pillola */
+.pillola {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--tocco);
+  padding: 0 24px;
+  border: 2px solid var(--bordo);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--testo);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    border-color 0.2s ease-in-out,
+    background 0.2s ease-in-out;
+}
+.pillola:hover {
+  border-color: var(--scuro, var(--accento));
+}
+.pillola svg {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* Usata dal lettore per "Ripeti passaggio": azzera le transizioni per un istante. */
@@ -109,6 +178,11 @@ button {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* Il lettore a tutto schermo del telefono blocca lo scorrimento della pagina sotto. */
+.blocca-scorrimento {
+  overflow: hidden;
 }
 
 .solo-lettori {
