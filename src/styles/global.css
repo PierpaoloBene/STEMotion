@@ -23,14 +23,17 @@
   --cibo: #c98b3f;
   --aria: #8ec9f0;
 
-  /* Illustrazioni: tessuti degli organi condivisi (src/components/anatomia) */
-  --contorno: #1d1d1f;
-  --pelle: #f4d3b5;
-  --osso: #ede6d6;
-  --tessuto: #eba5a5;
-  --tessuto-chiaro: #f8dcdc;
-  --lingua: #e58a9a;
-  --muscolo: #b8545f;
+  /* Illustrazioni in stile radiografia (guida di stile, §7): corpo di vetro su fondo scuro */
+  --contorno: #a9d0ff; /* luce sui bordi */
+  --pelle: rgb(86 128 240 / 0.2); /* corpo di vetro */
+  --osso: rgb(222 234 255 / 0.5);
+  --tessuto: #f07a6a;
+  --tessuto-chiaro: #f6b48c;
+  --lingua: #f0648a;
+  --muscolo: #d9453f;
+  --rx-centro: #1d4d66;
+  --rx-bordo: #07131f;
+  --rx-linea: #c9d8ec;
 
   /* Forme (guida di stile, §9) */
   --raggio: 24px;

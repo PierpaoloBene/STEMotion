@@ -29,7 +29,7 @@ Questa guida vale per **ogni** argomento del sito. Chi crea un nuovo argomento (
 
 ## 3. Colori
 
-Tema **chiaro** di default: sulla LIM proiettata rende molto meglio del tema scuro.
+Tema **chiaro** di default: sulla LIM proiettata rende molto meglio del tema scuro. Unica eccezione: il palco delle animazioni in stile radiografia (§7).
 
 ### Colori dell'interfaccia
 
@@ -138,7 +138,12 @@ Regole:
 ## 7. Illustrazioni
 
 - **Solo SVG originali**, disegnati per il sito. Niente immagini prese da libri, siti o banche immagini.
-- **Stile:** piatto e semplificato, contorni di 2–3 px, colori pieni, nessuna ombra realistica. Anatomia chiara ma non splatter.
+- **Stile: radiografia.** Il corpo sembra di vetro, visto "ai raggi X" come nella radiografia delle copertine (§9). Anatomia chiara ma non splatter.
+  - **Fondo scuro** blu petrolio, più chiaro al centro (`--rx-centro` → `--rx-bordo`). È l'unica eccezione al tema chiaro (§3) e vale solo per il palco dell'animazione: pagina, testi e comandi restano chiari.
+  - **Corpo di vetro:** sagoma azzurra trasparente (`--pelle`) con il bordo luminoso (`--contorno`); ossa bianche semitrasparenti.
+  - **Organi** in colori pieni e accesi, così spiccano sul corpo trasparente.
+  - **Bagliore:** una luce morbida attorno al disegno, da un unico filtro condiviso (`src/components/anatomia/Bagliore.astro`). Non si applica alle etichette, che restano nitide: testo bianco su fondo scuro.
+  - **Colori con significato fisso (§3):** restano gli stessi. L'aria è un velo azzurro semitrasparente, per non coprire gli organi.
 - **Etichette** collegate all'elemento con una linea sottile, mai sovrapposte al disegno.
 - **Coerenza:** uno stesso organo o oggetto si disegna una volta sola e si riusa (libreria di componenti condivisi). Il polmone della respirazione e quello della circolazione sono lo stesso disegno.
 

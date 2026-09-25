@@ -9,6 +9,7 @@
  * Due inquadrature: "vicina" su bocca e gola (passaggi 1–4),
  * "lontana" su esofago e stomaco (passaggi 5–6).
  */
+import Bagliore from '../../../src/components/anatomia/Bagliore.astro';
 import Corpo from '../../../src/components/anatomia/Corpo.astro';
 import BoccaFaringe from '../../../src/components/anatomia/BoccaFaringe.astro';
 import Esofago from '../../../src/components/anatomia/Esofago.astro';
@@ -65,7 +66,10 @@ const pezzetti = [
 
 <div class="deglutizione">
   <svg viewBox="0 0 800 640" aria-hidden="true" focusable="false">
+    <Bagliore />
     <g class="camera">
+      <!-- il disegno è luminoso come una radiografia; le etichette restano nitide -->
+      <g class="disegno" filter="url(#rx-bagliore)">
       <Corpo />
       <BoccaFaringe />
       <Esofago />
@@ -101,6 +105,8 @@ const pezzetti = [
         </g>
       </g>
 
+      </g>
+
       {
         etichette.map((e) => (
           <g class:list={['etichetta', `etichetta--${e.vista}`, e.testo === 'Bolo' && 'etichetta--bolo']} data-per={e.passaggio}>
@@ -130,11 +136,17 @@ const pezzetti = [
   .deglutizione {
     position: absolute;
     inset: 0;
+    /* fondo scuro della radiografia, più chiaro al centro */
+    background: radial-gradient(ellipse at 50% 40%, var(--rx-centro), var(--rx-bordo) 75%);
   }
   .deglutizione svg {
     display: block;
     width: 100%;
     height: 100%;
+  }
+  /* Nella radiografia l'aria è un velo azzurro: si vede, ma non copre gli organi. */
+  .deglutizione svg :is(.cavita, .laringe__lume) {
+    fill-opacity: 0.45;
   }
   /* Contorni sempre dello stesso spessore, anche quando l'inquadratura cambia. */
   .deglutizione svg :is(path, rect, circle, ellipse, line) {
@@ -371,17 +383,17 @@ const pezzetti = [
     transition: opacity 0.2s ease-in-out;
   }
   .deglutizione .etichetta line {
-    stroke: var(--testo-2);
+    stroke: var(--rx-linea);
     stroke-width: 1.5;
   }
   .deglutizione .etichetta circle {
-    fill: var(--testo-2);
+    fill: var(--rx-linea);
   }
   .deglutizione .etichetta text {
-    fill: var(--testo);
+    fill: var(--superficie);
     font-weight: 700;
     /* alone chiaro: il testo resta leggibile anche sopra una linea */
-    stroke: var(--sfondo);
+    stroke: var(--rx-bordo);
     stroke-width: 5px;
     stroke-linejoin: round;
     paint-order: stroke;
