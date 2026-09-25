@@ -1,0 +1,35 @@
+---
+// Stomaco con il cardias, l'anello di muscolo tra esofago e stomaco.
+// Sistema di riferimento condiviso: vedi README.md in questa cartella.
+const forma = 'M410 930C430 955 462 958 490 945C520 930 560 950 566 990C572 1040 530 1078 460 1070C392 1060 366 990 372 930';
+---
+
+<g class="stomaco">
+  <path class="stomaco__parete" d={`${forma}Z`}></path>
+  <path class="stomaco__interno" d="M384 940C382 990 404 1048 460 1056C520 1062 552 1034 548 992C544 962 516 950 494 960C466 972 426 966 398 940Z"></path>
+  <path class="stomaco__contorno" d={forma}></path>
+  <g class="cardias" transform="translate(391 934)">
+    <g class="cardias__sx"><rect x="-18" y="-9" width="17" height="18" rx="7"></rect></g>
+    <g class="cardias__dx"><rect x="1" y="-9" width="17" height="18" rx="7"></rect></g>
+  </g>
+</g>
+
+<style>
+  .stomaco__parete {
+    fill: var(--tessuto);
+  }
+  .stomaco__interno {
+    fill: var(--tessuto-chiaro);
+  }
+  .stomaco__contorno {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .cardias rect {
+    fill: var(--muscolo);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+</style>

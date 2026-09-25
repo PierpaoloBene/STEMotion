@@ -1,0 +1,49 @@
+---
+// Sezione di naso, bocca e faringe: cavità con l'aria, palato, denti, lingua, palato molle.
+// Sistema di riferimento condiviso: vedi README.md in questa cartella.
+---
+
+<g class="bocca-faringe">
+  <!-- naso, bocca e faringe contengono aria -->
+  <path class="cavita" d="M614 266C600 240 576 222 540 215L425 210C390 210 372 228 372 262V434H412L418 425V398H452L478 388L490 330V300H560L592 264Z"></path>
+  <path class="palato-duro" d="M596 250H447C440 250 438 264 447 264H596Z"></path>
+  <path class="dente" d="M588 264H600L602 296C598 300 590 300 588 296Z"></path>
+  <path class="dente" d="M586 304C590 300 598 300 600 304L598 334H588Z"></path>
+  <g transform="translate(545 396)">
+    <g class="lingua">
+      <path d="M33 -78C17 -94 -19 -98 -55 -97C-83 -96 -93 -82 -93 -58C-91 -34 -81 -18 -67 -8L0 0C27 -12 39 -50 33 -78Z"></path>
+    </g>
+  </g>
+  <g transform="translate(445 257)">
+    <g class="palato-molle">
+      <path d="M0 -7C-20 -6 -38 10 -46 40C-50 52 -40 56 -36 46C-30 26 -15 12 0 7Z"></path>
+    </g>
+  </g>
+</g>
+
+<style>
+  .cavita {
+    fill: var(--aria);
+  }
+  .palato-duro {
+    fill: var(--osso);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+  }
+  .dente {
+    fill: #ffffff;
+    stroke: var(--contorno);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+  .lingua path,
+  .palato-molle path {
+    fill: var(--lingua);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .palato-molle path {
+    fill: var(--tessuto);
+  }
+</style>

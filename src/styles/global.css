@@ -23,6 +23,15 @@
   --cibo: #c98b3f;
   --aria: #8ec9f0;
 
+  /* Illustrazioni: tessuti degli organi condivisi (src/components/anatomia) */
+  --contorno: #1d1d1f;
+  --pelle: #f4d3b5;
+  --osso: #ede6d6;
+  --tessuto: #eba5a5;
+  --tessuto-chiaro: #f8dcdc;
+  --lingua: #e58a9a;
+  --muscolo: #b8545f;
+
   /* Forme (guida di stile, §9) */
   --raggio: 24px;
   --raggio-piccolo: 14px;
@@ -167,7 +176,9 @@ button {
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
   }
 }
