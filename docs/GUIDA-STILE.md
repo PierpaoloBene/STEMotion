@@ -138,12 +138,14 @@ Regole:
 ## 7. Illustrazioni
 
 - **Solo SVG originali**, disegnati per il sito. Niente immagini prese da libri, siti o banche immagini.
-- **Stile: radiografia.** Il corpo sembra di vetro, visto "ai raggi X" come nella radiografia delle copertine (§9). Anatomia chiara ma non splatter.
-  - **Fondo scuro** blu petrolio, più chiaro al centro (`--rx-centro` → `--rx-bordo`). È l'unica eccezione al tema chiaro (§3) e vale solo per il palco dell'animazione: pagina, testi e comandi restano chiari.
-  - **Corpo di vetro:** sagoma azzurra trasparente (`--pelle`) con il bordo luminoso (`--contorno`); ossa bianche semitrasparenti.
-  - **Organi** in colori pieni e accesi, così spiccano sul corpo trasparente.
-  - **Bagliore:** una luce morbida attorno al disegno, da un unico filtro condiviso (`src/components/anatomia/Bagliore.astro`). Non si applica alle etichette, che restano nitide: testo bianco su fondo scuro.
-  - **Colori con significato fisso (§3):** restano gli stessi. L'aria è un velo azzurro semitrasparente, per non coprire gli organi.
+- **Stile: radiografia a colori.** Ogni disegno è una lastra laterale, come quelle usate per studiare la deglutizione, ma a colori. Anatomia chiara ma non splatter.
+  - **Fondo della lastra:** nero, appena più chiaro al centro, con la grana della pellicola (`--rx-centro` → `--rx-bordo`). È l'unica eccezione al tema chiaro (§3) e vale solo per il palco dell'animazione: pagina, testi e comandi restano chiari.
+  - **Più denso = più luminoso.** Lo smalto dei denti e le ossa sono le cose più brillanti, con il bordo (la corticale) più chiaro dell'interno. I tessuti molli sono veli di luce, più densi lungo l'asse del corpo e sfumati ai bordi.
+  - **L'aria è scura:** naso, faringe, trachea, polmoni e bolla dello stomaco sono zone quasi nere con il bordo azzurro (colore fisso dell'aria, §3).
+  - **Sovrapposizione:** come in una lastra, le strutture si vedono una attraverso l'altra e dove si sovrappongono la luce si somma (`mix-blend-mode: screen`).
+  - **Organi del passaggio** colorati per riconoscerli: lingua rosa, palato molle ed epiglottide rosa-arancio, esofago e stomaco arancioni, muscoli che si contraggono rossi.
+  - **Il bolo** brilla come il mezzo di contrasto, nel suo colore fisso ocra.
+  - Definizioni condivise (densità, alone del bolo, bordi morbidi) in `src/components/anatomia/Lastra.astro`. Le etichette restano nitide: testo bianco su fondo scuro.
 - **Etichette** collegate all'elemento con una linea sottile, mai sovrapposte al disegno.
 - **Coerenza:** uno stesso organo o oggetto si disegna una volta sola e si riusa (libreria di componenti condivisi). Il polmone della respirazione e quello della circolazione sono lo stesso disegno.
 

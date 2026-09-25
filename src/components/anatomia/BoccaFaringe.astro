@@ -1,49 +1,112 @@
 ---
-// Sezione di naso, bocca e faringe: cavità con l'aria, palato, denti, lingua, palato molle.
+// Naso, bocca e faringe come in una radiografia laterale: aria scura, palato duro,
+// mandibola, arcate dentarie, lingua e palato molle.
 // Sistema di riferimento condiviso: vedi README.md in questa cartella.
+// Richiede <Lastra /> nello stesso <svg>.
+
+// Denti visti di lato: incisivi davanti, poi premolari e molari (x, larghezza).
+const denti = [
+  [566, 16],
+  [546, 17],
+  [524, 19],
+  [500, 21],
+  [476, 21],
+];
 ---
 
 <g class="bocca-faringe">
-  <!-- naso, bocca e faringe contengono aria -->
-  <path class="cavita" d="M614 266C600 240 576 222 540 215L425 210C390 210 372 228 372 262V434H412L418 425V398H452L478 388L490 330V300H560L592 264Z"></path>
-  <path class="palato-duro" d="M596 250H447C440 250 438 264 447 264H596Z"></path>
-  <path class="dente" d="M588 264H600L602 296C598 300 590 300 588 296Z"></path>
-  <path class="dente" d="M586 304C590 300 598 300 600 304L598 334H588Z"></path>
+  <!-- naso, bocca e faringe contengono aria: in radiografia sono scuri -->
+  <path class="aria" d="M614 266C600 240 576 222 540 215L425 210C390 210 372 228 372 262V434H412L418 425V398H452L478 388L490 330V300H560L592 264Z"></path>
+  <!-- cornetti nasali -->
+  <path class="tessuto" d="M556 226C530 220 490 220 462 226C480 230 526 232 552 234Z"></path>
+  <path class="tessuto" d="M568 240C536 234 492 234 458 242C480 246 528 248 562 248Z"></path>
+
+  <!-- palato duro e mandibola -->
+  <path class="osso" d="M598 250H447C440 250 438 262 447 262H598Z"></path>
+  <path class="osso osso--tenue" d="M590 392C560 405 500 410 460 402C442 396 436 380 436 364L426 262C426 250 440 246 446 258L456 330C470 360 500 372 540 370L576 360C584 340 586 330 582 324Z"></path>
+
+  <!-- arcate dentarie: lo smalto è la cosa più densa del corpo -->
+  <path class="dente" d="M587 264H602L603 294C600 300 591 300 588 295Z"></path>
+  <path class="dente" d="M586 306C590 300 598 300 601 305L599 334H587Z"></path>
+  {
+    denti.map(([x, w]) => {
+      const a = x - w / 2;
+      const b = x + w / 2;
+      return (
+        <>
+          <path class="dente dente--radice" d={`M${a + 2} 264L${x - w / 4} 246L${x} 262L${x + w / 4} 246L${b - 2} 264`} />
+          <path class="dente" d={`M${a} 264H${b}V274C${b} 280 ${b - 4} 281 ${x} 280C${a + 4} 281 ${a} 280 ${a} 274Z`} />
+          <path class="dente dente--radice" d={`M${a + 2} 330L${x - w / 4} 348L${x} 332L${x + w / 4} 348L${b - 2} 330`} />
+          <path class="dente" d={`M${a} 330H${b}V320C${b} 314 ${b - 4} 313 ${x} 314C${a + 4} 313 ${a} 314 ${a} 320Z`} />
+        </>
+      );
+    })
+  }
+
   <g transform="translate(545 396)">
     <g class="lingua">
-      <path d="M33 -78C17 -94 -19 -98 -55 -97C-83 -96 -93 -82 -93 -58C-91 -34 -81 -18 -67 -8L0 0C27 -12 39 -50 33 -78Z"></path>
+      <path class="lingua__forma" d="M33 -78C17 -94 -19 -98 -55 -97C-83 -96 -93 -82 -93 -58C-91 -34 -81 -18 -67 -8L0 0C27 -12 39 -50 33 -78Z"></path>
     </g>
   </g>
   <g transform="translate(445 257)">
     <g class="palato-molle">
-      <path d="M0 -7C-20 -6 -38 10 -46 40C-50 52 -40 56 -36 46C-30 26 -15 12 0 7Z"></path>
+      <path class="palato-molle__forma" d="M0 -7C-20 -6 -38 10 -46 40C-50 52 -40 56 -36 46C-30 26 -15 12 0 7Z"></path>
     </g>
   </g>
 </g>
 
 <style>
-  .cavita {
-    fill: var(--aria);
+  .aria {
+    fill: var(--rx-aria-fondo);
+    fill-opacity: 0.8;
+    stroke: var(--aria);
+    stroke-opacity: 0.8;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
   }
-  .palato-duro {
-    fill: var(--osso);
-    stroke: var(--contorno);
-    stroke-width: 2.5;
+  .tessuto {
+    fill: var(--rx-tessuto);
+    fill-opacity: 0.35;
+    filter: url(#rx-morbido);
+    mix-blend-mode: screen;
+  }
+  .osso {
+    fill: var(--rx-osso);
+    fill-opacity: 0.25;
+    stroke: var(--rx-osso);
+    stroke-opacity: 0.85;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    mix-blend-mode: screen;
+  }
+  .osso--tenue {
+    fill-opacity: 0.1;
+    stroke-opacity: 0.45;
   }
   .dente {
-    fill: #ffffff;
-    stroke: var(--contorno);
-    stroke-width: 2;
+    fill: var(--rx-osso);
+    fill-opacity: 0.6;
+    stroke: var(--rx-osso);
+    stroke-width: 1.5;
     stroke-linejoin: round;
+    mix-blend-mode: screen;
   }
-  .lingua path,
-  .palato-molle path {
-    fill: var(--lingua);
-    stroke: var(--contorno);
-    stroke-width: 3;
+  .dente--radice {
+    fill: none;
+    stroke-opacity: 0.45;
+  }
+  .lingua__forma,
+  .palato-molle__forma {
+    fill: var(--rx-lingua);
+    fill-opacity: 0.4;
+    stroke: var(--rx-lingua);
+    stroke-opacity: 0.9;
+    stroke-width: 1.5;
     stroke-linejoin: round;
+    mix-blend-mode: screen;
   }
-  .palato-molle path {
-    fill: var(--tessuto);
+  .palato-molle__forma {
+    fill: var(--rx-mucosa);
+    stroke: var(--rx-mucosa);
   }
 </style>

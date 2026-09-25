@@ -1,13 +1,20 @@
 ---
-// Stomaco con il cardias, l'anello di muscolo tra esofago e stomaco.
+// Stomaco come in una radiografia: velo arancione con le pieghe e, in alto,
+// la bolla d'aria con il livello orizzontale del liquido. Il cardias è l'anello di muscolo.
 // Sistema di riferimento condiviso: vedi README.md in questa cartella.
-const forma = 'M410 930C430 955 462 958 490 945C520 930 560 950 566 990C572 1040 530 1078 460 1070C392 1060 366 990 372 930';
+// Richiede <Lastra /> nello stesso <svg>.
+const pieghe = [
+  'M394 972C404 976 402 986 412 990C422 994 420 1004 430 1008',
+  'M400 1010C412 1012 414 1022 426 1024C438 1026 440 1036 452 1036',
+  'M440 1042C452 1040 458 1048 470 1044C482 1040 490 1046 502 1040',
+  'M500 1000C510 1008 520 1004 530 1012C538 1018 536 1026 540 1030',
+];
 ---
 
 <g class="stomaco">
-  <path class="stomaco__parete" d={`${forma}Z`}></path>
-  <path class="stomaco__interno" d="M384 940C382 990 404 1048 460 1056C520 1062 552 1034 548 992C544 962 516 950 494 960C466 972 426 966 398 940Z"></path>
-  <path class="stomaco__contorno" d={forma}></path>
+  <path class="stomaco__parete" d="M410 930C430 955 462 958 490 945C520 930 560 950 566 990C572 1040 530 1078 460 1070C392 1060 366 990 372 930Z"></path>
+  <g class="stomaco__pieghe">{pieghe.map((d) => <path d={d} />)}</g>
+  <path class="stomaco__bolla" d="M500 962C506 948 540 944 554 960C558 968 558 976 556 982H500C498 976 498 968 500 962Z"></path>
   <g class="cardias" transform="translate(391 934)">
     <g class="cardias__sx"><rect x="-18" y="-9" width="17" height="18" rx="7"></rect></g>
     <g class="cardias__dx"><rect x="1" y="-9" width="17" height="18" rx="7"></rect></g>
@@ -16,20 +23,34 @@ const forma = 'M410 930C430 955 462 958 490 945C520 930 560 950 566 990C572 1040
 
 <style>
   .stomaco__parete {
-    fill: var(--tessuto);
+    fill: var(--rx-digerente);
+    fill-opacity: 0.22;
+    stroke: var(--rx-digerente);
+    stroke-opacity: 0.6;
+    stroke-width: 1.5;
+    filter: url(#rx-morbido);
+    mix-blend-mode: screen;
   }
-  .stomaco__interno {
-    fill: var(--tessuto-chiaro);
-  }
-  .stomaco__contorno {
+  .stomaco__pieghe path {
     fill: none;
-    stroke: var(--contorno);
-    stroke-width: 3;
-    stroke-linejoin: round;
+    stroke: var(--rx-digerente);
+    stroke-opacity: 0.4;
+    stroke-width: 2;
+    stroke-linecap: round;
+    mix-blend-mode: screen;
+  }
+  .stomaco__bolla {
+    fill: var(--rx-aria-fondo);
+    fill-opacity: 0.8;
+    stroke: var(--aria);
+    stroke-opacity: 0.8;
+    stroke-width: 1.5;
   }
   .cardias rect {
-    fill: var(--muscolo);
-    stroke: var(--contorno);
-    stroke-width: 2;
+    fill: var(--rx-muscolo);
+    fill-opacity: 0.5;
+    stroke: var(--rx-muscolo);
+    stroke-width: 1.5;
+    mix-blend-mode: screen;
   }
 </style>

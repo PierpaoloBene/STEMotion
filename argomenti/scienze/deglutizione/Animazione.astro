@@ -9,7 +9,7 @@
  * Due inquadrature: "vicina" su bocca e gola (passaggi 1–4),
  * "lontana" su esofago e stomaco (passaggi 5–6).
  */
-import Bagliore from '../../../src/components/anatomia/Bagliore.astro';
+import Lastra from '../../../src/components/anatomia/Lastra.astro';
 import Corpo from '../../../src/components/anatomia/Corpo.astro';
 import BoccaFaringe from '../../../src/components/anatomia/BoccaFaringe.astro';
 import Esofago from '../../../src/components/anatomia/Esofago.astro';
@@ -66,10 +66,10 @@ const pezzetti = [
 
 <div class="deglutizione">
   <svg viewBox="0 0 800 640" aria-hidden="true" focusable="false">
-    <Bagliore />
+    <Lastra />
     <g class="camera">
-      <!-- il disegno è luminoso come una radiografia; le etichette restano nitide -->
-      <g class="disegno" filter="url(#rx-bagliore)">
+      <!-- il disegno è una lastra; le etichette restano nitide sopra -->
+      <g class="disegno">
       <Corpo />
       <BoccaFaringe />
       <Esofago />
@@ -136,17 +136,15 @@ const pezzetti = [
   .deglutizione {
     position: absolute;
     inset: 0;
-    /* fondo scuro della radiografia, più chiaro al centro */
-    background: radial-gradient(ellipse at 50% 40%, var(--rx-centro), var(--rx-bordo) 75%);
+    /* la lastra: nera, appena più chiara al centro, con la grana della pellicola */
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.14 0 0 0 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse at 50% 45%, var(--rx-centro), var(--rx-bordo) 80%);
   }
   .deglutizione svg {
     display: block;
     width: 100%;
     height: 100%;
-  }
-  /* Nella radiografia l'aria è un velo azzurro: si vede, ma non copre gli organi. */
-  .deglutizione svg :is(.cavita, .laringe__lume) {
-    fill-opacity: 0.45;
   }
   /* Contorni sempre dello stesso spessore, anche quando l'inquadratura cambia. */
   .deglutizione svg :is(path, rect, circle, ellipse, line) {
@@ -168,9 +166,12 @@ const pezzetti = [
 
   /* --- Bolo e cibo --- */
 
+  .deglutizione .bolo {
+    filter: url(#rx-luce);
+  }
   .deglutizione .bolo circle {
-    fill: var(--cibo);
-    stroke: var(--contorno);
+    fill: url(#rx-bolo);
+    stroke: var(--cibo);
     stroke-width: 2.5;
     transition:
       stroke 0.3s ease-in-out,
@@ -185,7 +186,7 @@ const pezzetti = [
   }
   .deglutizione .pezzetto path {
     fill: var(--cibo);
-    stroke: var(--contorno);
+    stroke: var(--rx-bolo-luce);
     stroke-width: 2;
     stroke-linejoin: round;
   }
@@ -255,8 +256,9 @@ const pezzetti = [
   }
 
   .deglutizione .saliva path {
-    fill: #ffffff;
-    stroke: var(--contorno);
+    fill: var(--rx-osso);
+    fill-opacity: 0.35;
+    stroke: var(--rx-linea);
     stroke-width: 2;
   }
   .deglutizione .saliva {
@@ -300,8 +302,10 @@ const pezzetti = [
   /* --- Esofago: rigonfiamento e peristalsi --- */
 
   .deglutizione .rigonfiamento {
-    fill: var(--tessuto);
-    stroke: var(--contorno);
+    fill: var(--rx-digerente);
+    fill-opacity: 0.3;
+    stroke: var(--rx-digerente);
+    mix-blend-mode: screen;
     stroke-width: 3;
     opacity: 0;
     transition:
@@ -325,14 +329,16 @@ const pezzetti = [
     transition: opacity 0.3s ease-in-out 0.5s;
   }
   .deglutizione .contrazione__muscolo {
-    fill: var(--muscolo);
-    stroke: var(--contorno);
+    fill: var(--rx-muscolo);
+    fill-opacity: 0.6;
+    stroke: var(--rx-muscolo);
+    mix-blend-mode: screen;
     stroke-width: 2;
     stroke-linejoin: round;
   }
   .deglutizione .contrazione__freccia {
     fill: none;
-    stroke: var(--contorno);
+    stroke: var(--rx-linea);
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;

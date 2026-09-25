@@ -1,0 +1,33 @@
+---
+/**
+ * Definizioni condivise dello stile radiografia a colori (guida di stile, §7).
+ * Va messo una volta, all'inizio dell'<svg>, prima degli organi.
+ */
+---
+
+<defs>
+  <!-- densità dei tessuti molli: più luminosi lungo l'asse del corpo, più scuri ai bordi -->
+  <radialGradient id="rx-densita" gradientUnits="userSpaceOnUse" cx="400" cy="560" r="600" gradientTransform="translate(400 560) scale(0.42 1) translate(-400 -560)">
+    <stop offset="0" style="stop-color: var(--rx-tessuto); stop-opacity: 0.5"></stop>
+    <stop offset="0.65" style="stop-color: var(--rx-tessuto); stop-opacity: 0.3"></stop>
+    <stop offset="1" style="stop-color: var(--rx-tessuto); stop-opacity: 0.1"></stop>
+  </radialGradient>
+  <!-- bolo: denso come il mezzo di contrasto, brilla al centro -->
+  <radialGradient id="rx-bolo" cx="0.45" cy="0.4" r="0.6">
+    <stop offset="0" style="stop-color: var(--rx-bolo-luce)"></stop>
+    <stop offset="0.55" style="stop-color: var(--cibo)"></stop>
+    <stop offset="1" style="stop-color: var(--cibo); stop-opacity: 0.7"></stop>
+  </radialGradient>
+  <!-- bordi morbidi dei tessuti molli -->
+  <filter id="rx-morbido" x="-10%" y="-10%" width="120%" height="120%">
+    <feGaussianBlur stdDeviation="1.6"></feGaussianBlur>
+  </filter>
+  <!-- alone di luce del bolo -->
+  <filter id="rx-luce" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="alone"></feGaussianBlur>
+    <feMerge>
+      <feMergeNode in="alone"></feMergeNode>
+      <feMergeNode in="SourceGraphic"></feMergeNode>
+    </feMerge>
+  </filter>
+</defs>

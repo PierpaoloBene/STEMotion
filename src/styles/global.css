@@ -23,17 +23,21 @@
   --cibo: #c98b3f;
   --aria: #8ec9f0;
 
-  /* Illustrazioni in stile radiografia (guida di stile, §7): corpo di vetro su fondo scuro */
-  --contorno: #a9d0ff; /* luce sui bordi */
-  --pelle: rgb(86 128 240 / 0.2); /* corpo di vetro */
-  --osso: rgb(222 234 255 / 0.5);
-  --tessuto: #f07a6a;
-  --tessuto-chiaro: #f6b48c;
-  --lingua: #f0648a;
-  --muscolo: #d9453f;
-  --rx-centro: #1d4d66;
-  --rx-bordo: #07131f;
+  /* Illustrazioni in stile radiografia a colori (guida di stile, §7).
+     Come in una lastra: le ossa e il bolo brillano, l'aria è scura, i tessuti molli sono veli di luce. */
+  --rx-fondo: #010409;
+  --rx-centro: #0a1626;
+  --rx-bordo: #010409;
   --rx-linea: #c9d8ec;
+  --rx-tessuto: #7fa6d6; /* tessuti molli del corpo */
+  --rx-osso: #eef4ff;
+  --rx-cartilagine: #b9cde6;
+  --rx-aria-fondo: #041224; /* interno scuro delle zone con aria; il bordo è --aria */
+  --rx-lingua: #ff7fa3;
+  --rx-mucosa: #ff9a86; /* palato molle, epiglottide */
+  --rx-digerente: #ffa04d; /* esofago e stomaco */
+  --rx-muscolo: #ff5f4f; /* cardias e contrazioni */
+  --rx-bolo-luce: #fff1cf; /* centro luminoso del bolo, attorno è --cibo */
 
   /* Forme (guida di stile, §9) */
   --raggio: 24px;

@@ -1,47 +1,64 @@
 ---
-// Laringe con epiglottide, trachea e inizio dei bronchi.
+// Laringe, trachea e bronchi come in una radiografia laterale: colonna d'aria scura,
+// cartilagini appena visibili, osso ioide, epiglottide.
 // Sistema di riferimento condiviso: vedi README.md in questa cartella.
-const anelli = Array.from({ length: 10 }, (_, i) => 486 + i * 24);
+// Richiede <Lastra /> nello stesso <svg>.
+const anelli = Array.from({ length: 12 }, (_, i) => 490 + i * 22);
 ---
 
 <g class="laringe">
   <path class="laringe__lume" d="M418 398V735L414 790H432L437 760L442 790H460L456 735V398Z"></path>
-  <path class="laringe__anelli" d={anelli.map((y) => `M421 ${y}H453`).join('')}></path>
-  <path class="laringe__parete" d="M418 398V735L414 790M432 790L437 760L442 790M460 790L456 735V398"></path>
-  <!-- cartilagine tiroide, il "pomo d'Adamo" -->
-  <path class="laringe__tiroide" d="M456 404C478 414 480 452 456 472Z"></path>
+  <path class="laringe__anelli" d={anelli.map((y) => `M419 ${y}H455`).join('')}></path>
+  <!-- cartilagine tiroide e cricoide, osso ioide -->
+  <path class="cartilagine" d="M456 404C478 414 480 452 456 472Z"></path>
+  <path class="cartilagine" d="M414 440H428V482C422 486 416 486 414 482Z"></path>
+  <ellipse class="osso" cx="490" cy="404" rx="11" ry="5"></ellipse>
   <g transform="translate(452 398)">
     <g class="epiglottide">
-      <path d="M0 2C6 -18 -4 -40 -22 -54C-27 -48 -16 -28 -8 2Z"></path>
+      <path class="epiglottide__forma" d="M0 2C6 -18 -4 -40 -22 -54C-27 -48 -16 -28 -8 2Z"></path>
     </g>
   </g>
 </g>
 
 <style>
   .laringe__lume {
-    fill: var(--aria);
+    fill: var(--rx-aria-fondo);
+    fill-opacity: 0.8;
+    stroke: var(--aria);
+    stroke-opacity: 0.8;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
   }
   .laringe__anelli {
     fill: none;
-    stroke: var(--osso);
+    stroke: var(--rx-cartilagine);
+    stroke-opacity: 0.3;
     stroke-width: 4;
+    mix-blend-mode: screen;
   }
-  .laringe__parete {
-    fill: none;
-    stroke: var(--contorno);
-    stroke-width: 3;
-    stroke-linejoin: round;
+  .cartilagine {
+    fill: var(--rx-cartilagine);
+    fill-opacity: 0.12;
+    stroke: var(--rx-cartilagine);
+    stroke-opacity: 0.6;
+    stroke-width: 1.5;
+    mix-blend-mode: screen;
   }
-  .laringe__tiroide {
-    fill: var(--osso);
-    stroke: var(--contorno);
-    stroke-width: 2.5;
-    stroke-linejoin: round;
+  .osso {
+    fill: var(--rx-osso);
+    fill-opacity: 0.3;
+    stroke: var(--rx-osso);
+    stroke-opacity: 0.9;
+    stroke-width: 1.5;
+    mix-blend-mode: screen;
   }
-  .epiglottide path {
-    fill: var(--tessuto);
-    stroke: var(--contorno);
-    stroke-width: 2.5;
+  .epiglottide__forma {
+    fill: var(--rx-mucosa);
+    fill-opacity: 0.5;
+    stroke: var(--rx-mucosa);
+    stroke-opacity: 0.95;
+    stroke-width: 1.5;
     stroke-linejoin: round;
+    mix-blend-mode: screen;
   }
 </style>
