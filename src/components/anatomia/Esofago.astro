@@ -1,0 +1,28 @@
+---
+// Esofago dall'ingresso (sotto la faringe) fino al cardias.
+// Sistema di riferimento condiviso: vedi README.md in questa cartella.
+---
+
+<g class="esofago">
+  <path class="esofago__tubo" d="M372 430V936H410V430Z"></path>
+  <path class="esofago__parete" d="M372 936V430H410V936"></path>
+  <!-- quando è vuoto l'esofago è chiuso: le pareti si toccano -->
+  <path class="esofago__lume" d="M391 438V924"></path>
+</g>
+
+<style>
+  .esofago__tubo {
+    fill: var(--tessuto);
+  }
+  .esofago__parete {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .esofago__lume {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+  }
+</style>
