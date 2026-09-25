@@ -180,7 +180,7 @@ Mostra l'oggetto da fuori e, con l'effetto raggi X, da dentro (guida di stile, �
 - `viewBox="0 0 400 500"`, senza `width` e `height`: si adatta alla card.
 - Due soli gruppi di primo livello, `fuori` e `dentro`. Il sito rivela `dentro` sopra `fuori` con la scansione.
 - Lo sfondo di `fuori` è trasparente: sotto c'è la tinta della materia. `dentro` ha un rettangolo `#16233F` a tutta copertina.
-- Stesso stile delle illustrazioni (§7): piatto, contorni 2–3 px, niente testo, niente ombre.
+- Stile piatto delle copertine (guida di stile, §7): colori pieni, contorni 2–3 px, niente effetto a mano, niente testo, niente ombre.
 
 ---
 

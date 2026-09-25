@@ -25,3 +25,5 @@ così l'animazione li ruota o li sposta con un semplice `transform` CSS:
 
 Ordine consigliato: `Corpo`, `BoccaFaringe`, `Esofago`, `Laringe`, `Stomaco`.
 I colori sono i token "Illustrazioni" di `src/styles/global.css`.
+Per lo stile taccuino metti `<Tratto />` nell'`<svg>` e avvolgi gli organi in un gruppo
+con `filter="url(#tr-mano)"`; le etichette vanno fuori da quel gruppo.

@@ -9,6 +9,7 @@
  * Due inquadrature: "vicina" su bocca e gola (passaggi 1–4),
  * "lontana" su esofago e stomaco (passaggi 5–6).
  */
+import Tratto from '../../../src/components/anatomia/Tratto.astro';
 import Corpo from '../../../src/components/anatomia/Corpo.astro';
 import BoccaFaringe from '../../../src/components/anatomia/BoccaFaringe.astro';
 import Esofago from '../../../src/components/anatomia/Esofago.astro';
@@ -65,7 +66,10 @@ const pezzetti = [
 
 <div class="deglutizione">
   <svg viewBox="0 0 800 640" aria-hidden="true" focusable="false">
+    <Tratto />
     <g class="camera">
+      <!-- tutto il disegno è "a mano"; le etichette restano nitide per essere lette bene -->
+      <g class="disegno" filter="url(#tr-mano)">
       <Corpo />
       <BoccaFaringe />
       <Esofago />
@@ -101,6 +105,8 @@ const pezzetti = [
         </g>
       </g>
 
+      </g>
+
       {
         etichette.map((e) => (
           <g class:list={['etichetta', `etichetta--${e.vista}`, e.testo === 'Bolo' && 'etichetta--bolo']} data-per={e.passaggio}>
@@ -130,6 +136,12 @@ const pezzetti = [
   .deglutizione {
     position: absolute;
     inset: 0;
+    /* foglio di quaderno a quadretti */
+    background-color: var(--carta);
+    background-image:
+      linear-gradient(var(--quadretti) 1px, transparent 1px),
+      linear-gradient(90deg, var(--quadretti) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
   .deglutizione svg {
     display: block;
@@ -371,17 +383,17 @@ const pezzetti = [
     transition: opacity 0.2s ease-in-out;
   }
   .deglutizione .etichetta line {
-    stroke: var(--testo-2);
+    stroke: var(--contorno);
     stroke-width: 1.5;
   }
   .deglutizione .etichetta circle {
-    fill: var(--testo-2);
+    fill: var(--contorno);
   }
   .deglutizione .etichetta text {
     fill: var(--testo);
     font-weight: 700;
     /* alone chiaro: il testo resta leggibile anche sopra una linea */
-    stroke: var(--sfondo);
+    stroke: var(--carta);
     stroke-width: 5px;
     stroke-linejoin: round;
     paint-order: stroke;

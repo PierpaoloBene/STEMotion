@@ -138,7 +138,13 @@ Regole:
 ## 7. Illustrazioni
 
 - **Solo SVG originali**, disegnati per il sito. Niente immagini prese da libri, siti o banche immagini.
-- **Stile:** piatto e semplificato, contorni di 2–3 px, colori pieni, nessuna ombra realistica. Anatomia chiara ma non splatter.
+- **Stile: taccuino.** Come un disegno fatto a mano su un quaderno a quadretti: forme semplici, anatomia chiara ma non splatter.
+  - **Tratto a china** di 2–3 px, color inchiostro (`--contorno`), un po' irregolare come a mano libera.
+  - **Colori ad acquerello:** campiture piene e morbide con la grana della carta; niente sfumature di volume, niente ombre.
+  - **Sfondo:** foglio color carta (`--carta`) con quadretti leggeri (`--quadretti`) da 24 px.
+  - L'effetto "a mano" viene da un unico filtro condiviso, `src/components/anatomia/Tratto.astro`, applicato al disegno e **non** alle etichette, che restano nitide.
+  - **Colori con significato fisso (§3):** restano gli stessi (il bolo è ocra, l'aria azzurra).
+  - Le **copertine** (§9) restano piatte, senza effetto a mano: sono piccole e devono farsi riconoscere al primo sguardo.
 - **Etichette** collegate all'elemento con una linea sottile, mai sovrapposte al disegno.
 - **Coerenza:** uno stesso organo o oggetto si disegna una volta sola e si riusa (libreria di componenti condivisi). Il polmone della respirazione e quello della circolazione sono lo stesso disegno.
 

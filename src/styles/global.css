@@ -23,14 +23,16 @@
   --cibo: #c98b3f;
   --aria: #8ec9f0;
 
-  /* Illustrazioni: tessuti degli organi condivisi (src/components/anatomia) */
-  --contorno: #1d1d1f;
-  --pelle: #f4d3b5;
-  --osso: #ede6d6;
-  --tessuto: #eba5a5;
-  --tessuto-chiaro: #f8dcdc;
-  --lingua: #e58a9a;
-  --muscolo: #b8545f;
+  /* Illustrazioni in stile taccuino (guida di stile, §7): inchiostro e acquerelli */
+  --contorno: #2e2b3a; /* china */
+  --pelle: #f7dcc3;
+  --osso: #f2ead8;
+  --tessuto: #f0b3b0;
+  --tessuto-chiaro: #fbe1dd;
+  --lingua: #ec98a6;
+  --muscolo: #cf6a72;
+  --carta: #fbf8f1;
+  --quadretti: #e3eaf1;
 
   /* Forme (guida di stile, §9) */
   --raggio: 24px;
