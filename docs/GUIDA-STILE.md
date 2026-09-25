@@ -138,7 +138,14 @@ Regole:
 ## 7. Illustrazioni
 
 - **Solo SVG originali**, disegnati per il sito. Niente immagini prese da libri, siti o banche immagini.
-- **Stile:** piatto e semplificato, contorni di 2–3 px, colori pieni, nessuna ombra realistica. Anatomia chiara ma non splatter.
+- **Stile: illustrazione da atlante.** Realistica e dettagliata come le tavole di un atlante scolastico, ma sempre leggibile dal fondo dell'aula. Anatomia chiara ma non splatter.
+  - **Volume con le sfumature.** Ogni forma ha una sfumatura morbida (lineare o radiale) che ne suggerisce il volume. La luce viene sempre **dall'alto a sinistra**: lati illuminati più chiari, lati in ombra più scuri.
+  - **Ombreggiatura sì, ombre portate no.** Si scurisce l'interno di una forma o una cavità; non si proiettano ombre sullo sfondo e non si usano effetti di bagliore o sfocatura.
+  - **Contorni** di 1,5–2,5 px nel tono scuro del colore del tessuto (non nero puro), così le forme restano separate anche proiettate sulla LIM.
+  - **Dettagli anatomici veri:** strati dei tessuti (mucosa, muscolo), ossa e cartilagini, fibre muscolari, pieghe, radici dei denti. Un dettaglio si aggiunge solo se è corretto e non copre ciò che il passaggio deve mostrare.
+  - **Niente texture fotografiche** né immagini bitmap: solo forme vettoriali, sfumature e tratteggi leggeri.
+  - **Colori con significato fisso (§3):** restano gli stessi. La sfumatura di un elemento va dal suo colore a toni più chiari e più scuri della stessa tinta (il bolo resta ocra, l'aria azzurra).
+  - **Palette e sfumature condivise.** I colori dei tessuti sono i token "Illustrazioni" di `src/styles/global.css`; le sfumature sono definite una sola volta nel componente `src/components/anatomia/Sfumature.astro`.
 - **Etichette** collegate all'elemento con una linea sottile, mai sovrapposte al disegno.
 - **Coerenza:** uno stesso organo o oggetto si disegna una volta sola e si riusa (libreria di componenti condivisi). Il polmone della respirazione e quello della circolazione sono lo stesso disegno.
 
@@ -157,7 +164,7 @@ Regole:
 Il sito deve piacere a ragazzi abituati ai social senza perdere leggibilità sulla LIM. Le regole dei paragrafi 3 e 4 restano valide; questa sezione dice come usarle.
 
 - **Forme morbide.** Card e lettore con angoli di 24 px (`--raggio`); pulsanti e etichette a pillola (angoli completamente arrotondati); pulsanti con sola icona rotondi.
-- **Profondità leggera.** Le card e il lettore hanno un'ombra morbida (`--ombra`), che si alza al passaggio del mouse (`--ombra-alta`). Le ombre sono **solo nell'interfaccia**: nelle illustrazioni restano vietate (§7).
+- **Profondità leggera.** Le card e il lettore hanno un'ombra morbida (`--ombra`), che si alza al passaggio del mouse (`--ombra-alta`). Le ombre portate sono **solo nell'interfaccia**: nelle illustrazioni c'è solo l'ombreggiatura interna delle forme (§7).
 - **Colore a blocchi.** Le pagine di una materia e dei suoi argomenti hanno in cima una fascia con la **tinta** della materia. Il colore della materia compare anche come pallino nella navigazione e come anello nelle "bolle" delle materie in home. Sulle tinte il testo resta `--testo`; testo colorato solo con la variante scura.
 - **Navigazione.** In testata, oltre al marchio, le materie come pulsanti a pillola sempre raggiungibili. Niente briciole di pane: la fascia della pagina ha un link per tornare alla materia.
 - **Testi dell'interfaccia.** Seconda persona, brevi e diretti ("Inizia", "Continua da dove eri", "Vedi tutti"). Niente emoji, neanche nell'interfaccia: le icone sono SVG originali.
@@ -171,6 +178,7 @@ Ogni argomento ha una **copertina** (formato 4:5, come un post) che mostra l'ogg
 - Con `prefers-reduced-motion` la radiografia compare senza movimento.
 - Nella radiografia valgono i colori con significato fisso (§3): il cibo è ocra, l'aria azzurra, e così via.
 - Niente testo dentro la copertina: il titolo sta nella card.
+- **Stile delle copertine: piatto.** A differenza delle animazioni, le copertine restano piatte e semplificate (colori pieni, contorni 2–3 px, niente sfumature): sono piccole e devono farsi riconoscere al primo sguardo, come un'icona.
 
 ### Memoria nel browser
 

@@ -1,28 +1,46 @@
 ---
-// Esofago dall'ingresso (sotto la faringe) fino al cardias.
+// Esofago dall'ingresso (sotto la faringe) fino al cardias:
+// parete di muscolo all'esterno, mucosa all'interno, lume chiuso a riposo.
 // Sistema di riferimento condiviso: vedi README.md in questa cartella.
+// Richiede <Sfumature /> nello stesso <svg>.
+
+// Fibre circolari del muscolo, visibili ai due lati.
+const fibre = Array.from({ length: 62 }, (_, i) => 440 + i * 8);
+// Pieghe della mucosa: quando l'esofago è vuoto le pareti si toccano e si piegano.
+const pieghe = Array.from({ length: 30 }, (_, i) => 440 + i * 16)
+  .map((y) => `M391 ${y}C388 ${y + 4} 388 ${y + 8} 391 ${y + 8}C394 ${y + 8} 394 ${y + 12} 391 ${y + 16}`)
+  .join('');
 ---
 
 <g class="esofago">
-  <path class="esofago__tubo" d="M372 430V936H410V430Z"></path>
+  <path class="esofago__muscolo" d="M372 430V936H410V430Z"></path>
+  <path class="esofago__fibre" d={fibre.map((y) => `M373 ${y}H378M404 ${y}H409`).join('')}></path>
+  <path class="esofago__mucosa" d="M379 434V936H403V434Z"></path>
+  <path class="esofago__lume" d={pieghe}></path>
   <path class="esofago__parete" d="M372 936V430H410V936"></path>
-  <!-- quando è vuoto l'esofago è chiuso: le pareti si toccano -->
-  <path class="esofago__lume" d="M391 438V924"></path>
 </g>
 
 <style>
-  .esofago__tubo {
-    fill: var(--tessuto);
+  .esofago__muscolo {
+    fill: url(#an-muscolo-tubo);
   }
-  .esofago__parete {
+  .esofago__fibre {
     fill: none;
-    stroke: var(--contorno);
-    stroke-width: 3;
-    stroke-linejoin: round;
+    stroke: var(--muscolo-scuro);
+    stroke-width: 1.2;
+  }
+  .esofago__mucosa {
+    fill: url(#an-mucosa-tubo);
   }
   .esofago__lume {
     fill: none;
-    stroke: var(--contorno);
+    stroke: var(--mucosa-bordo);
     stroke-width: 1.5;
+  }
+  .esofago__parete {
+    fill: none;
+    stroke: var(--muscolo-bordo);
+    stroke-width: 2;
+    stroke-linejoin: round;
   }
 </style>

@@ -1,47 +1,72 @@
 ---
-// Laringe con epiglottide, trachea e inizio dei bronchi.
+// Laringe con epiglottide, cartilagini, osso ioide, trachea e inizio dei bronchi.
 // Sistema di riferimento condiviso: vedi README.md in questa cartella.
-const anelli = Array.from({ length: 10 }, (_, i) => 486 + i * 24);
+// Richiede <Sfumature /> nello stesso <svg>.
+
+// Anelli della trachea: sono a forma di C, aperti dietro. In sezione si vedono solo davanti.
+const anelli = Array.from({ length: 10 }, (_, i) => 500 + i * 23);
 ---
 
 <g class="laringe">
   <path class="laringe__lume" d="M418 398V735L414 790H432L437 760L442 790H460L456 735V398Z"></path>
-  <path class="laringe__anelli" d={anelli.map((y) => `M421 ${y}H453`).join('')}></path>
+  <!-- parete posteriore della trachea: muscolo, senza cartilagine -->
+  <path class="laringe__muscolo" d="M414 470H420V735L416 790H410L414 735Z"></path>
   <path class="laringe__parete" d="M418 398V735L414 790M432 790L437 760L442 790M460 790L456 735V398"></path>
-  <!-- cartilagine tiroide, il "pomo d'Adamo" -->
-  <path class="laringe__tiroide" d="M456 404C478 414 480 452 456 472Z"></path>
+  {anelli.map((y) => <rect class="cartilagine" x="452" y={y} width="10" height="14" rx="5" />)}
+
+  <!-- cartilagini della laringe: aritenoide e cricoide dietro, tiroide e cricoide davanti -->
+  <path class="cartilagine" d="M418 410C426 410 430 420 428 432L418 436Z"></path>
+  <path class="cartilagine" d="M414 440H428V482C422 486 416 486 414 482Z"></path>
+  <path class="cartilagine" d="M456 404C478 414 480 452 456 472Z"></path>
+  <path class="cartilagine" d="M456 478C466 478 470 486 468 494L456 496Z"></path>
+
+  <!-- osso ioide, sotto la lingua: sale insieme alla laringe -->
+  <ellipse class="osso" cx="490" cy="404" rx="11" ry="6"></ellipse>
+
   <g transform="translate(452 398)">
     <g class="epiglottide">
-      <path d="M0 2C6 -18 -4 -40 -22 -54C-27 -48 -16 -28 -8 2Z"></path>
+      <path class="epiglottide__forma" d="M0 2C6 -18 -4 -40 -22 -54C-27 -48 -16 -28 -8 2Z"></path>
+      <!-- cartilagine elastica all'interno -->
+      <path class="epiglottide__cartilagine" d="M-3 -2C0 -18 -6 -34 -18 -46"></path>
     </g>
   </g>
 </g>
 
 <style>
   .laringe__lume {
-    fill: var(--aria);
+    fill: url(#an-aria-tubo);
   }
-  .laringe__anelli {
-    fill: none;
-    stroke: var(--osso);
-    stroke-width: 4;
+  .laringe__muscolo {
+    fill: var(--muscolo);
+    opacity: 0.85;
   }
   .laringe__parete {
     fill: none;
-    stroke: var(--contorno);
-    stroke-width: 3;
+    stroke: var(--mucosa-bordo);
+    stroke-width: 2;
     stroke-linejoin: round;
   }
-  .laringe__tiroide {
-    fill: var(--osso);
-    stroke: var(--contorno);
-    stroke-width: 2.5;
+  .cartilagine {
+    fill: url(#an-cartilagine);
+    stroke: var(--cartilagine-bordo);
+    stroke-width: 1.5;
     stroke-linejoin: round;
   }
-  .epiglottide path {
-    fill: var(--tessuto);
-    stroke: var(--contorno);
-    stroke-width: 2.5;
+  .osso {
+    fill: url(#an-osso);
+    stroke: var(--osso-bordo);
+    stroke-width: 1.5;
+  }
+  .epiglottide__forma {
+    fill: url(#an-mucosa);
+    stroke: var(--mucosa-bordo);
+    stroke-width: 2;
     stroke-linejoin: round;
+  }
+  .epiglottide__cartilagine {
+    fill: none;
+    stroke: var(--cartilagine);
+    stroke-width: 2.5;
+    stroke-linecap: round;
   }
 </style>

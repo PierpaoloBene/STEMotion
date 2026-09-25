@@ -1,7 +1,10 @@
 # Organi condivisi
 
-Illustrazioni SVG originali da riusare in tutti gli argomenti (guida di stile, §7):
-uno stesso organo si disegna una volta sola.
+Illustrazioni SVG originali in stile atlante da riusare in tutti gli argomenti
+(guida di stile, §7): uno stesso organo si disegna una volta sola.
+
+Ogni `<svg>` che usa questi componenti deve contenere **una volta** `<Sfumature />`,
+che definisce le sfumature `an-…` (pelle, osso, mucosa, muscolo, aria, cibo…).
 
 Ogni componente produce un gruppo `<g>` da mettere dentro un `<svg>`. Tutti usano
 lo **stesso sistema di riferimento**, così si possono combinare senza spostarli:
@@ -17,11 +20,14 @@ così l'animazione li ruota o li sposta con un semplice `transform` CSS:
 
 | Componente | Classi animabili | Perno |
 |---|---|---|
+| `Sfumature` | — (solo `<defs>`) | — |
 | `Corpo` | — | — |
 | `BoccaFaringe` | `.lingua`, `.palato-molle` | lingua `(545, 396)`, palato molle `(445, 257)` |
 | `Laringe` | `.laringe` (tutta), `.epiglottide` | epiglottide `(452, 398)` |
 | `Esofago` | — | — |
 | `Stomaco` | `.cardias__sx`, `.cardias__dx` | cardias `(391, 934)` |
 
-Ordine consigliato: `Corpo`, `BoccaFaringe`, `Esofago`, `Laringe`, `Stomaco`.
+Ordine consigliato: `Sfumature`, `Corpo`, `BoccaFaringe`, `Esofago`, `Laringe`, `Stomaco`.
 I colori sono i token "Illustrazioni" di `src/styles/global.css`.
+Per evidenziare un organo (contorno `--accento`) si usano le classi della forma esterna:
+`.lingua__forma`, `.palato-molle__forma`, `.epiglottide__forma`, `.cardias rect`.

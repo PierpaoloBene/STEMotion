@@ -1,49 +1,158 @@
 ---
-// Sezione di naso, bocca e faringe: cavità con l'aria, palato, denti, lingua, palato molle.
+// Sezione di naso, bocca e faringe: cavità con l'aria, cornetti nasali, palato duro,
+// mandibola, denti con gengive, labbra, lingua, palato molle, parete della faringe.
 // Sistema di riferimento condiviso: vedi README.md in questa cartella.
+// Richiede <Sfumature /> nello stesso <svg>.
+
+// Fibre del muscolo della lingua: partono dal mento e si aprono a ventaglio (coordinate dal perno).
+const fibre = [
+  'M-8 -6C-20 -40 -30 -70 -36 -92',
+  'M-12 -4C-34 -30 -56 -56 -74 -84',
+  'M-16 -2C-44 -18 -70 -36 -88 -56',
+  'M-4 -8C-4 -40 4 -66 14 -86',
+];
+// Papille sul dorso della lingua.
+const papille = [
+  [-70, -90],
+  [-50, -93],
+  [-30, -94],
+  [-10, -92],
+  [10, -88],
+  [-60, -86],
+  [-40, -88],
+  [-20, -88],
+  [0, -85],
+];
 ---
 
 <g class="bocca-faringe">
+  <!-- muscoli della parete posteriore della faringe, davanti alla colonna -->
+  <path class="muscolo" d="M362 262C362 250 366 244 372 242V436H362Z"></path>
+
   <!-- naso, bocca e faringe contengono aria -->
   <path class="cavita" d="M614 266C600 240 576 222 540 215L425 210C390 210 372 228 372 262V434H412L418 425V398H452L478 388L490 330V300H560L592 264Z"></path>
-  <path class="palato-duro" d="M596 250H447C440 250 438 264 447 264H596Z"></path>
-  <path class="dente" d="M588 264H600L602 296C598 300 590 300 588 296Z"></path>
-  <path class="dente" d="M586 304C590 300 598 300 600 304L598 334H588Z"></path>
+  <!-- ombra interna: la cavità è più scura verso la parete posteriore -->
+  <path class="cavita__ombra" d="M372 262C372 236 386 214 410 211C392 222 384 244 384 270V434H372Z"></path>
+
+  <!-- cornetti nasali, sulla parete laterale del naso -->
+  <path class="mucosa" d="M556 226C530 220 490 220 462 226C480 230 526 232 552 234Z"></path>
+  <path class="mucosa" d="M568 240C536 234 492 234 458 242C480 246 528 248 562 248Z"></path>
+
+  <!-- palato duro: osso rivestito di mucosa -->
+  <path class="osso" d="M598 250H447C440 250 438 262 447 262H598Z"></path>
+  <path class="mucosa-strato" d="M598 262H447C442 262 441 267 447 267H592Z"></path>
+
+  <!-- mandibola, tagliata al mento -->
+  <path class="osso" d="M580 326C590 342 590 370 583 390C574 398 556 398 550 392C553 370 564 342 572 326Z"></path>
+
+  <!-- gengive e denti incisivi, con la radice nell'osso -->
+  <path class="gengiva" d="M584 258H604L602 272H586Z"></path>
+  <path class="gengiva" d="M582 322H602L600 334H580Z"></path>
+    <path class="dente dente--corona" d="M587 264H602L603 294C600 300 591 300 588 295Z"></path>
+  <path class="dente dente--corona" d="M586 306C590 300 598 300 601 305L599 326H587Z"></path>
+  <path class="dente" d="M587 326H599L596 348C594 352 590 352 589 348Z"></path>
+
+  <!-- labbra -->
+  <path class="labbro" d="M613 292C615 300 610 308 600 311L602 296Z"></path>
+  <path class="labbro" d="M600 312C608 316 612 324 608 334L602 330Z"></path>
+
   <g transform="translate(545 396)">
     <g class="lingua">
-      <path d="M33 -78C17 -94 -19 -98 -55 -97C-83 -96 -93 -82 -93 -58C-91 -34 -81 -18 -67 -8L0 0C27 -12 39 -50 33 -78Z"></path>
+      <path class="lingua__forma" d="M33 -78C17 -94 -19 -98 -55 -97C-83 -96 -93 -82 -93 -58C-91 -34 -81 -18 -67 -8L0 0C27 -12 39 -50 33 -78Z"></path>
+      <g class="lingua__fibre">{fibre.map((d) => <path d={d} />)}</g>
+      <g class="lingua__papille">{papille.map(([x, y]) => <circle cx={x} cy={y} r="1.6" />)}</g>
     </g>
   </g>
+
   <g transform="translate(445 257)">
     <g class="palato-molle">
-      <path d="M0 -7C-20 -6 -38 10 -46 40C-50 52 -40 56 -36 46C-30 26 -15 12 0 7Z"></path>
+      <path class="palato-molle__forma" d="M0 -7C-20 -6 -38 10 -46 40C-50 52 -40 56 -36 46C-30 26 -15 12 0 7Z"></path>
+      <!-- muscolo all'interno del palato molle -->
+      <path class="palato-molle__muscolo" d="M-2 0C-16 2 -30 16 -38 38"></path>
     </g>
   </g>
 </g>
 
 <style>
   .cavita {
-    fill: var(--aria);
+    fill: url(#an-aria);
   }
-  .palato-duro {
-    fill: var(--osso);
-    stroke: var(--contorno);
-    stroke-width: 2.5;
+  .cavita__ombra {
+    fill: var(--aria-scuro);
+    opacity: 0.45;
+  }
+  .muscolo {
+    opacity: 0.75;
+    fill: url(#an-muscolo);
+    stroke: var(--muscolo-bordo);
+    stroke-width: 1.5;
+  }
+  .mucosa {
+    fill: url(#an-mucosa);
+    stroke: var(--mucosa-bordo);
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+  }
+  .mucosa-strato {
+    fill: var(--mucosa);
+    stroke: var(--mucosa-bordo);
+    stroke-width: 1.2;
+  }
+  .osso {
+    fill: url(#an-osso);
+    stroke: var(--osso-bordo);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+  .gengiva {
+    fill: var(--gengiva);
+    stroke: var(--mucosa-bordo);
+    stroke-width: 1.2;
   }
   .dente {
-    fill: #ffffff;
-    stroke: var(--contorno);
+    fill: var(--dente);
+    stroke: var(--dente-bordo);
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+    opacity: 0.8;
+  }
+  .dente--corona {
+    fill: url(#an-dente);
+    stroke-width: 1.8;
+    opacity: 1;
+  }
+  .labbro {
+    fill: var(--lingua);
+    opacity: 0.6;
+  }
+  .lingua__forma {
+    fill: url(#an-lingua);
+    stroke: var(--lingua-bordo);
     stroke-width: 2;
     stroke-linejoin: round;
   }
-  .lingua path,
-  .palato-molle path {
-    fill: var(--lingua);
-    stroke: var(--contorno);
-    stroke-width: 3;
+  .lingua__fibre path {
+    fill: none;
+    stroke: var(--lingua-chiaro);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.8;
+  }
+  .lingua__papille circle {
+    fill: var(--lingua-scuro);
+    opacity: 0.6;
+  }
+  .palato-molle__forma {
+    fill: url(#an-mucosa);
+    stroke: var(--mucosa-bordo);
+    stroke-width: 2;
     stroke-linejoin: round;
   }
-  .palato-molle path {
-    fill: var(--tessuto);
+  .palato-molle__muscolo {
+    fill: none;
+    stroke: var(--muscolo);
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0.7;
   }
 </style>

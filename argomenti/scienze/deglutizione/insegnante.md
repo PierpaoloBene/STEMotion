@@ -8,7 +8,7 @@
 ## Semplificazioni fatte
 - Non mostriamo lo sfintere esofageo superiore come struttura separata.
 - La peristalsi è mostrata come un solo anello di contrazione che segue il bolo; in realtà è un'onda continua lungo tutto l'esofago.
-- Non disegniamo i muscoli della faringe che si contraggono, né il diaframma.
+- Non mostriamo i muscoli della faringe mentre si contraggono: sono disegnati, ma restano fermi.
 - Proporzioni e posizione degli organi nel torace sono semplificate: lo stomaco è più piccolo e più vicino alla gola di quanto sia davvero.
 
 ## Collegamenti

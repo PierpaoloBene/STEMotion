@@ -1,0 +1,52 @@
+---
+/**
+ * Sfumature condivise delle illustrazioni in stile atlante (guida di stile, §7).
+ * Va messo una volta, all'inizio dell'<svg>; gli organi le usano con fill="url(#an-…)".
+ *
+ * Luce sempre dall'alto a sinistra:
+ * - "diagonale": forme piene (chiaro in alto a sinistra, scuro in basso a destra);
+ * - "tubo": organi cilindrici verticali (chiaro a sinistra, scuro a destra);
+ * - "sfera": forme tonde (riflesso in alto a sinistra).
+ * I colori sono i token "Illustrazioni" di src/styles/global.css.
+ */
+type Forma = 'diagonale' | 'tubo' | 'sfera' | 'verticale';
+const sfumature: { id: string; forma: Forma; toni: [string, string, string] }[] = [
+  { id: 'pelle', forma: 'diagonale', toni: ['--pelle-chiaro', '--pelle', '--pelle-scuro'] },
+  { id: 'osso', forma: 'diagonale', toni: ['--osso-chiaro', '--osso', '--osso-scuro'] },
+  { id: 'cartilagine', forma: 'diagonale', toni: ['--cartilagine-chiaro', '--cartilagine', '--cartilagine-scuro'] },
+  { id: 'encefalo', forma: 'sfera', toni: ['--encefalo-chiaro', '--encefalo', '--encefalo-scuro'] },
+  { id: 'mucosa', forma: 'diagonale', toni: ['--mucosa-chiaro', '--mucosa', '--mucosa-scuro'] },
+  { id: 'mucosa-tubo', forma: 'tubo', toni: ['--mucosa-chiaro', '--mucosa', '--mucosa-scuro'] },
+  { id: 'muscolo', forma: 'diagonale', toni: ['--muscolo-chiaro', '--muscolo', '--muscolo-scuro'] },
+  { id: 'muscolo-tubo', forma: 'tubo', toni: ['--muscolo-chiaro', '--muscolo', '--muscolo-scuro'] },
+  { id: 'lingua', forma: 'sfera', toni: ['--lingua-chiaro', '--lingua', '--lingua-scuro'] },
+  { id: 'dente', forma: 'tubo', toni: ['--dente-chiaro', '--dente', '--osso-scuro'] },
+  { id: 'aria', forma: 'verticale', toni: ['--aria-chiaro', '--aria', '--aria-scuro'] },
+  { id: 'aria-tubo', forma: 'tubo', toni: ['--aria-chiaro', '--aria', '--aria-scuro'] },
+  { id: 'cibo', forma: 'sfera', toni: ['--cibo-chiaro', '--cibo', '--cibo-scuro'] },
+  { id: 'interno', forma: 'sfera', toni: ['--interno-chiaro', '--interno', '--mucosa'] },
+  { id: 'saliva', forma: 'sfera', toni: ['--dente-chiaro', '--saliva', '--cartilagine'] },
+];
+const lineari: Record<Exclude<Forma, 'sfera'>, { x2: string; y2: string }> = {
+  diagonale: { x2: '1', y2: '1' },
+  tubo: { x2: '1', y2: '0' },
+  verticale: { x2: '0', y2: '1' },
+};
+const posizioni = ['0', '0.55', '1'];
+---
+
+<defs>
+  {
+    sfumature.map(({ id, forma, toni }) =>
+      forma === 'sfera' ? (
+        <radialGradient id={`an-${id}`} cx="0.38" cy="0.32" r="0.75" fx="0.3" fy="0.25">
+          {toni.map((t, i) => <stop offset={posizioni[i]} style={`stop-color: var(${t})`} />)}
+        </radialGradient>
+      ) : (
+        <linearGradient id={`an-${id}`} x1="0" y1="0" x2={lineari[forma].x2} y2={lineari[forma].y2}>
+          {toni.map((t, i) => <stop offset={posizioni[i]} style={`stop-color: var(${t})`} />)}
+        </linearGradient>
+      ),
+    )
+  }
+</defs>

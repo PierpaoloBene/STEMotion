@@ -9,6 +9,7 @@
  * Due inquadrature: "vicina" su bocca e gola (passaggi 1–4),
  * "lontana" su esofago e stomaco (passaggi 5–6).
  */
+import Sfumature from '../../../src/components/anatomia/Sfumature.astro';
 import Corpo from '../../../src/components/anatomia/Corpo.astro';
 import BoccaFaringe from '../../../src/components/anatomia/BoccaFaringe.astro';
 import Esofago from '../../../src/components/anatomia/Esofago.astro';
@@ -65,6 +66,7 @@ const pezzetti = [
 
 <div class="deglutizione">
   <svg viewBox="0 0 800 640" aria-hidden="true" focusable="false">
+    <Sfumature />
     <g class="camera">
       <Corpo />
       <BoccaFaringe />
@@ -81,7 +83,10 @@ const pezzetti = [
       <!-- il bolo, con l'esofago che si allarga attorno e l'onda di contrazione sopra -->
       <g class="bolo-x">
         <g class="bolo-y">
-          <ellipse class="rigonfiamento" rx="27" ry="30"></ellipse>
+          <g class="rigonfiamento">
+            <ellipse class="rigonfiamento__muscolo" rx="27" ry="30"></ellipse>
+            <ellipse class="rigonfiamento__mucosa" rx="20" ry="23"></ellipse>
+          </g>
           <g class="contrazione">
             <path class="contrazione__muscolo" d="M-19 -68C-19 -56 -5 -54 -5 -47C-5 -40 -19 -38 -19 -26Z"></path>
             <path class="contrazione__muscolo" d="M19 -68C19 -56 5 -54 5 -47C5 -40 19 -38 19 -26Z"></path>
@@ -96,7 +101,9 @@ const pezzetti = [
           }
           <g class="bolo">
             <circle r="16"></circle>
-            <path class="bolo__riflesso" d="M-8 -6A9 9 0 0 1 -1 -11"></path>
+            <!-- pezzetti di cibo ancora riconoscibili dentro il bolo -->
+            <path class="bolo__grana" d="M-6 4L-2 2L-1 6ZM5 -4L9 -2L6 1ZM3 8L7 6L8 10ZM-10 -2L-7 -5L-6 -1Z"></path>
+            <path class="bolo__riflesso" d="M-9 -5A10 10 0 0 1 -2 -12"></path>
           </g>
         </g>
       </g>
@@ -157,12 +164,16 @@ const pezzetti = [
   /* --- Bolo e cibo --- */
 
   .deglutizione .bolo circle {
-    fill: var(--cibo);
-    stroke: var(--contorno);
-    stroke-width: 2.5;
+    fill: url(#an-cibo);
+    stroke: var(--cibo-bordo);
+    stroke-width: 2;
     transition:
       stroke 0.3s ease-in-out,
       stroke-width 0.3s ease-in-out;
+  }
+  .deglutizione .bolo__grana {
+    fill: var(--cibo-scuro);
+    opacity: 0.6;
   }
   .deglutizione .bolo__riflesso {
     fill: none;
@@ -172,9 +183,9 @@ const pezzetti = [
     opacity: 0.7;
   }
   .deglutizione .pezzetto path {
-    fill: var(--cibo);
-    stroke: var(--contorno);
-    stroke-width: 2;
+    fill: url(#an-cibo);
+    stroke: var(--cibo-bordo);
+    stroke-width: 1.5;
     stroke-linejoin: round;
   }
 
@@ -243,9 +254,9 @@ const pezzetti = [
   }
 
   .deglutizione .saliva path {
-    fill: #ffffff;
-    stroke: var(--contorno);
-    stroke-width: 2;
+    fill: url(#an-saliva);
+    stroke: var(--saliva-bordo);
+    stroke-width: 1.5;
   }
   .deglutizione .saliva {
     opacity: 0;
@@ -288,13 +299,21 @@ const pezzetti = [
   /* --- Esofago: rigonfiamento e peristalsi --- */
 
   .deglutizione .rigonfiamento {
-    fill: var(--tessuto);
-    stroke: var(--contorno);
-    stroke-width: 3;
     opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  .deglutizione .rigonfiamento__muscolo {
+    fill: url(#an-muscolo);
+    stroke: var(--muscolo-bordo);
+    stroke-width: 2;
     transition:
-      opacity 0.3s ease-in-out,
-      stroke 0.3s ease-in-out;
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .deglutizione .rigonfiamento__mucosa {
+    fill: url(#an-mucosa);
+    stroke: var(--mucosa-bordo);
+    stroke-width: 1.2;
   }
   [data-passaggio='ingresso-esofago'] .deglutizione .rigonfiamento {
     opacity: 1;
@@ -313,14 +332,14 @@ const pezzetti = [
     transition: opacity 0.3s ease-in-out 0.5s;
   }
   .deglutizione .contrazione__muscolo {
-    fill: var(--muscolo);
-    stroke: var(--contorno);
+    fill: url(#an-muscolo);
+    stroke: var(--muscolo-bordo);
     stroke-width: 2;
     stroke-linejoin: round;
   }
   .deglutizione .contrazione__freccia {
     fill: none;
-    stroke: var(--contorno);
+    stroke: var(--testo);
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -349,15 +368,15 @@ const pezzetti = [
 
   /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
 
-  .deglutizione :is(.lingua path, .palato-molle path, .epiglottide path, .cardias rect) {
+  .deglutizione :is(.lingua__forma, .palato-molle__forma, .epiglottide__forma, .cardias rect) {
     transition:
       stroke 0.3s ease-in-out,
       stroke-width 0.3s ease-in-out;
   }
   [data-passaggio='masticazione'] .deglutizione .bolo circle,
-  [data-passaggio='spinta-lingua'] .deglutizione .lingua path,
-  [data-passaggio='chiusura-vie-aeree'] .deglutizione :is(.palato-molle path, .epiglottide path),
-  [data-passaggio='ingresso-esofago'] .deglutizione .rigonfiamento,
+  [data-passaggio='spinta-lingua'] .deglutizione .lingua__forma,
+  [data-passaggio='chiusura-vie-aeree'] .deglutizione :is(.palato-molle__forma, .epiglottide__forma),
+  [data-passaggio='ingresso-esofago'] .deglutizione .rigonfiamento__muscolo,
   [data-passaggio='peristalsi'] .deglutizione .contrazione__muscolo,
   [data-passaggio='stomaco'] .deglutizione .cardias rect {
     stroke: var(--accento);

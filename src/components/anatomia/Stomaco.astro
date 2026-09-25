@@ -1,12 +1,23 @@
 ---
-// Stomaco con il cardias, l'anello di muscolo tra esofago e stomaco.
+// Stomaco con le pieghe della mucosa e il cardias, l'anello di muscolo tra esofago e stomaco.
 // Sistema di riferimento condiviso: vedi README.md in questa cartella.
+// Richiede <Sfumature /> nello stesso <svg>.
 const forma = 'M410 930C430 955 462 958 490 945C520 930 560 950 566 990C572 1040 530 1078 460 1070C392 1060 366 990 372 930';
+const interno = 'M384 940C382 990 404 1048 460 1056C520 1062 552 1034 548 992C544 962 516 950 494 960C466 972 426 966 398 940Z';
+// Pieghe della mucosa (rughe gastriche), che seguono la curva dello stomaco.
+const pieghe = [
+  'M394 972C404 976 402 986 412 990C422 994 420 1004 430 1008',
+  'M400 1010C412 1012 414 1022 426 1024C438 1026 440 1036 452 1036',
+  'M440 1042C452 1040 458 1048 470 1044C482 1040 490 1046 502 1040',
+  'M500 978C510 986 520 982 530 990C538 996 536 1006 540 1012',
+  'M470 990C480 996 490 992 500 1000C510 1008 506 1016 516 1022',
+];
 ---
 
 <g class="stomaco">
   <path class="stomaco__parete" d={`${forma}Z`}></path>
-  <path class="stomaco__interno" d="M384 940C382 990 404 1048 460 1056C520 1062 552 1034 548 992C544 962 516 950 494 960C466 972 426 966 398 940Z"></path>
+  <path class="stomaco__interno" d={interno}></path>
+  <g class="stomaco__pieghe">{pieghe.map((d) => <path d={d} />)}</g>
   <path class="stomaco__contorno" d={forma}></path>
   <g class="cardias" transform="translate(391 934)">
     <g class="cardias__sx"><rect x="-18" y="-9" width="17" height="18" rx="7"></rect></g>
@@ -16,20 +27,28 @@ const forma = 'M410 930C430 955 462 958 490 945C520 930 560 950 566 990C572 1040
 
 <style>
   .stomaco__parete {
-    fill: var(--tessuto);
+    fill: url(#an-muscolo);
   }
   .stomaco__interno {
-    fill: var(--tessuto-chiaro);
+    fill: url(#an-interno);
+    stroke: var(--mucosa-bordo);
+    stroke-width: 1.2;
+  }
+  .stomaco__pieghe path {
+    fill: none;
+    stroke: var(--mucosa-scuro);
+    stroke-width: 2;
+    stroke-linecap: round;
   }
   .stomaco__contorno {
     fill: none;
-    stroke: var(--contorno);
-    stroke-width: 3;
+    stroke: var(--muscolo-bordo);
+    stroke-width: 2;
     stroke-linejoin: round;
   }
   .cardias rect {
-    fill: var(--muscolo);
-    stroke: var(--contorno);
+    fill: url(#an-muscolo);
+    stroke: var(--muscolo-bordo);
     stroke-width: 2;
   }
 </style>
