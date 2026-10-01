@@ -12,7 +12,7 @@ npm install
 npm run dev
 ```
 
-Poi apri http://localhost:4321/animazioni-ai-raggi-x/
+Poi apri http://localhost:4321/STEMotion/
 
 ## Come è organizzato
 
