@@ -1,4 +1,4 @@
-# Animazioni ai raggi X
+# STEMotion
 
 Animazioni interattive per le scuole medie: scienze e matematica viste "ai raggi X", un passo alla volta.
 Pensato per l'insegnante che spiega sulla LIM e per lo studente che ripassa a casa.

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- bicchiere d'acqua con due cubetti di ghiaccio che galleggiano: l'acqua vela la parte immersa -->
+    <path fill="#FFFFFF" fill-opacity="0.7" stroke="none" d="M110 110H290L272 440Q271 452 259 452H141Q129 452 128 440Z" />
+    <g stroke-width="2.5">
+      <path fill="#B9DEF1" d="M240.0 272.0L212.3 256.0L212.3 224.0L240.0 240.0Z"/><path fill="#94CCE8" d="M240.0 272.0L267.7 256.0L267.7 224.0L240.0 240.0Z"/><path fill="#E3F2FA" d="M240.0 240.0L267.7 224.0L240.0 208.0L212.3 224.0Z"/>
+      <path fill="#B9DEF1" d="M170.0 280.0L138.0 261.5L138.0 224.5L170.0 243.0Z"/><path fill="#94CCE8" d="M170.0 280.0L202.0 261.5L202.0 224.5L170.0 243.0Z"/><path fill="#E3F2FA" d="M170.0 243.0L202.0 224.5L170.0 206.0L138.0 224.5Z"/>
+    </g>
+    <path fill="#2C9AD1" fill-opacity="0.55" stroke="none" d="M116.7 232H283.3L272 440Q271 452 259 452H141Q129 452 128 440Z" />
+    <path fill="none" d="M116.7 232H283.3" stroke-width="2" />
+    <path fill="none" d="M110 110H290L272 440Q271 452 259 452H141Q129 452 128 440Z" />
+  </g>
+  <g class="dentro">
+    <rect width="400" height="500" fill="#16233F" />
+    <!-- il bicchiere e l'acqua -->
+    <path fill="#1F3257" d="M116.7 232H283.3L272 440Q271 452 259 452H141Q129 452 128 440Z" />
+    <path fill="none" stroke="#8FA6CC" stroke-width="3" stroke-linejoin="round" d="M110 110H290L272 440Q271 452 259 452H141Q129 452 128 440Z" />
+    <!-- contorno dei cubetti -->
+    <g fill="#16233F" stroke="#8FA6CC" stroke-width="2" stroke-linejoin="round">
+      <path d="M240.0 272.0L267.7 256.0L267.7 224.0L240.0 208.0L212.3 224.0L212.3 256.0Z"/>
+      <path d="M170.0 280.0L202.0 261.5L202.0 224.5L170.0 206.0L138.0 224.5L138.0 261.5Z"/>
+    </g>
+    <!-- scie delle particelle di vapore -->
+    <g fill="none" stroke="#D8E2F0" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 6">
+      <path d="M157.5 151.8L158.0 173.8"/><path d="M300.1 117.6L278.1 118.7"/><path d="M128.5 60.8L139.4 41.7"/><path d="M207.7 72.8L217.5 53.1"/><path d="M279.8 184.2L269.8 164.6"/><path d="M71.2 202.2L82.5 183.4"/><path d="M280.6 47.8L278.5 69.7"/>
+    </g>
+    <!-- particelle d'acqua: ordinate nel ghiaccio, in disordine nel liquido, lontane nel vapore -->
+    <g fill="#2C9AD1" stroke="#D8E2F0" stroke-width="1.5">
+      <circle cx="232.0" cy="226.1" r="7"/><circle cx="248.0" cy="226.1" r="7"/><circle cx="224.0" cy="240.0" r="7"/><circle cx="240.0" cy="240.0" r="7"/><circle cx="256.0" cy="240.0" r="7"/><circle cx="232.0" cy="253.9" r="7"/><circle cx="248.0" cy="253.9" r="7"/><circle cx="162.0" cy="229.1" r="7"/><circle cx="178.0" cy="229.1" r="7"/><circle cx="154.0" cy="243.0" r="7"/><circle cx="170.0" cy="243.0" r="7"/><circle cx="186.0" cy="243.0" r="7"/><circle cx="162.0" cy="256.9" r="7"/><circle cx="178.0" cy="256.9" r="7"/>
+      <circle cx="127.1" cy="240.5" r="7"/><circle cx="129.0" cy="274.3" r="7"/><circle cx="215.5" cy="268.8" r="7"/><circle cx="257.6" cy="275.5" r="7"/><circle cx="129.8" cy="288.8" r="7"/><circle cx="152.8" cy="290.6" r="7"/><circle cx="167.9" cy="290.7" r="7"/><circle cx="182.5" cy="286.8" r="7"/><circle cx="199.5" cy="295.4" r="7"/><circle cx="214.0" cy="291.6" r="7"/><circle cx="233.9" cy="285.8" r="7"/><circle cx="251.6" cy="292.2" r="7"/><circle cx="265.4" cy="287.8" r="7"/><circle cx="135.2" cy="307.7" r="7"/><circle cx="150.9" cy="311.0" r="7"/><circle cx="166.7" cy="313.1" r="7"/><circle cx="181.2" cy="311.5" r="7"/><circle cx="198.1" cy="313.2" r="7"/><circle cx="217.7" cy="305.6" r="7"/><circle cx="232.2" cy="304.5" r="7"/><circle cx="254.7" cy="307.3" r="7"/><circle cx="269.0" cy="305.5" r="7"/><circle cx="131.8" cy="323.6" r="7"/><circle cx="146.3" cy="324.7" r="7"/><circle cx="166.7" cy="329.9" r="7"/><circle cx="185.3" cy="328.8" r="7"/><circle cx="205.8" cy="328.1" r="7"/><circle cx="218.8" cy="321.0" r="7"/><circle cx="237.3" cy="326.1" r="7"/><circle cx="254.3" cy="324.0" r="7"/><circle cx="268.5" cy="321.2" r="7"/><circle cx="135.0" cy="343.0" r="7"/><circle cx="148.9" cy="339.0" r="7"/><circle cx="167.8" cy="348.8" r="7"/><circle cx="181.2" cy="342.8" r="7"/><circle cx="197.5" cy="340.0" r="7"/><circle cx="215.2" cy="344.3" r="7"/><circle cx="239.1" cy="340.5" r="7"/><circle cx="253.5" cy="338.5" r="7"/><circle cx="136.2" cy="357.5" r="7"/><circle cx="153.4" cy="360.6" r="7"/><circle cx="168.7" cy="363.4" r="7"/><circle cx="182.5" cy="357.2" r="7"/><circle cx="202.3" cy="353.7" r="7"/><circle cx="215.7" cy="359.1" r="7"/><circle cx="235.4" cy="354.5" r="7"/><circle cx="247.8" cy="362.0" r="7"/><circle cx="134.7" cy="379.8" r="7"/><circle cx="155.7" cy="375.0" r="7"/><circle cx="169.9" cy="378.1" r="7"/><circle cx="187.2" cy="377.1" r="7"/><circle cx="202.9" cy="375.4" r="7"/><circle cx="222.8" cy="375.6" r="7"/><circle cx="237.1" cy="378.1" r="7"/><circle cx="251.4" cy="376.0" r="7"/><circle cx="140.2" cy="393.3" r="7"/><circle cx="154.1" cy="389.4" r="7"/><circle cx="167.8" cy="394.3" r="7"/><circle cx="182.3" cy="394.4" r="7"/><circle cx="205.4" cy="389.7" r="7"/><circle cx="222.0" cy="392.6" r="7"/><circle cx="239.8" cy="392.3" r="7"/><circle cx="256.3" cy="393.0" r="7"/><circle cx="136.2" cy="407.2" r="7"/><circle cx="155.1" cy="412.8" r="7"/><circle cx="169.0" cy="408.9" r="7"/><circle cx="188.4" cy="407.8" r="7"/><circle cx="202.9" cy="407.8" r="7"/><circle cx="219.8" cy="410.8" r="7"/><circle cx="236.0" cy="408.5" r="7"/><circle cx="259.2" cy="407.2" r="7"/><circle cx="137.5" cy="430.0" r="7"/><circle cx="151.6" cy="426.9" r="7"/><circle cx="172.7" cy="423.3" r="7"/><circle cx="186.8" cy="426.8" r="7"/><circle cx="206.9" cy="422.0" r="7"/><circle cx="221.0" cy="425.5" r="7"/><circle cx="243.3" cy="426.3" r="7"/><circle cx="260.6" cy="423.0" r="7"/>
+      <circle cx="157.5" cy="151.8" r="7"/><circle cx="300.1" cy="117.6" r="7"/><circle cx="128.5" cy="60.8" r="7"/><circle cx="207.7" cy="72.8" r="7"/><circle cx="279.8" cy="184.2" r="7"/><circle cx="71.2" cy="202.2" r="7"/><circle cx="280.6" cy="47.8" r="7"/>
+    </g>
+  </g>
+</svg>

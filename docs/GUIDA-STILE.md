@@ -1,4 +1,4 @@
-# Guida di stile — Animazioni ai raggi X
+# Guida di stile — STEMotion
 
 Questa guida vale per **ogni** argomento del sito. Chi crea un nuovo argomento (persona o Claude) la legge per intero prima di iniziare e la rispetta senza eccezioni. Se una regola non funziona per un caso concreto, si cambia la guida, non il singolo argomento.
 
@@ -72,6 +72,8 @@ Lo stesso concetto ha **sempre** lo stesso colore, in tutto il sito:
 | Anidride carbonica (CO₂) | `#7A7A85` (grigio) |
 | Cibo / bolo | `#C98B3F` (ocra) |
 | Aria | `#8EC9F0` (azzurro) |
+| Acqua in ogni stato (ghiaccio, liquida, vapore) e sue particelle | `#2C9AD1` (blu acqua) |
+| Calore (fornello, fiamma, piastra accesa) | `#F26B1D` (arancione) |
 | Elemento evidenziato nel passaggio corrente | contorno `--accento`, 4 px |
 
 ### Accessibilità del colore

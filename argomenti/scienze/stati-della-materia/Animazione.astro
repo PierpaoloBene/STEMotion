@@ -1,0 +1,684 @@
+---
+/**
+ * Gli stati della materia: l'acqua in tre barattoli (ghiaccio, acqua, vapore) vista
+ * da fuori e, con una lente "ai raggi X", da dentro fino alle particelle.
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4).
+ *
+ * Lo stesso disegno esiste in due disposizioni: "larga" (tre colonne, per la LIM e il
+ * computer) e "stretta" (tre righe, per il telefono in verticale). Sceglie il CSS con una
+ * container query, così le etichette restano leggibili in tutti e due i casi.
+ */
+
+type Stato = 'solido' | 'liquido' | 'gas';
+type Punto = [number, number];
+
+interface Colonna {
+  titolo: Punto;
+  /** Fondo del barattolo, al centro; `sb` è la scala del barattolo. */
+  barattolo: Punto;
+  sb: number;
+  /** Centro della lente; `sl` è la sua scala (raggio = 100 × sl). */
+  lente: Punto;
+  sl: number;
+  /** Etichetta della sostanza: testo e punto da cui parte la linea. */
+  etichetta: { x: number; y: number; ancora: 'start' | 'middle'; linea: Punto };
+  didascalia?: Punto;
+}
+
+const stati: { id: Stato; titolo: string; sostanza: string; nota?: string; didascalia: string }[] = [
+  { id: 'solido', titolo: 'Solido', sostanza: 'Ghiaccio', didascalia: 'vicine, in ordine' },
+  { id: 'liquido', titolo: 'Liquido', sostanza: 'Acqua', didascalia: 'vicine, in disordine' },
+  { id: 'gas', titolo: 'Gassoso', sostanza: 'Vapore acqueo', nota: 'in realtà invisibile', didascalia: 'lontane, veloci' },
+];
+
+const arrotonda = (v: number) => +v.toFixed(1);
+
+// --- Barattoli, in coordinate del barattolo (origine al centro del fondo) ---
+
+/** Cubetto di ghiaccio in assonometria: `x, y` è lo spigolo davanti in basso, `l` il lato. */
+function cubetto(x: number, y: number, l: number) {
+  const [cx, cy] = [0.866 * l, 0.5 * l];
+  const p = (pts: number[][]) => 'M' + pts.map(([a, b]) => `${arrotonda(a)} ${arrotonda(b)}`).join('L') + 'Z';
+  return {
+    sinistra: p([[x, y], [x - cx, y - cy], [x - cx, y - cy - l], [x, y - l]]),
+    destra: p([[x, y], [x + cx, y - cy], [x + cx, y - cy - l], [x, y - l]]),
+    sopra: p([[x, y - l], [x + cx, y - cy - l], [x, y - 2 * cy - l], [x - cx, y - cy - l]]),
+    // riflesso lungo lo spigolo sinistro della faccia di sopra, una bollicina e una crepa
+    riflesso: `M${arrotonda(x - cx * 0.7)} ${arrotonda(y - l - cy * 1.15)}L${arrotonda(x - cx * 0.25)} ${arrotonda(y - l - cy * 1.65)}`,
+    bolla: [arrotonda(x - cx * 0.45), arrotonda(y - l * 0.45)],
+    crepa: `M${arrotonda(x + cx * 0.3)} ${arrotonda(y - l * 0.75)}l${arrotonda(l * 0.12)} ${arrotonda(l * 0.12)}l${arrotonda(-l * 0.05)} ${arrotonda(l * 0.18)}`,
+  };
+}
+// Due cubetti: quello dietro si disegna per primo. Stanno anche nel barattolo basso (75 di altezza).
+const cubetti = [cubetto(23, -9, 29), cubetto(-21, -2, 30)];
+
+// Ondine del vapore: un simbolo, sparse in tutto il barattolo e lontane dal mirino della lente.
+const ondine: Punto[] = [
+  [-30, -128],
+  [22, -114],
+  [-8, -96],
+  [30, -76],
+  [-32, -62],
+  [12, -48],
+  [-30, -16],
+  [28, -18],
+];
+const ONDINA = 'M-14 0q3.5 -5 7 0t7 0t7 0t7 0';
+
+const larga = (x: number): Colonna => ({
+  titolo: [x, 50],
+  barattolo: [x, 250],
+  sb: 1,
+  lente: [x, 420],
+  sl: 1.2,
+  etichetta: { x, y: 352, ancora: 'middle', linea: [x, 324] },
+  didascalia: [x, 582],
+});
+const stretta = (y: number): Colonna => ({
+  titolo: [120, y - 74],
+  barattolo: [120, y + 85],
+  sb: 0.85,
+  lente: [410, y],
+  sl: 1,
+  etichetta: { x: 300, y: y + 10, ancora: 'start', linea: [292, y + 1] },
+});
+
+const disposizioni: { id: 'larga' | 'stretta'; viewBox: string; colonne: Record<Stato, Colonna> }[] = [
+  { id: 'larga', viewBox: '0 0 960 600', colonne: { solido: larga(160), liquido: larga(480), gas: larga(800) } },
+  { id: 'stretta', viewBox: '0 0 560 660', colonne: { solido: stretta(110), liquido: stretta(330), gas: stretta(550) } },
+];
+
+// Punto del barattolo che la lente ingrandisce, sopra il fondo: sta dentro il ghiaccio
+// e dentro l'acqua anche quando il recipiente cambia forma.
+const MIRINO = 28;
+const R_MIRINO = 12;
+
+/** Cono della lente: le due tangenti esterne tra il mirino e il bordo della lente. */
+function cono(c: Colonna) {
+  const p: Punto = [c.barattolo[0], c.barattolo[1] - MIRINO * c.sb];
+  const r1 = R_MIRINO * c.sb;
+  const r2 = 100 * c.sl;
+  const dx = c.lente[0] - p[0];
+  const dy = c.lente[1] - p[1];
+  const d = Math.hypot(dx, dy);
+  const base = Math.atan2(dy, dx);
+  const beta = Math.acos((r1 - r2) / d);
+  const tangente = (segno: number) => {
+    const a = base + segno * beta;
+    return [p[0] + r1 * Math.cos(a), p[1] + r1 * Math.sin(a), c.lente[0] + r2 * Math.cos(a), c.lente[1] + r2 * Math.sin(a)].map((v) => +v.toFixed(1));
+  };
+  const [a, b] = [tangente(1), tangente(-1)];
+  return { a, b, poligono: `${a[0]},${a[1]} ${a[2]},${a[3]} ${b[2]},${b[3]} ${b[0]},${b[1]}` };
+}
+
+// --- Particelle, in coordinate della lente (raggio 100). Tutte uguali nei tre stati. ---
+
+// Generatore pseudo-casuale con seme: il disegno è identico a ogni build.
+function casuale(seme: number) {
+  let s = seme;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Punti casuali dentro un cerchio, mai più vicini di `distanza`. */
+function sparpaglia(rnd: () => number, raggio: number, distanza: number, tentativi: number): Punto[] {
+  const punti: Punto[] = [];
+  for (let i = 0; i < tentativi; i++) {
+    const a = rnd() * Math.PI * 2;
+    const r = Math.sqrt(rnd()) * raggio;
+    const p: Punto = [r * Math.cos(a), r * Math.sin(a)];
+    if (punti.every((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) >= distanza)) punti.push(p);
+  }
+  return punti.map(([x, y]) => [arrotonda(x), arrotonda(y)]);
+}
+
+const R_PARTICELLA = 10;
+
+// Solido: file ordinate. Nell'acqua il ghiaccio non è più compatto del liquido (galleggia),
+// quindi il passo della griglia dà più o meno la stessa densità delle particelle del liquido.
+const PASSO = 24.5;
+const rndSolido = casuale(7);
+const solido = [];
+for (let i = -5; i <= 5; i++) {
+  for (let j = -5; j <= 5; j++) {
+    const x = i * PASSO;
+    const y = j * PASSO;
+    if (Math.hypot(x, y) > 100 + R_PARTICELLA) continue;
+    const a = rndSolido() * Math.PI * 2;
+    solido.push({ x, y, dx: arrotonda(2.5 * Math.cos(a)), dy: arrotonda(2.5 * Math.sin(a)) });
+  }
+}
+
+// Liquido: vicine ma in disordine; ognuna scorre un po' e torna al suo posto.
+// Si parte dalla griglia del solido, si mescola e si separano le particelle che si toccano:
+// stessa densità del ghiaccio, ma senza ordine.
+const rndLiquido = casuale(11);
+const mescolate: Punto[] = solido.map((p) => [p.x + (rndLiquido() - 0.5) * 16, p.y + (rndLiquido() - 0.5) * 16]);
+for (let giro = 0; giro < 60; giro++) {
+  for (let i = 0; i < mescolate.length; i++) {
+    for (let j = i + 1; j < mescolate.length; j++) {
+      const [a, b] = [mescolate[i], mescolate[j]];
+      const d = Math.hypot(b[0] - a[0], b[1] - a[1]) || 0.01;
+      const manca = 2 * R_PARTICELLA + 0.5 - d;
+      if (manca <= 0) continue;
+      const [ux, uy] = [((b[0] - a[0]) / d) * (manca / 2), ((b[1] - a[1]) / d) * (manca / 2)];
+      a[0] -= ux;
+      a[1] -= uy;
+      b[0] += ux;
+      b[1] += uy;
+    }
+  }
+}
+const liquido = mescolate.map(([x, y]) => [arrotonda(x), arrotonda(y)]).map(([x, y]) => {
+  const v = () => arrotonda((rndLiquido() - 0.5) * 18);
+  return { x, y, ax: v(), ay: v(), bx: v(), by: v() };
+});
+
+// Gas: lontane, ognuna arriva in linea retta da una direzione diversa.
+const rndGas = casuale(5);
+const gas = sparpaglia(rndGas, 94, 40, 3000).map(([x, y]) => {
+  const a = rndGas() * Math.PI * 2;
+  return { x, y, vx: arrotonda(46 * Math.cos(a)), vy: arrotonda(46 * Math.sin(a)) };
+});
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni: Record<string, string> = {
+  'tre-stati': 'Tre barattoli chiusi. Nel primo ci sono due cubetti di ghiaccio, nel secondo acqua. Il terzo sta su un fornello acceso e contiene vapore acqueo, disegnato come un velo azzurro con delle ondine.',
+  particelle: 'Una lente ingrandisce il ghiaccio: dentro si vedono tante palline uguali, le particelle.',
+  solido: 'Nella lente del ghiaccio le particelle sono vicine, in file ordinate, e vibrano senza lasciare il loro posto.',
+  'solido-forma': 'Il barattolo del ghiaccio diventa basso e largo. I cubetti restano uguali, con la stessa forma e la stessa grandezza.',
+  liquido: 'Una lente ingrandisce l’acqua: le particelle sono vicine ma in disordine e scorrono le une sulle altre.',
+  'liquido-forma': 'Il barattolo dell’acqua diventa basso e largo. L’acqua si allarga, il livello scende e la quantità resta la stessa.',
+  gas: 'Una lente ingrandisce il vapore: poche particelle, lontane tra loro, che si muovono in linea retta in direzioni diverse.',
+  'gas-volume': 'Il barattolo del vapore diventa più largo e il vapore lo riempie tutto. Nella lente le particelle si allontanano.',
+  confronto: 'Le tre lenti affiancate: nel solido particelle vicine e ordinate, nel liquido vicine e in disordine, nel gas lontane e veloci.',
+};
+---
+
+<div class="stati">
+  {
+    disposizioni.map((disp) => (
+      <svg class={`stati__disegno stati__disegno--${disp.id}`} viewBox={disp.viewBox} aria-hidden="true" focusable="false">
+        <defs>
+          <clipPath id={`stati-lente-${disp.id}`}>
+            <circle r="98.5" />
+          </clipPath>
+        </defs>
+        {stati.map((s) => {
+          const c = disp.colonne[s.id];
+          const k = cono(c);
+          return (
+            <g class={`colonna colonna--${s.id}`}>
+              <g class="cono">
+                <polygon points={k.poligono} />
+                <line x1={k.a[0]} y1={k.a[1]} x2={k.a[2]} y2={k.a[3]} />
+                <line x1={k.b[0]} y1={k.b[1]} x2={k.b[2]} y2={k.b[3]} />
+              </g>
+
+              <g transform={`translate(${c.barattolo[0]} ${c.barattolo[1]}) scale(${c.sb})`}>
+                {s.id === 'gas' && (
+                  <g class="fornello">
+                    <rect class="fornello__base" x="-62" y="5" width="124" height="16" rx="5" />
+                    <rect class="fornello__piastra" x="-48" y="0" width="96" height="7" rx="3" />
+                    <circle class="fornello__manopola" cx="50" cy="13" r="3.5" />
+                  </g>
+                )}
+                <g class="recipiente">
+                  <rect class="recipiente__fondo" x="-55" y="-150" width="110" height="150" rx="14" />
+                  {s.id === 'gas' && <rect class="velo" x="-53.5" y="-148.5" width="107" height="147" rx="12.5" />}
+                </g>
+                {s.id === 'gas' &&
+                  ondine.map(([x, y]) => (
+                    <g class="ondina" style={`--x: ${x}px; --y: ${y}px`}>
+                      <path d={ONDINA} />
+                    </g>
+                  ))}
+                {s.id === 'solido' && (
+                  <g class="cubo">
+                    {cubetti.map((c) => (
+                      <g>
+                        <path class="cubo__sinistra" d={c.sinistra} />
+                        <path class="cubo__destra" d={c.destra} />
+                        <path class="cubo__sopra" d={c.sopra} />
+                        <path class="cubo__segno" d={`${c.riflesso}${c.crepa}`} />
+                        <circle class="cubo__bolla" cx={c.bolla[0]} cy={c.bolla[1]} r="2.5" />
+                      </g>
+                    ))}
+                  </g>
+                )}
+                {s.id === 'liquido' && <path class="acqua" d="M-53.5 -100H53.5V-14A12.5 12.5 0 0 1 41 -1.5H-41A12.5 12.5 0 0 1 -53.5 -14Z" />}
+                <g class="recipiente">
+                  <rect class="recipiente__vetro" x="-55" y="-150" width="110" height="150" rx="14" />
+                  <rect class="recipiente__tappo" x="-61" y="-166" width="122" height="18" rx="6" />
+                </g>
+                <circle class="mirino" cy={-MIRINO} r={R_MIRINO} />
+              </g>
+
+              <g transform={`translate(${c.lente[0]} ${c.lente[1]}) scale(${c.sl})`}>
+                <g class="lente">
+                  <circle class="lente__fondo" r="100" />
+                  <g clip-path={`url(#stati-lente-${disp.id})`}>
+                    {s.id === 'solido' &&
+                      solido.map((p) => <circle class="particella particella--solido" cx={p.x} cy={p.y} r={R_PARTICELLA} style={`--dx: ${p.dx}px; --dy: ${p.dy}px`} />)}
+                    {s.id === 'liquido' &&
+                      liquido.map((p) => (
+                        <circle
+                          class="particella particella--liquido"
+                          cx={p.x}
+                          cy={p.y}
+                          r={R_PARTICELLA}
+                          style={`--ax: ${p.ax}px; --ay: ${p.ay}px; --bx: ${p.bx}px; --by: ${p.by}px`}
+                        />
+                      ))}
+                    {s.id === 'gas' &&
+                      gas.map((p) => (
+                        <g class="gas-posto" style={`--x: ${p.x}px; --y: ${p.y}px`}>
+                          <g class="gas-moto" style={`--vx: ${p.vx}px; --vy: ${p.vy}px`}>
+                            <line class="scia" x2={arrotonda(-p.vx * 0.55)} y2={arrotonda(-p.vy * 0.55)} />
+                            <circle class="particella" r={R_PARTICELLA} />
+                          </g>
+                        </g>
+                      ))}
+                  </g>
+                  <circle class="lente__anello" r="100" />
+                </g>
+              </g>
+
+              <text class="titolo" x={c.titolo[0]} y={c.titolo[1]}>
+                {s.titolo}
+              </text>
+
+              <g class="etichetta">
+                <line x1={c.etichetta.linea[0]} y1={c.etichetta.linea[1]} x2={c.barattolo[0]} y2={c.barattolo[1] - MIRINO * c.sb} />
+                <circle cx={c.barattolo[0]} cy={c.barattolo[1] - MIRINO * c.sb} r="3.5" />
+                <text x={c.etichetta.x} y={c.etichetta.y} text-anchor={c.etichetta.ancora}>
+                  {s.sostanza}
+                  {s.nota && (
+                    <tspan class="etichetta__nota" x={c.etichetta.x} dy="1.15em">
+                      {s.nota}
+                    </tspan>
+                  )}
+                </text>
+              </g>
+
+              {c.didascalia && (
+                <text class="didascalia" x={c.didascalia[0]} y={c.didascalia[1]}>
+                  {s.didascalia}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    ))
+  }
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .stati {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+  }
+  .stati__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .stati__disegno--stretta {
+    display: none;
+  }
+  /* Palco stretto o verticale (telefono): tre righe invece di tre colonne. */
+  @container (aspect-ratio < 1.15) {
+    .stati__disegno--larga {
+      display: none;
+    }
+    .stati__disegno--stretta {
+      display: block;
+    }
+  }
+  .stati svg :is(path, rect, circle, line, polygon) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Interruttori di ogni colonna, impostati per passaggio più sotto ---
+     --lente: 1 quando la lente è aperta
+     --cambia: 1 quando il recipiente ha cambiato forma
+     --attenua: 1 quando la colonna non è quella di cui si parla */
+
+  .stati .colonna {
+    opacity: calc(1 - 0.6 * var(--attenua, 0));
+    transition: opacity 0.6s ease-in-out;
+  }
+
+  /* --- Barattoli --- */
+
+  .stati .recipiente__fondo {
+    fill: var(--superficie);
+    fill-opacity: 0.75;
+  }
+  .stati .recipiente__vetro {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .stati .recipiente__tappo {
+    fill: var(--bordo);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  /* Ghiaccio: tre tinte del colore dell'acqua, la faccia di sopra è la più chiara. */
+  .stati .cubo :is(.cubo__sinistra, .cubo__destra, .cubo__sopra) {
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+  .stati .cubo__sopra {
+    fill: #e3f2fa;
+  }
+  .stati .cubo__sinistra {
+    fill: #b9def1;
+  }
+  .stati .cubo__destra {
+    fill: #94cce8;
+  }
+  .stati .cubo__segno {
+    fill: none;
+    stroke: var(--superficie);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .stati .cubo__bolla {
+    fill: none;
+    stroke: var(--superficie);
+    stroke-width: 2;
+  }
+
+  /* Vapore: velo e ondine sono un simbolo (il vapore acqueo è invisibile).
+     Riempiono tutto il barattolo, anche quando si allarga. */
+  .stati .velo {
+    fill: var(--acqua);
+    fill-opacity: 0.12;
+  }
+  .stati .ondina {
+    transform: translate(calc(var(--x) * (1 + 0.8 * var(--cambia, 0))), var(--y));
+    transition: transform 1.4s ease-in-out;
+  }
+  .stati .ondina path {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  @keyframes stati-ondeggia {
+    50% {
+      transform: translate(4px, -6px);
+    }
+  }
+  :is([data-indice='6'], [data-indice='8']) .stati .ondina path {
+    animation: stati-ondeggia 1s ease-in-out 0.5s 2;
+  }
+
+  /* Il fornello tiene caldo il barattolo: così l'acqua resta tutta vapore. */
+  .stati .fornello__base {
+    fill: var(--testo-2);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .stati .fornello__piastra {
+    fill: var(--calore);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .stati .fornello__manopola {
+    fill: var(--bordo);
+  }
+  .stati .acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.55;
+    stroke: var(--accento);
+    stroke-width: 0;
+  }
+  .stati .mirino {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    opacity: var(--lente, 0);
+    transition: opacity 0.4s ease-in-out;
+  }
+
+  /* Il recipiente cambia forma dal fondo: basso e largo per solido e liquido
+     (stessa superficie, quindi stesso volume d'acqua), più largo per il gas. */
+  .stati .recipiente {
+    transition: transform 1.4s ease-in-out;
+  }
+  .stati .acqua {
+    transition:
+      transform 1.4s ease-in-out,
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .stati :is(.colonna--solido, .colonna--liquido) :is(.recipiente, .acqua) {
+    transform: scale(calc(1 + var(--cambia, 0)), calc(1 - 0.5 * var(--cambia, 0)));
+  }
+  .stati .colonna--gas .recipiente {
+    transform: scaleX(calc(1 + 0.8 * var(--cambia, 0)));
+  }
+
+  /* --- Lente e cono --- */
+
+  .stati .cono {
+    opacity: var(--lente, 0);
+    transition: opacity 0.4s ease-in-out;
+  }
+  .stati .cono polygon {
+    fill: var(--accento);
+    fill-opacity: 0.08;
+  }
+  .stati .cono line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .stati .lente {
+    opacity: var(--lente, 0);
+    transform: scale(calc(0.6 + 0.4 * var(--lente, 0)));
+    transition:
+      opacity 0.6s ease-in-out,
+      transform 0.8s ease-in-out;
+  }
+  .stati .lente__fondo {
+    fill: var(--radiografia);
+  }
+  .stati .lente__anello {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+
+  /* --- Particelle: tutte uguali nei tre stati --- */
+
+  .stati .particella {
+    fill: var(--acqua);
+    stroke: #d8e2f0;
+    stroke-width: 2;
+  }
+  .stati .scia {
+    stroke: #d8e2f0;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 2 6;
+  }
+
+  @keyframes stati-vibra {
+    25% {
+      transform: translate(var(--dx), var(--dy));
+    }
+    75% {
+      transform: translate(calc(-1 * var(--dx)), calc(-1 * var(--dy)));
+    }
+  }
+  @keyframes stati-scorre {
+    35% {
+      transform: translate(var(--ax), var(--ay));
+    }
+    70% {
+      transform: translate(var(--bx), var(--by));
+    }
+  }
+  @keyframes stati-vola {
+    from {
+      transform: translate(calc(-1 * var(--vx)), calc(-1 * var(--vy)));
+    }
+  }
+
+  :is([data-indice='2'], [data-indice='8']) .stati .particella--solido {
+    animation: stati-vibra 0.4s ease-in-out 0.5s 5;
+  }
+  :is([data-indice='4'], [data-indice='8']) .stati .particella--liquido {
+    animation: stati-scorre 2.2s ease-in-out 0.5s;
+  }
+  :is([data-indice='6'], [data-indice='8']) .stati .gas-moto {
+    animation: stati-vola 2s ease-out 0.5s backwards;
+  }
+
+  /* Il gas si allarga con il recipiente: le particelle si allontanano. */
+  .stati .gas-posto {
+    transform: translate(calc(var(--x) * (1 + 0.45 * var(--cambia, 0))), calc(var(--y) * (1 + 0.45 * var(--cambia, 0))));
+    transition: transform 1.4s ease-in-out;
+  }
+
+  /* --- Testi --- */
+
+  .stati text {
+    fill: var(--testo);
+    font-weight: 700;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  .stati .titolo {
+    text-anchor: middle;
+  }
+  .stati__disegno--larga .titolo {
+    font-size: 30px;
+  }
+  .stati__disegno--larga :is(.etichetta text, .didascalia) {
+    font-size: 26px;
+  }
+  /* Il disegno stretto si rimpicciolisce di più sul telefono: testi più grandi. */
+  .stati__disegno--stretta .titolo {
+    font-size: 32px;
+  }
+  .stati__disegno--stretta .etichetta text {
+    font-size: 30px;
+  }
+
+  .stati .etichetta {
+    opacity: calc(1 - var(--lente, 0));
+    transition: opacity 0.4s ease-in-out;
+  }
+  .stati .etichetta__nota {
+    fill: var(--testo-2);
+    font-weight: 400;
+    font-size: 0.8em;
+  }
+  .stati .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .stati .etichetta circle {
+    fill: var(--testo-2);
+  }
+
+  .stati .didascalia {
+    fill: var(--testo-2);
+    font-weight: 400;
+    text-anchor: middle;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  [data-indice='8'] .stati .didascalia {
+    opacity: 1;
+    transition-delay: 0.6s;
+  }
+
+  /* --- Stato di ogni passaggio ---
+     0 tre-stati · 1 particelle · 2 solido · 3 solido-forma · 4 liquido
+     5 liquido-forma · 6 gas · 7 gas-volume · 8 confronto */
+
+  [data-indice]:not([data-indice='-1'], [data-indice='0']) .stati .colonna--solido,
+  :is([data-indice='4'], [data-indice='5'], [data-indice='6'], [data-indice='7'], [data-indice='8']) .stati .colonna--liquido,
+  :is([data-indice='6'], [data-indice='7'], [data-indice='8']) .stati .colonna--gas {
+    --lente: 1;
+  }
+
+  :is([data-indice='3'], [data-indice='4'], [data-indice='5'], [data-indice='6'], [data-indice='7'], [data-indice='8']) .stati .colonna--solido,
+  :is([data-indice='5'], [data-indice='6'], [data-indice='7'], [data-indice='8']) .stati .colonna--liquido,
+  :is([data-indice='7'], [data-indice='8']) .stati .colonna--gas {
+    --cambia: 1;
+  }
+
+  :is([data-indice='1'], [data-indice='2'], [data-indice='3']) .stati :is(.colonna--liquido, .colonna--gas),
+  :is([data-indice='4'], [data-indice='5']) .stati :is(.colonna--solido, .colonna--gas),
+  :is([data-indice='6'], [data-indice='7']) .stati :is(.colonna--solido, .colonna--liquido) {
+    --attenua: 1;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  .stati :is(.cubo path, .recipiente__vetro) {
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  :is([data-indice='1'], [data-indice='2']) .stati .colonna--solido .lente__anello,
+  [data-indice='4'] .stati .colonna--liquido .lente__anello,
+  [data-indice='6'] .stati .colonna--gas .lente__anello,
+  [data-indice='8'] .stati .lente__anello,
+  [data-indice='3'] .stati .cubo :is(.cubo__sinistra, .cubo__destra, .cubo__sopra),
+  [data-indice='5'] .stati .acqua,
+  [data-indice='7'] .stati .colonna--gas .recipiente__vetro {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .stati .descrizione {
+    display: none;
+  }
+  [data-passaggio='tre-stati'] .stati .descrizione[data-per='tre-stati'],
+  [data-passaggio='particelle'] .stati .descrizione[data-per='particelle'],
+  [data-passaggio='solido'] .stati .descrizione[data-per='solido'],
+  [data-passaggio='solido-forma'] .stati .descrizione[data-per='solido-forma'],
+  [data-passaggio='liquido'] .stati .descrizione[data-per='liquido'],
+  [data-passaggio='liquido-forma'] .stati .descrizione[data-per='liquido-forma'],
+  [data-passaggio='gas'] .stati .descrizione[data-per='gas'],
+  [data-passaggio='gas-volume'] .stati .descrizione[data-per='gas-volume'],
+  [data-passaggio='confronto'] .stati .descrizione[data-per='confronto'] {
+    display: block;
+  }
+</style>

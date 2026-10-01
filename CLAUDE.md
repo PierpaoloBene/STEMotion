@@ -1,4 +1,4 @@
-# Animazioni ai raggi X
+# STEMotion
 
 Sito didattico in italiano con animazioni interattive per le scuole medie
 (scienze, matematica, fisica). Usato dagli insegnanti sulla LIM e dagli studenti a casa.
