@@ -41,17 +41,23 @@ const argomenti = defineCollection({
     }),
 });
 
+// Un passaggio: stesso formato in passaggi.yaml e nelle deviazioni.
+const passaggio = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/, 'Usa solo lettere minuscole, numeri e trattini.'),
+  fase: z.string().optional(),
+  titolo: z.string(),
+  breve: z.string(),
+  spiegazione: z.string(),
+});
+
 const passaggi = defineCollection({
   loader: glob({ base: './argomenti', pattern: '*/*/passaggi.yaml', generateId: cartella }),
   schema: z.object({
     passaggi: z
       .array(
-        z.object({
-          id: z.string().regex(/^[a-z0-9-]+$/, 'Usa solo lettere minuscole, numeri e trattini.'),
-          fase: z.string().optional(),
-          titolo: z.string(),
-          breve: z.string(),
-          spiegazione: z.string(),
+        passaggio.extend({
+          // Slug delle deviazioni che si aprono da questo passaggio (cartelle in deviazioni/).
+          deviazioni: z.array(z.string()).max(3, 'Al massimo 3 deviazioni per passaggio (guida di stile, §5).').default([]),
         }),
       )
       .min(1)
@@ -59,8 +65,19 @@ const passaggi = defineCollection({
   }),
 });
 
+// Deviazioni: processi alternativi che partono da un passaggio e si aprono in un box.
+// L'id è il percorso della cartella, es. "scienze/deglutizione/deviazioni/tosse".
+const deviazioni = defineCollection({
+  loader: glob({ base: './argomenti', pattern: '*/*/deviazioni/*/deviazione.yaml', generateId: cartella }),
+  schema: z.object({
+    pulsante: z.string(),
+    titolo: z.string(),
+    passaggi: z.array(passaggio).min(1).max(6, 'Al massimo 6 passaggi in una deviazione (guida di stile, §5).'),
+  }),
+});
+
 const note = defineCollection({
   loader: glob({ base: './argomenti', pattern: '*/*/insegnante.md', generateId: cartella }),
 });
 
-export const collections = { materie, argomenti, passaggi, note };
+export const collections = { materie, argomenti, passaggi, deviazioni, note };

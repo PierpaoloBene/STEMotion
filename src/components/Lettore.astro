@@ -11,6 +11,10 @@
  *
  * Interfaccia "a storie" (guida di stile, §5): barre in alto, tocchi sul palco
  * nel modello `passaggi`, lettore a tutto schermo sul telefono, schermata finale.
+ *
+ * Deviazioni (guida di stile, §5): un passaggio può avere dei pulsanti che aprono un box
+ * (<dialog data-box id="box-<slug>">) con dentro un altro lettore, `annidato`: niente
+ * schermata finale, indirizzo o progressi, e all'ultimo passaggio Avanti chiude il box.
  */
 import { testoInline } from '../lib/testo';
 
@@ -20,6 +24,8 @@ interface Passaggio {
   titolo: string;
   breve: string;
   spiegazione: string;
+  /** Slug delle deviazioni che si aprono da questo passaggio. */
+  deviazioni?: string[];
 }
 interface Link {
   titolo: string;
@@ -35,13 +41,21 @@ interface Props {
   prossimo?: Link | null;
   /** Pagina della materia, per la schermata finale quando manca il prossimo argomento. */
   materia: Link;
+  /** Testo dei pulsanti delle deviazioni, per slug. */
+  pulsanti?: Record<string, string>;
+  /** Lettore dentro il box di una deviazione. */
+  annidato?: boolean;
+  /** Testo di Avanti all'ultimo passaggio di un lettore annidato, es. "Torna alla deglutizione". */
+  ritorno?: string;
 }
-const { id, passaggi, titolo, modello, prossimo, materia } = Astro.props;
+const { id, passaggi, titolo, modello, prossimo, materia, pulsanti = {}, annidato = false, ritorno = 'Chiudi' } = Astro.props;
 const n = passaggi.length;
+// Più lettori nella stessa pagina (i box delle deviazioni): id diversi.
+const idTesti = `testi-${id.replace(/[^a-z0-9]+/gi, '-')}`;
 const tocchi = modello === 'passaggi';
 ---
 
-<section class="lettore" data-lettore data-argomento={id} data-titolo={titolo} data-modello={modello} data-ids={JSON.stringify(passaggi.map((p) => p.id))} aria-label={`Animazione: ${titolo}`}>
+<section class:list={['lettore', annidato && 'lettore--annidato']} data-lettore data-annidato={annidato ? '' : undefined} data-argomento={id} data-titolo={titolo} data-modello={modello} data-ids={JSON.stringify(passaggi.map((p) => p.id))} aria-label={`Animazione: ${titolo}`}>
   <div class="lettore__barra">
     <ol class="barre">
       {
@@ -63,78 +77,103 @@ const tocchi = modello === 'passaggi';
     <slot />
   </div>
 
-  <div class="lettore__inizia" data-azione="inizia">
-    <button type="button" class="tasto tasto--primario tasto--grande" data-azione="inizia">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"></path></svg>
-      <span>Inizia</span>
-    </button>
-    <p>{n} passaggi{tocchi && ' · tocca a destra per andare avanti, a sinistra per tornare indietro'}</p>
-  </div>
+  {
+    !annidato && (
+      <div class="lettore__inizia" data-azione="inizia">
+        <button type="button" class="tasto tasto--primario tasto--grande" data-azione="inizia">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5l11 7-11 7z" />
+          </svg>
+          <span>Inizia</span>
+        </button>
+        <p>{n} passaggi{tocchi && ' · tocca a destra per andare avanti, a sinistra per tornare indietro'}</p>
+      </div>
+    )
+  }
 
-  <div class="lettore__testi" id="lettore-testi" aria-live="polite">
+  <div class="lettore__testi" id={idTesti} aria-live="polite">
     {
       passaggi.map((p, i) => (
         <article class="passaggio" data-i={i} hidden={i !== 0}>
           <p class="passaggio__contatore">
-            Passaggio {i + 1} di {n}
+            {annidato && `${titolo} · `}Passaggio {i + 1} di {n}
             {p.fase && <span> · fase {p.fase}</span>}
           </p>
           <h2 class="passaggio__titolo">{p.titolo}</h2>
           <p class="passaggio__breve">{p.breve}</p>
+          {p.deviazioni && p.deviazioni.length > 0 && (
+            <div class="deviazioni">
+              <p class="deviazioni__domanda">E se qualcosa va storto?</p>
+              <div class="deviazioni__pulsanti">
+                {p.deviazioni.map((d) => (
+                  <button type="button" class="tasto deviazioni__tasto" data-box={d} aria-haspopup="dialog">
+                    <span>{pulsanti[d] ?? d}</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M5 5h14v14H5zM9 15l6-6M10 9h5v5" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <p class="passaggio__spiegazione" set:html={testoInline(p.spiegazione)} />
         </article>
       ))
     }
-    <button type="button" class="espandi" data-azione="espandi" aria-expanded="false" aria-controls="lettore-testi">
+    <button type="button" class="espandi" data-azione="espandi" aria-expanded="false" aria-controls={idTesti}>
       <span class="espandi__apri">Leggi la spiegazione</span>
       <span class="espandi__chiudi">Riduci</span>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
     </button>
   </div>
 
-  <div class="lettore__fine" data-fine hidden tabindex="-1" aria-labelledby="lettore-fine-titolo">
-    <h2 id="lettore-fine-titolo">Hai visto tutti i {n} passaggi</h2>
-    <div class="fine__azioni">
-      <button type="button" class="tasto" data-azione="rivedi">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v5h5"></path></svg>
-        <span>Rivedi dall'inizio</span>
-      </button>
-      <button type="button" class="tasto" data-azione="condividi">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5"></path><path d="M5 13v6h14v-6"></path></svg>
-        <span>Condividi</span>
-      </button>
-    </div>
-    <p class="fine__esito" data-esito aria-live="polite"></p>
-    {
-      prossimo ? (
-        <a class="prossimo" href={prossimo.href}>
-          <span class="prossimo__etichetta">Prossimo argomento</span>
-          <span class="prossimo__titolo">{prossimo.titolo}</span>
-        </a>
-      ) : (
-        <a class="prossimo" href={materia.href}>
-          <span class="prossimo__etichetta">Continua a esplorare</span>
-          <span class="prossimo__titolo">Altri argomenti di {materia.titolo}</span>
-        </a>
-      )
-    }
-    <h3 class="fine__sottotitolo">Ripassa i passaggi</h3>
-    <ol class="riepilogo">
-      {
-        passaggi.map((p, i) => (
-          <li>
-            <button type="button" class="riepilogo__voce" data-vai={i}>
-              <span class="riepilogo__numero" aria-hidden="true">{i + 1}</span>
-              <span class="riepilogo__testo">
-                <strong>{p.titolo}</strong>
-                <span>{p.breve}</span>
-              </span>
-            </button>
-          </li>
-        ))
-      }
-    </ol>
-  </div>
+  {
+    !annidato && (
+      <div class="lettore__fine" data-fine hidden tabindex="-1" aria-labelledby="lettore-fine-titolo">
+        <h2 id="lettore-fine-titolo">Hai visto tutti i {n} passaggi</h2>
+        <div class="fine__azioni">
+          <button type="button" class="tasto" data-azione="rivedi">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v5h5"></path></svg>
+            <span>Rivedi dall'inizio</span>
+          </button>
+          <button type="button" class="tasto" data-azione="condividi">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5"></path><path d="M5 13v6h14v-6"></path></svg>
+            <span>Condividi</span>
+          </button>
+        </div>
+        <p class="fine__esito" data-esito aria-live="polite"></p>
+        {
+          prossimo ? (
+            <a class="prossimo" href={prossimo.href}>
+              <span class="prossimo__etichetta">Prossimo argomento</span>
+              <span class="prossimo__titolo">{prossimo.titolo}</span>
+            </a>
+          ) : (
+            <a class="prossimo" href={materia.href}>
+              <span class="prossimo__etichetta">Continua a esplorare</span>
+              <span class="prossimo__titolo">Altri argomenti di {materia.titolo}</span>
+            </a>
+          )
+        }
+        <h3 class="fine__sottotitolo">Ripassa i passaggi</h3>
+        <ol class="riepilogo">
+          {
+            passaggi.map((p, i) => (
+              <li>
+                <button type="button" class="riepilogo__voce" data-vai={i}>
+                  <span class="riepilogo__numero" aria-hidden="true">{i + 1}</span>
+                  <span class="riepilogo__testo">
+                    <strong>{p.titolo}</strong>
+                    <span>{p.breve}</span>
+                  </span>
+                </button>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    )
+  }
 
   <nav class="lettore__comandi" aria-label="Comandi dell'animazione">
     <button type="button" class="tasto" data-azione="indietro" title="Indietro (←)">
@@ -143,7 +182,8 @@ const tocchi = modello === 'passaggi';
     </button>
 
     <button type="button" class="tasto tasto--primario tasto--avanti" data-azione="avanti" title="Avanti (→ o spazio)">
-      <span>Avanti</span>
+      <span class="tasto__avanti">Avanti</span>
+      {annidato && <span class="tasto__torna">{ritorno}</span>}
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
     </button>
 
@@ -191,8 +231,11 @@ const tocchi = modello === 'passaggi';
     const palco = radice.querySelector<HTMLElement>('[data-palco]')!;
     const articoli = [...radice.querySelectorAll<HTMLElement>('.passaggio')];
     const barre = [...radice.querySelectorAll<HTMLButtonElement>('.barra')];
-    const fineEl = radice.querySelector<HTMLElement>('[data-fine]')!;
-    const esitoEl = radice.querySelector<HTMLElement>('[data-esito]')!;
+    // Nel box di una deviazione non ci sono schermata finale né esito della condivisione.
+    const fineEl = radice.querySelector<HTMLElement>('[data-fine]');
+    const esitoEl = radice.querySelector<HTMLElement>('[data-esito]');
+    const annidato = radice.hasAttribute('data-annidato');
+    const box = radice.closest('dialog');
     const elencoId = JSON.parse(radice.dataset.ids ?? '[]') as string[];
     const n = articoli.length;
     const tocchi = radice.dataset.modello === 'passaggi';
@@ -210,7 +253,7 @@ const tocchi = modello === 'passaggi';
 
     // Progressi solo nel browser (guida di stile, §9): servono a "Continua" e alla spunta "Visto".
     function ricorda() {
-      if (!pronto) return;
+      if (!pronto || annidato) return;
       const id = radice.dataset.argomento!;
       const ultimo = { id, titolo: radice.dataset.titolo, href: location.pathname, passo: indice + 1, n, fine };
       scrivi(CHIAVE_ULTIMO, JSON.stringify(ultimo));
@@ -225,6 +268,7 @@ const tocchi = modello === 'passaggi';
     }
 
     function aggiornaIndirizzo() {
+      if (annidato) return;
       // Conserva lo stato della cronologia: serve a chiudere il lettore col tasto "indietro".
       history.replaceState(history.state, '', fine ? '#fine' : `#p${indice + 1}`);
     }
@@ -237,7 +281,9 @@ const tocchi = modello === 'passaggi';
         b.classList.toggle('fatto', fine || k < indice);
       });
       radice.classList.toggle('lettore--fine', fine);
-      fineEl.hidden = !fine;
+      // All'ultimo passaggio di un box, Avanti diventa "Torna a …" e lo chiude.
+      radice.classList.toggle('lettore--ultimo', annidato && indice === n - 1);
+      if (fineEl) fineEl.hidden = !fine;
       btnIndietro.disabled = !fine && indice === 0;
       btnAvanti.disabled = fine;
       btnRipeti.disabled = fine;
@@ -264,15 +310,18 @@ const tocchi = modello === 'passaggi';
     function mostraFine() {
       indice = n - 1;
       fine = true;
-      esitoEl.textContent = '';
+      if (esitoEl) esitoEl.textContent = '';
       aggiornaComandi();
-      fineEl.scrollTop = 0;
-      fineEl.focus({ preventScroll: true });
+      if (fineEl) {
+        fineEl.scrollTop = 0;
+        fineEl.focus({ preventScroll: true });
+      }
     }
 
     const avanti = () => {
       if (fine) return;
-      if (indice === n - 1) mostraFine();
+      if (indice === n - 1 && annidato) box?.close();
+      else if (indice === n - 1) mostraFine();
       else imposta(indice + 1);
     };
     const indietro = () => imposta(fine ? n - 1 : indice - 1);
@@ -322,20 +371,21 @@ const tocchi = modello === 'passaggi';
       }
       try {
         await navigator.clipboard.writeText(indirizzo);
-        esitoEl.textContent = 'Link copiato: ora puoi incollarlo dove vuoi.';
+        if (esitoEl) esitoEl.textContent = 'Link copiato: ora puoi incollarlo dove vuoi.';
       } catch {
-        esitoEl.textContent = `Copia questo link: ${indirizzo}`;
+        if (esitoEl) esitoEl.textContent = `Copia questo link: ${indirizzo}`;
       }
     }
 
     // --- Lettore a tutto schermo sul telefono ---
 
     // Rende inerte tutto il resto della pagina, così il focus resta nel lettore.
+    // I box delle deviazioni restano attivi: si aprono sopra il lettore.
     function inerteAttorno(attivo: boolean) {
       let el: HTMLElement = radice;
       while (el.parentElement && el !== document.body) {
         for (const fratello of el.parentElement.children) {
-          if (fratello !== el && fratello instanceof HTMLElement) fratello.inert = attivo;
+          if (fratello !== el && fratello instanceof HTMLElement && !fratello.matches('[data-box]')) fratello.inert = attivo;
         }
         el = el.parentElement;
       }
@@ -361,7 +411,36 @@ const tocchi = modello === 'passaggi';
       radice.scrollIntoView({ block: 'nearest' });
     }
 
-    const chiudi = () => (history.state?.lettore ? history.back() : esci());
+    const chiudi = () => {
+      if (annidato) box?.close();
+      else if (history.state?.lettore) history.back();
+      else esci();
+    };
+
+    // --- Deviazioni: il box si apre sopra la pagina e riparte dal primo passaggio ---
+
+    function apriBox(slug: string, pulsante: HTMLElement) {
+      const deviazione = document.getElementById(`box-${slug}`);
+      if (!(deviazione instanceof HTMLDialogElement)) return;
+      deviazione.showModal();
+      deviazione.dispatchEvent(new Event('apri'));
+      deviazione.addEventListener(
+        'close',
+        () => {
+          impostaTesto(leggi(CHIAVE_TESTO) !== 'no'); // il testo sì/no si può cambiare anche nel box
+          pulsante.focus({ preventScroll: true });
+        },
+        { once: true },
+      );
+    }
+
+    box?.addEventListener('apri', () => {
+      impostaTesto(leggi(CHIAVE_TESTO) !== 'no');
+      espandi(false);
+      indice = 0;
+      ripeti(); // dallo stato "prima del passaggio 1", così la prima animazione si vede
+      btnAvanti.focus({ preventScroll: true });
+    });
 
     window.addEventListener('popstate', () => {
       if (!history.state?.lettore) esci();
@@ -401,6 +480,7 @@ const tocchi = modello === 'passaggi';
       const t = bersaglio.closest<HTMLButtonElement>('button');
       if (!t) return;
       if (t.dataset.vai) return imposta(Number(t.dataset.vai));
+      if (t.dataset.box) return apriBox(t.dataset.box, t);
       switch (t.dataset.azione) {
         case 'indietro':
           return indietro();
@@ -426,6 +506,8 @@ const tocchi = modello === 'passaggi';
     // Tastiera e telecomandi da presentazione (che inviano PagGiù/PagSu).
     document.addEventListener('keydown', (e) => {
       if (e.altKey || e.ctrlKey || e.metaKey) return;
+      // Con un box aperto comanda solo il suo lettore.
+      if (annidato ? !box?.open : document.querySelector('dialog[open]')) return;
       const bersaglio = e.target as HTMLElement;
       if (bersaglio.closest('input, textarea, select, [contenteditable]')) return;
       const tasto = e.key.toLowerCase();
@@ -437,8 +519,8 @@ const tocchi = modello === 'passaggi';
         pageup: indietro,
         r: ripeti,
         t: () => impostaTesto(radice.classList.contains('lettore--lezione')),
-        f: schermoIntero,
-        escape: () => radice.classList.contains('lettore--immersivo') && chiudi(),
+        ...(annidato ? {} : { f: schermoIntero }),
+        escape: () => (annidato || radice.classList.contains('lettore--immersivo')) && chiudi(),
       };
       if (tasto === ' ' && bersaglio.closest('button, a')) return; // lo spazio su un pulsante lo attiva già
       const azione = mappa[tasto];
@@ -448,7 +530,7 @@ const tocchi = modello === 'passaggi';
       }
     });
 
-    if (document.fullscreenEnabled) btnSchermo.hidden = false;
+    if (document.fullscreenEnabled && !annidato) btnSchermo.hidden = false;
     document.addEventListener('fullscreenchange', () => {
       radice.classList.toggle('lettore--schermo', document.fullscreenElement === radice);
     });
@@ -466,8 +548,11 @@ const tocchi = modello === 'passaggi';
       } else imposta(numero > 0 ? numero - 1 : 0);
       return hash === '#fine' || numero > 0;
     }
-    window.addEventListener('hashchange', daIndirizzo);
-    if (daIndirizzo() && stretto.matches) apri();
+    if (annidato) imposta(0);
+    else {
+      window.addEventListener('hashchange', daIndirizzo);
+      if (daIndirizzo() && stretto.matches) apri();
+    }
     pronto = true;
   }
 
@@ -548,8 +633,11 @@ const tocchi = modello === 'passaggi';
     height: 14px;
     background: var(--accento);
   }
-  .lettore:not(.lettore--immersivo) .lettore__chiudi {
+  .lettore:not(.lettore--immersivo, .lettore--annidato) .lettore__chiudi {
     display: none;
+  }
+  .lettore--annidato .lettore__chiudi {
+    border-color: transparent;
   }
 
   /* --- Palco --- */
@@ -620,6 +708,52 @@ const tocchi = modello === 'passaggi';
   }
   .lettore--lezione .passaggio__spiegazione {
     display: none;
+  }
+
+  /* --- Pulsanti delle deviazioni: restano visibili anche con il testo nascosto --- */
+
+  .deviazioni {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 14px 16px 16px;
+    border: 2px dashed var(--accento);
+    border-radius: var(--raggio-piccolo);
+    /* compaiono quando l'animazione del passaggio è finita */
+    animation: lettore-compari 0.4s ease-in-out 1.6s backwards;
+  }
+  @keyframes lettore-compari {
+    from {
+      opacity: 0;
+    }
+  }
+  .deviazioni__domanda {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .deviazioni__pulsanti {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .deviazioni__tasto {
+    color: var(--accento);
+    border-color: var(--accento);
+  }
+  .deviazioni__tasto svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* --- Avanti all'ultimo passaggio di un box: "Torna a …" --- */
+
+  .tasto__torna,
+  .lettore--ultimo .tasto__avanti {
+    display: none;
+  }
+  .lettore--ultimo .tasto__torna {
+    display: inline;
   }
 
   .espandi {
@@ -814,6 +948,9 @@ const tocchi = modello === 'passaggi';
     cursor: pointer;
     touch-action: manipulation;
   }
+  .tasto[hidden] {
+    display: none;
+  }
   .tasto:hover:not(:disabled) {
     border-color: var(--accento);
   }
@@ -916,8 +1053,26 @@ const tocchi = modello === 'passaggi';
     .lettore--attivo:not(.lettore--immersivo, .lettore--schermo) .lettore__inizia {
       display: grid;
     }
-    .lettore--attivo:not(.lettore--immersivo, .lettore--schermo) :is(.lettore__barra, .lettore__testi, .lettore__comandi, .lettore__fine) {
+    .lettore--attivo:not(.lettore--immersivo, .lettore--schermo, .lettore--annidato) :is(.lettore__barra, .lettore__testi, .lettore__comandi, .lettore__fine) {
       display: none;
+    }
+
+    /* Il box di una deviazione occupa tutto lo schermo, come il lettore del telefono. */
+    .lettore--annidato {
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
+      box-shadow: none;
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+    }
+    .lettore--annidato .lettore__palco {
+      aspect-ratio: auto;
+    }
+    .lettore--annidato .lettore__testi {
+      max-height: 55vh;
+      max-height: 55dvh;
+      overflow-y: auto;
+      border-top: 2px solid var(--bordo);
     }
   }
 

@@ -117,10 +117,18 @@ Ogni pagina argomento ha gli **stessi controlli nella stessa posizione**:
 - **Condividi**: usa la condivisione del telefono o, se non c'è, copia il link;
 - il **prossimo argomento** da vedere, oppure il ritorno alla materia. Non si apre mai da solo.
 
+**Deviazioni.** A volte un processo può prendere un'altra strada: il cibo va di traverso, un boccone è troppo grande. Queste alternative non sono passaggi della sequenza, perché non vengono "dopo": sono **deviazioni** che partono da un passaggio preciso.
+
+- Nel passaggio da cui partono, sotto la frase `breve`, compare un riquadro tratteggiato "E se qualcosa va storto?" con un pulsante per ogni deviazione. Resta visibile anche con il testo nascosto.
+- Il pulsante scurisce la pagina e apre sopra un **box** con un lettore ridotto: barre, **◀ Indietro** · **▶ Avanti** · **↺ Ripeti** · **Testo sì/no** e **✕ Chiudi**. Niente schermata finale e niente schermo intero (il box si apre anche sopra lo schermo intero). Sul telefono il box occupa tutto lo schermo.
+- Il box riparte sempre dal primo passaggio. All'ultimo, **Avanti** diventa "Torna a …" (es. "Torna alla deglutizione") e chiude il box. Si chiude anche con ✕ o `Esc`. Come il resto, non si apre né si chiude da solo.
+- Chiuso il box, si è di nuovo nel passaggio da cui si era partiti.
+- Al massimo **3 deviazioni** per passaggio e **6 passaggi** per deviazione: è una parentesi, non un secondo argomento.
+
 Regole:
 
 - Area toccabile minima **56 × 56 px** (le LIM sono poco precise) per tutti i comandi. Unica eccezione ammessa: le barre di avanzamento, che sono una scorciatoia. Sono alte 56 px e si dividono la larghezza. Per questo un argomento non supera **12 passaggi**.
-- Tastiera: `→` / `Spazio` avanti, `←` indietro, `R` ripeti, `T` testo, `F` schermo intero, `Esc` chiude il lettore a tutto schermo del telefono. Così funziona anche con il telecomando da presentazione.
+- Tastiera: `→` / `Spazio` avanti, `←` indietro, `R` ripeti, `T` testo, `F` schermo intero, `Esc` chiude il lettore a tutto schermo del telefono o il box di una deviazione. Così funziona anche con il telecomando da presentazione.
 - Funziona da **telefono in verticale** (studenti a casa) fino alla **LIM 16:9** (classe).
 - Cosa **non** si prende dai social: avanzamento o riproduzione automatica, scorrimento infinito, like e contatori, notifiche, serie di giorni consecutivi. Creano dipendenza e richiederebbero di raccogliere dati.
 

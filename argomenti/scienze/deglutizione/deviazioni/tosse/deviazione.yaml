@@ -1,0 +1,38 @@
+pulsante: Tosse
+titolo: La tosse
+passaggi:
+  - id: di-traverso
+    titolo: Il cibo va di traverso
+    breve: Se parli mentre deglutisci, un pezzetto di cibo entra nella laringe.
+    spiegazione: >
+      Per deglutire bisogna smettere di respirare per un istante.
+      Se parliamo o ridiamo con il cibo in bocca, l'epiglottide non chiude in tempo la **laringe**.
+      Un pezzetto di cibo può scivolarci dentro e scendere nella **trachea**.
+      Si dice che il cibo è andato **di traverso**.
+
+  - id: respiro-profondo
+    titolo: Un respiro profondo
+    breve: Il cibo fa scattare un riflesso, che comincia con un respiro profondo.
+    spiegazione: >
+      Le pareti della laringe e della trachea sono molto sensibili.
+      Il cibo le tocca e fa scattare la **tosse**, un riflesso: avviene da sola, senza che lo decidiamo.
+      Prima si prende un respiro profondo.
+      Il **diaframma**, il muscolo sotto i polmoni, si abbassa e i polmoni si riempiono d'aria.
+
+  - id: compressione
+    titolo: L'aria viene compressa
+    breve: Le corde vocali si chiudono e i muscoli comprimono l'aria.
+    spiegazione: >
+      Le **corde vocali**, due pieghe dentro la laringe, si chiudono.
+      Lo spazio tra loro si chiama **glottide**.
+      I muscoli della pancia spingono il diaframma verso l'alto e schiacciano i polmoni.
+      L'aria non può uscire e viene compressa.
+
+  - id: colpo-di-tosse
+    titolo: Il colpo di tosse
+    breve: Le corde vocali si aprono e l'aria spara fuori il cibo.
+    spiegazione: >
+      All'improvviso le corde vocali si aprono.
+      L'aria compressa esce velocissima e trascina via il pezzetto di cibo.
+      Il cibo torna in bocca e si può sputare o deglutire di nuovo.
+      A volte servono più colpi di tosse.

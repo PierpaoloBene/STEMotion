@@ -10,7 +10,11 @@ argomenti/
         ├── passaggi.yaml       # la spiegazione, passo per passo
         ├── insegnante.md       # note didattiche per l'insegnante
         ├── copertina.svg       # la copertina "ai raggi X" per le card
-        └── Animazione.astro    # l'animazione interattiva
+        ├── Animazione.astro    # l'animazione interattiva
+        └── deviazioni/         # facoltativa: processi alternativi aperti in un box
+            └── tosse/
+                ├── deviazione.yaml
+                └── Animazione.astro
 ```
 
 ---
@@ -110,6 +114,38 @@ passaggi:
 
 Per ogni passaggio l'animazione deve mostrare **esattamente** ciò che dice il testo, niente di più.
 
+Un passaggio può aprire delle **deviazioni** (guida di stile, §5) elencandone gli slug, cioè i nomi delle cartelle in `deviazioni/`:
+
+```yaml
+  - id: chiusura-vie-aeree
+    # … titolo, breve, spiegazione …
+    deviazioni: [tosse, riflesso-faringeo]
+```
+
+---
+
+## 2b. `deviazioni/<slug>/` — le deviazioni (facoltative)
+
+Ogni deviazione è una cartella con due file.
+
+`deviazione.yaml`: il testo del pulsante, il titolo del box e i passaggi, nello stesso formato di `passaggi.yaml` (massimo 6).
+
+```yaml
+pulsante: Tosse
+titolo: La tosse
+passaggi:
+  - id: di-traverso
+    titolo: Il cibo va di traverso
+    breve: Se parli mentre deglutisci, un pezzetto di cibo entra nella laringe.
+    spiegazione: >
+      …
+```
+
+`Animazione.astro`: funziona come quella dell'argomento (§4), con gli stessi attributi `data-passaggio` e `data-indice` sul suo palco. Gli `id` dei passaggi devono essere diversi da quelli dell'argomento, e la classe principale dell'animazione diversa dalle altre della pagina: le animazioni del box e dell'argomento stanno nella stessa pagina.
+Conviene che il primo passaggio parta dallo stato del passaggio da cui si apre il box: così la deviazione sembra il seguito di quel momento. Le note per l'insegnante restano in `insegnante.md` dell'argomento.
+
+Se un passaggio cita una deviazione che non esiste, `npm run build` si ferma con un errore.
+
 ---
 
 ## 3. `insegnante.md` — note didattiche
@@ -189,7 +225,7 @@ Mostra l'oggetto da fuori e, con l'effetto raggi X, da dentro (guida di stile, �
 - [ ] `npm run build` termina senza errori (i file YAML vengono controllati automaticamente)
 - [ ] `argomento.yaml` compilato, `stato: da-revisionare`
 - [ ] Ogni passaggio ha `breve` e `spiegazione`, e l'animazione li rispecchia
-- [ ] Al massimo 12 passaggi
+- [ ] Al massimo 12 passaggi (e al massimo 6 per ogni deviazione)
 - [ ] `copertina.svg` con i gruppi `fuori` e `dentro`
 - [ ] Con il testo nascosto l'animazione si capisce ancora
 - [ ] Avanti/indietro/salto a un passaggio danno sempre lo stesso risultato

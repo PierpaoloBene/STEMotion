@@ -1,0 +1,202 @@
+---
+/**
+ * Deviazione della deglutizione: il riflesso faringeo respinge un boccone troppo grande.
+ *
+ * Stessa scena e stessa inquadratura "vicina" della deglutizione (componenti condivisi).
+ * Ogni stato è disegnato solo con CSS a partire da [data-passaggio] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4).
+ */
+import Corpo from '../../../../../src/components/anatomia/Corpo.astro';
+import BoccaFaringe from '../../../../../src/components/anatomia/BoccaFaringe.astro';
+import Esofago from '../../../../../src/components/anatomia/Esofago.astro';
+import Laringe from '../../../../../src/components/anatomia/Laringe.astro';
+
+interface Etichetta {
+  testo: string;
+  /** Posizione del testo (inizio della riga di base). */
+  x: number;
+  y: number;
+  /** Linea dal testo all'organo: [x1, y1, x2, y2]; il pallino va sull'organo. */
+  linea: [number, number, number, number];
+  passaggio: string;
+}
+
+const etichette: Etichetta[] = [
+  { testo: 'Palato molle', x: 110, y: 400, linea: [268, 393, 404, 296], passaggio: 'boccone-grande' },
+  { testo: 'Boccone', x: 110, y: 470, linea: [222, 463, 412, 332], passaggio: 'boccone-grande' },
+  { testo: 'Faringe', x: 110, y: 505, linea: [204, 498, 384, 385], passaggio: 'riflesso-faringeo' },
+  { testo: 'Lingua', x: 656, y: 382, linea: [650, 375, 540, 340], passaggio: 'riflesso-faringeo' },
+];
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni: Record<string, string> = {
+  'boccone-grande': 'Testa vista in sezione, di profilo. Un boccone grosso è finito in fondo alla bocca e tocca la lingua e il palato molle.',
+  'riflesso-faringeo': 'I muscoli della faringe si stringono e la lingua si sposta in avanti: il boccone torna verso la parte davanti della bocca.',
+};
+
+// Muscoli della faringe che si stringono, con le frecce della spinta.
+const muscolo = (y: number) => `M372 ${y - 22}C372 ${y - 10} 388 ${y - 8} 388 ${y}C388 ${y + 8} 372 ${y + 10} 372 ${y + 22}Z`;
+const spinta = (y: number) => `M340 ${y}H364M357 ${y - 7}L364 ${y}L357 ${y + 7}`;
+---
+
+<div class="riflesso-faringeo">
+  <svg viewBox="0 0 800 640" aria-hidden="true" focusable="false">
+    <g class="camera">
+      <Corpo />
+      <BoccaFaringe />
+      <Esofago />
+      <Laringe />
+
+      <g class="contrazione-faringe">
+        <path class="faringe-muscolo" d={muscolo(330)}></path>
+        <path class="faringe-muscolo" d={muscolo(385)}></path>
+        <path class="freccia-muscolo" d={spinta(330) + spinta(385)}></path>
+      </g>
+
+      <g class="boccone">
+        <path d="M-24 -4C-26 -14 -14 -19 -4 -17C6 -21 20 -17 24 -7C28 3 22 14 10 16C0 20 -14 18 -20 10C-25 6 -23 1 -24 -4Z"></path>
+      </g>
+
+      {
+        etichette.map((e) => (
+          <g class="etichetta" data-per={e.passaggio}>
+            <line x1={e.linea[0]} y1={e.linea[1]} x2={e.linea[2]} y2={e.linea[3]} />
+            <circle cx={e.linea[2]} cy={e.linea[3]} r="3.5" />
+            <text x={e.x} y={e.y}>
+              {e.testo}
+            </text>
+          </g>
+        ))
+      }
+    </g>
+  </svg>
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .riflesso-faringeo {
+    position: absolute;
+    inset: 0;
+  }
+  .riflesso-faringeo svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .riflesso-faringeo svg :is(path, rect, circle, ellipse, line) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Inquadratura vicina, la stessa della deglutizione. */
+  .riflesso-faringeo .camera {
+    transform: translate(-125px, -62.5px) scale(1.25);
+  }
+
+  /* --- Il boccone: dalla bocca al fondo della gola, poi respinto in avanti --- */
+
+  .riflesso-faringeo .boccone path {
+    fill: var(--cibo);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .riflesso-faringeo .boccone {
+    /* in bocca */
+    transform: translate(535px, 284px);
+    transition: transform 1s ease-in-out 0.3s;
+  }
+  [data-passaggio='boccone-grande'] .riflesso-faringeo .boccone {
+    /* in fondo alla bocca, contro lingua e palato molle */
+    transform: translate(428px, 320px);
+    transition-duration: 1.1s;
+  }
+
+  /* --- Lingua e faringe nel riflesso --- */
+
+  .riflesso-faringeo .lingua {
+    transition: transform 0.8s ease-in-out;
+  }
+  [data-passaggio='riflesso-faringeo'] .riflesso-faringeo .lingua {
+    transform: translate(8px, 4px);
+    transition-delay: 0.3s;
+  }
+  .riflesso-faringeo .contrazione-faringe {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+  [data-passaggio='riflesso-faringeo'] .riflesso-faringeo .contrazione-faringe {
+    opacity: 1;
+    transition-duration: 0.3s;
+  }
+  .riflesso-faringeo .faringe-muscolo {
+    fill: var(--muscolo);
+    stroke: var(--contorno);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+  .riflesso-faringeo .freccia-muscolo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  [data-passaggio='boccone-grande'] .riflesso-faringeo .boccone path,
+  [data-passaggio='riflesso-faringeo'] .riflesso-faringeo .faringe-muscolo {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Etichette: compaiono quando il movimento si è fermato --- */
+
+  .riflesso-faringeo .etichetta {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+  .riflesso-faringeo .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .riflesso-faringeo .etichetta circle {
+    fill: var(--testo-2);
+  }
+  .riflesso-faringeo .etichetta text {
+    fill: var(--testo);
+    font-size: 21px;
+    font-weight: 700;
+    stroke: var(--sfondo);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  [data-passaggio='boccone-grande'] .riflesso-faringeo .etichetta[data-per='boccone-grande'],
+  [data-passaggio='riflesso-faringeo'] .riflesso-faringeo .etichetta[data-per='riflesso-faringeo'] {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out 1.4s;
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .riflesso-faringeo .descrizione {
+    display: none;
+  }
+  [data-passaggio='boccone-grande'] .riflesso-faringeo .descrizione[data-per='boccone-grande'],
+  [data-passaggio='riflesso-faringeo'] .riflesso-faringeo .descrizione[data-per='riflesso-faringeo'] {
+    display: block;
+  }
+</style>

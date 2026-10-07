@@ -1,0 +1,337 @@
+---
+/**
+ * Deviazione della deglutizione: il cibo va di traverso e la tosse lo espelle.
+ *
+ * Stessa scena della deglutizione (componenti condivisi), con polmone e diaframma.
+ * Ogni stato è disegnato solo con CSS a partire da [data-passaggio] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Il pezzetto parte da dove il bolo si trova
+ * nel passaggio della deglutizione che apre questo box.
+ *
+ * Due inquadrature: "vicina" su bocca e gola, "media" dalla bocca al diaframma.
+ */
+import Corpo from '../../../../../src/components/anatomia/Corpo.astro';
+import Polmoni from '../../../../../src/components/anatomia/Polmoni.astro';
+import Diaframma from '../../../../../src/components/anatomia/Diaframma.astro';
+import BoccaFaringe from '../../../../../src/components/anatomia/BoccaFaringe.astro';
+import Esofago from '../../../../../src/components/anatomia/Esofago.astro';
+import Laringe from '../../../../../src/components/anatomia/Laringe.astro';
+import Stomaco from '../../../../../src/components/anatomia/Stomaco.astro';
+
+interface Etichetta {
+  /** Con "\n" il testo va su due righe. */
+  testo: string;
+  /** Posizione del testo (inizio della riga di base). */
+  x: number;
+  y: number;
+  /** Linea dal testo all'organo: [x1, y1, x2, y2]; il pallino va sull'organo. */
+  linea: [number, number, number, number];
+  passaggio: string;
+  vista: 'vicina' | 'media';
+}
+
+const etichette: Etichetta[] = [
+  { testo: 'Cibo', x: 110, y: 530, linea: [170, 523, 428, 484], passaggio: 'di-traverso', vista: 'vicina' },
+  { testo: 'Epiglottide aperta', x: 505, y: 440, linea: [499, 433, 446, 376], passaggio: 'di-traverso', vista: 'vicina' },
+  { testo: 'Trachea', x: 505, y: 530, linea: [499, 523, 456, 523], passaggio: 'di-traverso', vista: 'vicina' },
+  { testo: 'Polmone', x: 640, y: 740, linea: [632, 732, 545, 732], passaggio: 'respiro-profondo', vista: 'media' },
+  { testo: 'Diaframma', x: 640, y: 970, linea: [632, 962, 572, 936], passaggio: 'respiro-profondo', vista: 'media' },
+  { testo: 'Corde vocali', x: 640, y: 452, linea: [632, 444, 458, 444], passaggio: 'compressione', vista: 'media' },
+  { testo: 'Muscoli\ndella pancia', x: 650, y: 920, linea: [644, 948, 628, 966], passaggio: 'compressione', vista: 'media' },
+  { testo: 'Cibo', x: 700, y: 380, linea: [694, 372, 540, 292], passaggio: 'colpo-di-tosse', vista: 'media' },
+  { testo: 'Aria', x: 640, y: 600, linea: [632, 592, 452, 560], passaggio: 'colpo-di-tosse', vista: 'media' },
+];
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni: Record<string, string> = {
+  'di-traverso': 'Testa vista in sezione, di profilo. L’epiglottide è alzata e la laringe aperta: un pezzetto di cibo scivola dentro e scende nella trachea.',
+  'respiro-profondo': 'La vista si allarga fino al diaframma. Il diaframma si abbassa, il polmone si gonfia e l’aria entra dal naso e scende nella trachea.',
+  compressione: 'Le corde vocali si chiudono. I muscoli della pancia spingono, il diaframma sale e il polmone si stringe: l’aria resta chiusa sotto le corde vocali.',
+  'colpo-di-tosse': 'Le corde vocali si aprono. L’aria esce di colpo dalla trachea e porta il pezzetto di cibo fino in bocca.',
+};
+
+// Freccia dell'aria, disegnata verso l'alto attorno al proprio centro.
+const frecciaAria = 'M0 -22L13 -6H6V22H-6V-6H-13Z';
+const aria = {
+  inspira: [
+    { x: 510, y: 238, r: -90 },
+    { x: 437, y: 610, r: 180 },
+    { x: 520, y: 800, r: 150 },
+  ],
+  compressa: [
+    { x: 437, y: 545, r: 0 },
+    { x: 437, y: 610, r: 0 },
+    { x: 515, y: 800, r: -35 },
+  ],
+  tosse: [
+    { x: 437, y: 560, r: 0 },
+    { x: 437, y: 630, r: 0 },
+    { x: 660, y: 292, r: 90 },
+  ],
+};
+
+// Frecce dei muscoli della pancia, che spingono da davanti.
+const freccia = (x: number, y: number, dx: number) => {
+  const punta = x + dx;
+  const base = punta - Math.sign(dx) * 7;
+  return `M${x} ${y}H${punta}M${base} ${y - 7}L${punta} ${y}L${base} ${y + 7}`;
+};
+const spintaPancia = freccia(624, 968, -32) + freccia(624, 1000, -32);
+---
+
+<div class="tosse">
+  <svg viewBox="0 0 800 640" aria-hidden="true" focusable="false">
+    <g class="camera">
+      <Corpo />
+      <Polmoni />
+      <Diaframma />
+      <BoccaFaringe />
+      <Esofago />
+      <Laringe />
+      <Stomaco />
+
+      <path class="freccia-muscolo spinta-pancia" d={spintaPancia}></path>
+      {
+        Object.entries(aria).map(([fase, frecce]) => (
+          <g class={`aria aria--${fase}`}>
+            {frecce.map((f) => (
+              <path class="freccia-aria" d={frecciaAria} transform={`translate(${f.x} ${f.y}) rotate(${f.r})`} />
+            ))}
+          </g>
+        ))
+      }
+
+      <g class="pezzetto">
+        <circle r="10"></circle>
+      </g>
+
+      {
+        etichette.map((e) => (
+          <g class:list={['etichetta', `etichetta--${e.vista}`]} data-per={e.passaggio}>
+            <line x1={e.linea[0]} y1={e.linea[1]} x2={e.linea[2]} y2={e.linea[3]} />
+            <circle cx={e.linea[2]} cy={e.linea[3]} r="3.5" />
+            <text x={e.x} y={e.y}>
+              {e.testo.split('\n').map((riga, i) => (
+                <tspan x={e.x} dy={i === 0 ? 0 : '1.15em'}>
+                  {riga}
+                </tspan>
+              ))}
+            </text>
+          </g>
+        ))
+      }
+    </g>
+  </svg>
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .tosse {
+    position: absolute;
+    inset: 0;
+  }
+  .tosse svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* Contorni sempre dello stesso spessore, anche quando l'inquadratura cambia. */
+  .tosse svg :is(path, rect, circle, ellipse, line) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Inquadratura --- */
+
+  .tosse .camera {
+    /* vicina: bocca e gola (la stessa della deglutizione) */
+    transform: translate(-125px, -62.5px) scale(1.25);
+    transition: transform 1.2s ease-in-out;
+  }
+  :is([data-passaggio='respiro-profondo'], [data-passaggio='compressione'], [data-passaggio='colpo-di-tosse']) .tosse .camera {
+    /* media: dalla bocca al diaframma */
+    transform: translate(72.4px, -167.7px) scale(0.78);
+  }
+
+  /* --- Il pezzetto che va di traverso --- */
+
+  .tosse .pezzetto circle {
+    fill: var(--cibo);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .tosse .pezzetto {
+    /* prima del passaggio 1: nella faringe, dove il bolo arriva nella deglutizione */
+    transform: translate(398px, 338px);
+  }
+  :is([data-passaggio='di-traverso'], [data-passaggio='respiro-profondo'], [data-passaggio='compressione']) .tosse .pezzetto {
+    transform: translate(437px, 482px);
+  }
+  /* Le tappe girano attorno all'epiglottide invece di attraversarla. */
+  [data-passaggio='di-traverso'] .tosse .pezzetto {
+    animation: tosse-di-traverso 1.4s ease-in-out;
+  }
+  @keyframes tosse-di-traverso {
+    0% {
+      transform: translate(398px, 338px);
+    }
+    30% {
+      transform: translate(414px, 362px);
+    }
+    55% {
+      transform: translate(434px, 400px);
+    }
+  }
+  [data-passaggio='colpo-di-tosse'] .tosse .pezzetto {
+    transform: translate(530px, 284px);
+    animation: tosse-espulsione 1s ease-in-out 0.4s backwards;
+  }
+  @keyframes tosse-espulsione {
+    0% {
+      transform: translate(437px, 482px);
+    }
+    25% {
+      transform: translate(436px, 410px);
+    }
+    45% {
+      transform: translate(420px, 352px);
+    }
+    65% {
+      transform: translate(445px, 316px);
+    }
+  }
+
+  /* --- Respiro: diaframma e polmone --- */
+
+  .tosse :is(.diaframma, .polmone) {
+    transition: transform 1s ease-in-out;
+  }
+  [data-passaggio='respiro-profondo'] .tosse .diaframma {
+    transform: translateY(10px);
+  }
+  [data-passaggio='respiro-profondo'] .tosse .polmone {
+    transform: scale(1.05);
+  }
+  :is([data-passaggio='compressione'], [data-passaggio='colpo-di-tosse']) .tosse .diaframma {
+    transform: translateY(-8px);
+  }
+  :is([data-passaggio='compressione'], [data-passaggio='colpo-di-tosse']) .tosse .polmone {
+    transform: scale(0.92);
+  }
+
+  /* --- Corde vocali: chiuse solo mentre l'aria viene compressa --- */
+
+  .tosse .corda-vocale {
+    transition: transform 0.5s ease-in-out;
+  }
+  [data-passaggio='compressione'] .tosse .corda-vocale {
+    transform: scaleX(1.46);
+    transition-duration: 0.6s;
+  }
+  [data-passaggio='colpo-di-tosse'] .tosse .corda-vocale {
+    transition-duration: 0.25s;
+  }
+
+  /* --- Frecce dell'aria e dei muscoli --- */
+
+  .tosse .freccia-aria {
+    fill: var(--aria);
+    stroke: var(--contorno);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+  .tosse .freccia-muscolo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tosse :is(.aria, .spinta-pancia) {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+  [data-passaggio='respiro-profondo'] .tosse .aria--inspira,
+  [data-passaggio='compressione'] .tosse :is(.aria--compressa, .spinta-pancia),
+  [data-passaggio='colpo-di-tosse'] .tosse .aria--tosse {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out 1s;
+  }
+  [data-passaggio='colpo-di-tosse'] .tosse .aria--tosse {
+    transition-delay: 0.4s;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  .tosse :is(.polmone__sagoma, .corda-vocale path) {
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  [data-passaggio='di-traverso'] .tosse .pezzetto circle,
+  [data-passaggio='respiro-profondo'] .tosse .polmone__sagoma,
+  [data-passaggio='compressione'] .tosse .corda-vocale path,
+  [data-passaggio='colpo-di-tosse'] .tosse .pezzetto circle {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Etichette: compaiono quando l'inquadratura si è fermata --- */
+
+  .tosse .etichetta {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+  .tosse .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .tosse .etichetta circle {
+    fill: var(--testo-2);
+  }
+  .tosse .etichetta text {
+    fill: var(--testo);
+    font-weight: 700;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  /* 21 e 33,65 unità diventano la stessa dimensione a schermo nelle due inquadrature. */
+  .tosse .etichetta--vicina text {
+    font-size: 21px;
+  }
+  .tosse .etichetta--media text {
+    font-size: 33.65px;
+  }
+  [data-passaggio='di-traverso'] .tosse .etichetta[data-per='di-traverso'],
+  [data-passaggio='respiro-profondo'] .tosse .etichetta[data-per='respiro-profondo'],
+  [data-passaggio='compressione'] .tosse .etichetta[data-per='compressione'],
+  [data-passaggio='colpo-di-tosse'] .tosse .etichetta[data-per='colpo-di-tosse'] {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out 1.4s;
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .tosse .descrizione {
+    display: none;
+  }
+  [data-passaggio='di-traverso'] .tosse .descrizione[data-per='di-traverso'],
+  [data-passaggio='respiro-profondo'] .tosse .descrizione[data-per='respiro-profondo'],
+  [data-passaggio='compressione'] .tosse .descrizione[data-per='compressione'],
+  [data-passaggio='colpo-di-tosse'] .tosse .descrizione[data-per='colpo-di-tosse'] {
+    display: block;
+  }
+</style>

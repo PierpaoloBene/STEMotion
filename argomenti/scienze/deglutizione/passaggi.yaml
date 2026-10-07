@@ -26,6 +26,7 @@ passaggi:
       Il palato molle si alza e chiude il passaggio verso il naso.
       La laringe si solleva e l'**epiglottide** si abbassa come un coperchio.
       Per un istante il respiro si ferma: il bolo non può finire nei polmoni.
+    deviazioni: [tosse, riflesso-faringeo]
 
   - id: ingresso-esofago
     fase: faringea

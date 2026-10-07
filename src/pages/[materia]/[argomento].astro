@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Lettore from '../../components/Lettore.astro';
 import Segnaposto from '../../components/Segnaposto.astro';
 import { url } from '../../lib/url';
-import { elencoClassi } from '../../lib/testo';
+import { elencoClassi, tornaA } from '../../lib/testo';
 
 export async function getStaticPaths() {
   const argomenti = await getCollection('argomenti');
@@ -35,6 +35,24 @@ const Note = note ? (await render(note)).Content : null;
 // Ogni argomento può avere il suo Animazione.astro nella propria cartella.
 const moduli = import.meta.glob<{ default: any }>('/argomenti/*/*/Animazione.astro', { eager: true });
 const Animazione = moduli[`/argomenti/${argomento.id}/Animazione.astro`]?.default;
+
+// Deviazioni: processi alternativi che si aprono in un box da un passaggio (guida di stile, §5).
+const moduliDeviazioni = import.meta.glob<{ default: any }>('/argomenti/*/*/deviazioni/*/Animazione.astro', { eager: true });
+const deviazioni = (await getCollection('deviazioni'))
+  .filter((d) => d.id.startsWith(`${argomento.id}/deviazioni/`))
+  .map((d) => ({
+    slug: d.id.split('/').pop()!,
+    ...d.data,
+    Animazione: moduliDeviazioni[`/argomenti/${d.id}/Animazione.astro`]?.default,
+  }));
+for (const p of passaggi.data.passaggi) {
+  for (const slug of p.deviazioni) {
+    if (!deviazioni.some((d) => d.slug === slug)) {
+      throw new Error(`argomenti/${argomento.id}: il passaggio "${p.id}" apre la deviazione "${slug}", ma manca deviazioni/${slug}/deviazione.yaml`);
+    }
+  }
+}
+const pulsanti = Object.fromEntries(deviazioni.map((d) => [d.slug, d.pulsante]));
 
 // Prossimo argomento per la schermata finale: prima uno che ha questo tra i prerequisiti,
 // altrimenti il successivo in ordine alfabetico nella stessa materia.
@@ -74,9 +92,28 @@ const prossimo = dopo ? { titolo: dopo.data.titolo, href: url(`${materia.id}/${s
       modello={data.modello}
       prossimo={prossimo}
       materia={{ titolo: materia.data.nome, href: url(`${materia.id}/`) }}
+      pulsanti={pulsanti}
     >
       {Animazione ? <Animazione /> : <Segnaposto passaggi={passaggi.data.passaggi} />}
     </Lettore>
+
+    {
+      deviazioni.map(({ slug, titolo, passaggi: passi, Animazione: AnimazioneDeviazione }) => (
+        <dialog class="box" id={`box-${slug}`} data-box aria-label={titolo}>
+          <Lettore
+            id={`${argomento.id}/${slug}`}
+            passaggi={passi}
+            titolo={titolo}
+            modello="passaggi"
+            materia={{ titolo: materia.data.nome, href: url(`${materia.id}/`) }}
+            annidato
+            ritorno={tornaA(data.titolo)}
+          >
+            {AnimazioneDeviazione ? <AnimazioneDeviazione /> : <Segnaposto passaggi={passi} />}
+          </Lettore>
+        </dialog>
+      ))
+    }
 
     <p class="aiuto">Tastiera: <kbd>→</kbd> o <kbd>spazio</kbd> avanti · <kbd>←</kbd> indietro · <kbd>R</kbd> ripeti · <kbd>T</kbd> spiegazione · <kbd>F</kbd> schermo intero</p>
 
@@ -177,6 +214,44 @@ const prossimo = dopo ? { titolo: dopo.data.titolo, href: url(`${materia.id}/${s
   /* Il lettore sale sopra la fascia colorata. */
   .corpo {
     margin-top: -48px;
+  }
+
+  /* --- Box delle deviazioni: la pagina si scurisce e il box si apre sopra --- */
+
+  .box {
+    width: min(1100px, calc(100% - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: var(--raggio);
+    background: none;
+    overflow-y: auto;
+  }
+  .box[open] {
+    animation: box-apri 0.25s ease-in-out;
+  }
+  @keyframes box-apri {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+  .box::backdrop {
+    background: rgb(90 90 99 / 0.6);
+    backdrop-filter: grayscale(1);
+  }
+  :global(html:has(dialog[open])) {
+    overflow: hidden;
+  }
+  @media (max-width: 899px) {
+    .box {
+      width: 100%;
+      height: 100dvh;
+      max-height: none;
+      margin: 0;
+      border-radius: 0;
+    }
   }
 
   .aiuto {

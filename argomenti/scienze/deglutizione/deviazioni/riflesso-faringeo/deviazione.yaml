@@ -1,0 +1,19 @@
+pulsante: Riflesso faringeo
+titolo: Il riflesso faringeo
+passaggi:
+  - id: boccone-grande
+    titolo: Un boccone troppo grande
+    breve: Un boccone troppo grande tocca il fondo della gola.
+    spiegazione: >
+      Un boccone troppo grande o masticato poco tocca il fondo della lingua e il palato molle.
+      Queste parti sono molto sensibili al tatto.
+      Un pezzo così grosso potrebbe bloccare la gola.
+
+  - id: riflesso-faringeo
+    titolo: La gola lo respinge
+    breve: La gola si stringe e la lingua spinge il boccone in avanti.
+    spiegazione: >
+      Scatta il **riflesso faringeo**, chiamato anche riflesso del vomito.
+      La gola si contrae e la lingua spinge il boccone verso la bocca.
+      Succede anche quando lo spazzolino tocca il fondo della gola.
+      Serve a non inghiottire pezzi che potrebbero bloccare il respiro.
