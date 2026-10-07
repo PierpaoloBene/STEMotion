@@ -1,0 +1,29 @@
+---
+// Polmone di profilo, davanti alla colonna e dietro trachea ed esofago, con i bronchi.
+// Il fondo finisce sotto il diaframma, così non si apre un vuoto quando il diaframma si muove.
+// Sistema di riferimento condiviso: vedi README.md in questa cartella.
+---
+
+<g class="polmoni">
+  <g transform="translate(437 790)">
+    <g class="polmone">
+      <path class="polmone__sagoma" d="M-75 110C-81 10 -67 -110 -17 -165C8 -190 38 -185 68 -150C118 -90 145 10 147 150C103 112 23 113 -47 110Z"></path>
+      <path class="polmone__bronchi" d="M-14 0C-22 22 -36 40 -50 58M-30 30L-28 62M14 0C28 20 48 30 70 34M44 26C56 8 70 -8 82 -14M54 30C66 50 78 66 92 76"></path>
+    </g>
+  </g>
+</g>
+
+<style>
+  .polmone__sagoma {
+    fill: var(--tessuto-chiaro);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .polmone__bronchi {
+    fill: none;
+    stroke: var(--aria);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+</style>

@@ -13,4 +13,5 @@
 
 ## Collegamenti
 - Prima: apparato digerente (panoramica)
+- Dopo: tosse, conato e vomito (cosa succede quando il cibo va di traverso)
 - Dopo: la digestione nello stomaco

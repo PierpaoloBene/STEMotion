@@ -10,6 +10,13 @@ const anelli = Array.from({ length: 10 }, (_, i) => 486 + i * 24);
   <path class="laringe__parete" d="M418 398V735L414 790M432 790L437 760L442 790M460 790L456 735V398"></path>
   <!-- cartilagine tiroide, il "pomo d'Adamo" -->
   <path class="laringe__tiroide" d="M456 404C478 414 480 452 456 472Z"></path>
+  <!-- corde vocali, aperte: si chiudono allargandosi verso il centro (scaleX) -->
+  <g transform="translate(418 444)">
+    <g class="corda-vocale corda-vocale--dietro"><path d="M0 -10L13 -1V1L0 10Z"></path></g>
+  </g>
+  <g transform="translate(456 444)">
+    <g class="corda-vocale corda-vocale--davanti"><path d="M0 -10L-13 -1V1L0 10Z"></path></g>
+  </g>
   <g transform="translate(452 398)">
     <g class="epiglottide">
       <path d="M0 2C6 -18 -4 -40 -22 -54C-27 -48 -16 -28 -8 2Z"></path>
@@ -36,6 +43,12 @@ const anelli = Array.from({ length: 10 }, (_, i) => 486 + i * 24);
     fill: var(--osso);
     stroke: var(--contorno);
     stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+  .corda-vocale path {
+    fill: var(--tessuto);
+    stroke: var(--contorno);
+    stroke-width: 2;
     stroke-linejoin: round;
   }
   .epiglottide path {

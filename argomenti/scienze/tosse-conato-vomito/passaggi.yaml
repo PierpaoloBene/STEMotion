@@ -1,0 +1,98 @@
+passaggi:
+  - id: di-traverso
+    fase: tosse
+    titolo: Il cibo va di traverso
+    breve: Se parli mentre deglutisci, un pezzetto di cibo entra nella laringe.
+    spiegazione: >
+      Per deglutire bisogna smettere di respirare per un istante.
+      Se parliamo o ridiamo con il cibo in bocca, la **laringe**, l'ingresso delle vie dell'aria, resta aperta.
+      Un pezzetto di cibo può scivolarci dentro e scendere nella **trachea**.
+      Si dice che il cibo è andato **di traverso**.
+
+  - id: respiro-profondo
+    fase: tosse
+    titolo: Un respiro profondo
+    breve: Il cibo fa scattare un riflesso, che comincia con un respiro profondo.
+    spiegazione: >
+      Le pareti della laringe e della trachea sono molto sensibili.
+      Il cibo le tocca e fa scattare la **tosse**, un **riflesso**: avviene da sola, senza che lo decidiamo.
+      Prima si prende un respiro profondo.
+      Il **diaframma**, il muscolo sotto i polmoni, si abbassa e i polmoni si riempiono d'aria.
+
+  - id: compressione
+    fase: tosse
+    titolo: L'aria viene compressa
+    breve: Le corde vocali si chiudono e i muscoli comprimono l'aria.
+    spiegazione: >
+      Le **corde vocali**, due pieghe dentro la laringe, si chiudono.
+      Lo spazio tra loro si chiama **glottide**.
+      I muscoli della pancia spingono il diaframma verso l'alto e schiacciano i polmoni.
+      L'aria non può uscire e viene compressa.
+
+  - id: colpo-di-tosse
+    fase: tosse
+    titolo: Il colpo di tosse
+    breve: Le corde vocali si aprono e l'aria spara fuori il cibo.
+    spiegazione: >
+      All'improvviso le corde vocali si aprono.
+      L'aria compressa esce velocissima e trascina via il pezzetto di cibo.
+      Il cibo torna in bocca e si può sputare o deglutire di nuovo.
+      A volte servono più colpi di tosse.
+
+  - id: boccone-grande
+    fase: riflesso faringeo
+    titolo: Un boccone troppo grande
+    breve: Un boccone troppo grande tocca il fondo della gola.
+    spiegazione: >
+      Un boccone troppo grande o masticato poco tocca il fondo della lingua e il palato molle.
+      Queste parti sono molto sensibili al tatto.
+      Un pezzo così grosso potrebbe bloccare la gola.
+
+  - id: riflesso-faringeo
+    fase: riflesso faringeo
+    titolo: Il riflesso faringeo
+    breve: La gola si stringe e la lingua spinge il boccone in avanti.
+    spiegazione: >
+      Scatta il **riflesso faringeo**, chiamato anche riflesso del vomito.
+      La gola si contrae e la lingua spinge il boccone verso la bocca.
+      Succede anche quando lo spazzolino tocca il fondo della gola.
+      Serve a non inghiottire pezzi che potrebbero bloccare il respiro.
+
+  - id: conato
+    fase: vomito
+    titolo: Il conato
+    breve: Diaframma e muscoli della pancia schiacciano lo stomaco.
+    spiegazione: >
+      Con il cibo avariato o il mal d'auto, per esempio, il cervello ordina di vomitare.
+      Il diaframma si abbassa e i muscoli della pancia si contraggono: lo stomaco resta schiacciato in mezzo.
+      Questi sforzi si chiamano **conati**.
+      A volte si ripetono senza che si vomiti.
+
+  - id: risalita
+    fase: vomito
+    titolo: Il contenuto risale
+    breve: Il cardias si apre e il contenuto risale lungo l'esofago.
+    spiegazione: >
+      Il **cardias**, l'anello di muscolo in fondo all'esofago, si apre.
+      Il contenuto dello stomaco viene spinto su per l'esofago.
+      La spinta non viene dall'esofago ma dai muscoli che schiacciano lo stomaco.
+
+  - id: vie-aeree-chiuse
+    fase: vomito
+    titolo: Le vie dell'aria si chiudono
+    breve: L'epiglottide chiude la laringe, il palato molle chiude il naso.
+    spiegazione: >
+      Come nella deglutizione, l'**epiglottide** si abbassa sulla laringe come un coperchio.
+      Il **palato molle** si alza e chiude il passaggio verso il naso.
+      Così il vomito non entra nei polmoni.
+      Per un istante il respiro si ferma.
+
+  - id: fuori
+    fase: vomito
+    titolo: Fuori dalla bocca
+    breve: Il contenuto dello stomaco esce dalla bocca.
+    spiegazione: >
+      Il contenuto dello stomaco esce dalla bocca.
+      È mescolato al **succo gastrico**, un liquido acido prodotto dallo stomaco.
+      Per questo, dopo aver vomitato, la gola brucia.
+      Spesso vomitare serve a liberarsi di cibo che fa male.
