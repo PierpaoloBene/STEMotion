@@ -24,6 +24,9 @@
   --aria: #8ec9f0;
   --acqua: #2c9ad1;
   --calore: #f26b1d;
+  --nutrienti: #8e5bb5; /* sostanze nutritive */
+  --succhi: #a3c639; /* succhi digestivi: gastrico, bile, pancreatico */
+  --batteri: #5e7a2a;
 
   /* Illustrazioni: tessuti degli organi condivisi (src/components/anatomia) */
   --contorno: #1d1d1f;
@@ -33,6 +36,13 @@
   --tessuto-chiaro: #f8dcdc;
   --lingua: #e58a9a;
   --muscolo: #b8545f;
+  --fegato: #a65a40;
+  --pancreas: #efc58f;
+  --intestino: #f2b8a2;
+  --colon: #e3a37f;
+  --feci: #8a5a2b;
+  --tessuto-infiammato: #e0533f;
+  --pus: #e8cf6a;
 
   /* Forme (guida di stile, §9) */
   --raggio: 24px;

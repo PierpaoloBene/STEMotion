@@ -1,0 +1,69 @@
+---
+// Intestino crasso visto di fronte: cieco con l'appendice, colon, retto e ano.
+// Attenzione: la persona ci guarda, quindi il suo lato destro è a sinistra nel disegno
+// (cieco e appendice a sinistra, colon discendente a destra).
+// Lo slot "appendice" riceve disegni nel riferimento dell'appendice: asse lungo y, attacco in (0, 0).
+// Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
+const COLON =
+  'M300 524C296 470 286 420 288 360C290 322 300 304 330 302C380 300 440 322 470 316C500 310 518 296 526 316C534 360 522 420 522 470C522 520 500 540 470 550C440 560 410 552 404 584L400 640';
+---
+
+<g class="crasso">
+  <!-- appendice: tubo chiuso in fondo, disegnato lungo l'asse y dal suo attacco al cieco -->
+  <g transform="translate(310 538) rotate(-35)">
+    <g class="appendice">
+      <g class="appendice__corpo">
+        <path class="appendice__parete" d="M-7 -6C-7 18 -7 38 -6 48C-5 58 5 58 6 48C7 38 7 18 7 -6Z"></path>
+        <path class="appendice__lume" d="M0 2V47"></path>
+        <!-- contenuto dell'appendice (es. AppendiceInterno): stesso riferimento, si gonfia con lei -->
+        <slot name="appendice" />
+      </g>
+    </g>
+  </g>
+  <ellipse class="crasso__cieco" cx="298" cy="520" rx="26" ry="24"></ellipse>
+  <path class="crasso__bordo" d={COLON}></path>
+  <path class="crasso__tubo" d={COLON}></path>
+  <!-- austre: le pieghe che dividono il colon in tante "tasche" -->
+  <path class="crasso__austre" d={COLON}></path>
+</g>
+
+<style>
+  .appendice__parete {
+    fill: var(--colon);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+  .appendice__lume {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+  }
+  .crasso__cieco {
+    fill: var(--colon);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .crasso__bordo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 46;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .crasso__tubo {
+    fill: none;
+    stroke: var(--colon);
+    stroke-width: 40;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .crasso__austre {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 40;
+    stroke-dasharray: 2 20;
+    opacity: 0.3;
+  }
+</style>

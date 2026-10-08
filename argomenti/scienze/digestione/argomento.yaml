@@ -1,0 +1,16 @@
+titolo: La digestione
+sottotitolo: Dallo stomaco all'intestino, come il cibo diventa nutrimento
+materia: scienze
+area: anatomia
+classi: [2]
+modello: passaggi
+durata_minuti: 15
+prerequisiti: [deglutizione]
+obiettivi:
+  - Descrivere che cosa succede al cibo nello stomaco
+  - Spiegare come l'intestino tenue assorbe le sostanze nutritive
+  - Spiegare il compito dell'intestino crasso
+parole_chiave: [stomaco, succo gastrico, chimo, piloro, duodeno, bile, pancreas, villi, assorbimento, intestino crasso, feci]
+stato: bozza
+revisionato_da: null
+fonti: []

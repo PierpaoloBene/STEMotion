@@ -1,0 +1,36 @@
+---
+// Intestino tenue visto di fronte: duodeno (attorno al pancreas) e le anse che finiscono nel cieco.
+// È un tubo: il colore è il tratto (stroke), il contorno è un tratto più largo sotto.
+// Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
+const DUODENO = 'M382 254C352 258 338 290 342 316C346 342 380 350 410 344C432 340 446 330 452 318';
+const ANSE =
+  'M452 318C480 330 492 352 470 366C440 384 360 368 346 388C334 406 362 416 400 414C440 412 492 410 490 434C488 456 420 452 380 452C340 452 330 470 344 484C360 498 430 486 470 490C496 494 496 520 470 526C430 534 380 530 350 516C336 508 330 500 318 500';
+---
+
+<g class="tenue">
+  <g class="duodeno">
+    <path class="tubo-bordo" d={DUODENO}></path>
+    <path class="tubo" d={DUODENO}></path>
+  </g>
+  <g class="anse">
+    <path class="tubo-bordo" d={ANSE}></path>
+    <path class="tubo" d={ANSE}></path>
+  </g>
+</g>
+
+<style>
+  .tubo-bordo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 23;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tubo {
+    fill: none;
+    stroke: var(--intestino);
+    stroke-width: 18;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>
