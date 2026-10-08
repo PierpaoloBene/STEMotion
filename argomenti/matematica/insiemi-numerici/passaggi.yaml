@@ -1,0 +1,84 @@
+passaggi:
+  - id: naturali
+    titolo: I numeri naturali
+    breve: "I numeri naturali servono a contare: 0, 1, 2, 3…"
+    spiegazione: >
+      I numeri che usiamo per contare si chiamano **numeri naturali**.
+      Il loro insieme si indica con la lettera **N**.
+      Si parte da 0 e non c'è un ultimo numero: dopo ogni naturale ne viene un altro.
+      Sulla retta dei numeri stanno a destra dello 0, tutti alla stessa distanza.
+
+  - id: sottrazione
+    titolo: Una sottrazione impossibile
+    breve: Nei naturali la sottrazione 3 − 5 non ha risultato.
+    spiegazione: >
+      Partiamo da 3 e facciamo 5 passi indietro sulla retta.
+      Dopo lo 0 non c'è più nessun numero naturale su cui fermarsi.
+      Nei naturali si può sottrarre solo un numero che non è più grande del primo.
+
+  - id: interi
+    titolo: I numeri interi relativi
+    breve: Con i numeri negativi nasce l'insieme Z degli interi.
+    spiegazione: >
+      A sinistra dello 0 mettiamo i **numeri negativi**: −1, −2, −3…
+      Negativi, zero e positivi formano i **numeri interi relativi**, l'insieme **Z**.
+      Ora 3 − 5 ha un risultato: −2.
+      Ogni numero naturale è anche un intero: per questo N sta dentro Z.
+
+  - id: divisione
+    titolo: Una divisione impossibile
+    breve: "Negli interi la divisione 1 : 2 non ha risultato."
+    spiegazione: >
+      Dividere 1 in 2 parti uguali vuol dire trovare il punto a metà tra 0 e 1.
+      Tra 0 e 1 non c'è nessun numero intero.
+      Negli interi una divisione si può fare solo se il risultato è un intero.
+
+  - id: razionali
+    titolo: I numeri razionali
+    breve: Le frazioni formano l'insieme Q dei numeri razionali.
+    spiegazione: >
+      Con le **frazioni** possiamo indicare anche le parti: 1 : 2 = 1/2.
+      I numeri che si possono scrivere come frazione, positivi o negativi, sono i **numeri razionali**: l'insieme **Q**.
+      Anche gli interi sono razionali, per esempio 3 = 3/1.
+      Per questo Z sta dentro Q.
+
+  - id: decimali
+    titolo: Frazioni e numeri decimali
+    breve: Ogni razionale è un decimale limitato o periodico.
+    spiegazione: >
+      Dividendo il numeratore per il denominatore si ottiene un numero decimale.
+      1/2 = 0,5 è un decimale **limitato**: le cifre dopo la virgola finiscono.
+      1/3 = 0,333… è un decimale **periodico**: una cifra si ripete all'infinito.
+
+  - id: radice-di-2
+    titolo: La diagonale del quadrato
+    breve: La diagonale di un quadrato di lato 1 misura √2.
+    spiegazione: >
+      Disegniamo sulla retta un quadrato con il lato lungo 1.
+      Con il compasso riportiamo la sua diagonale sulla retta, a partire da 0.
+      Il punto che troviamo è **√2**, la radice quadrata di 2: il numero che moltiplicato per sé stesso dà 2.
+
+  - id: irrazionali
+    titolo: I numeri irrazionali
+    breve: √2 e π non sono frazioni, sono numeri irrazionali.
+    spiegazione: >
+      √2 = 1,41421356… ha infinite cifre dopo la virgola, senza un gruppo che si ripete.
+      Per questo non si può scrivere come frazione e non sta in Q.
+      I numeri così si chiamano **irrazionali**.
+      Anche π = 3,14159…, il numero che lega la circonferenza al suo diametro, è irrazionale.
+
+  - id: reali
+    titolo: I numeri reali
+    breve: Razionali e irrazionali insieme formano l'insieme R dei reali.
+    spiegazione: >
+      Mettendo insieme razionali e irrazionali si ottengono i **numeri reali**: l'insieme **R**.
+      Ogni punto della retta corrisponde a un numero reale, e ogni numero reale a un punto.
+      Ora la retta è piena, senza buchi.
+
+  - id: inclusione
+    titolo: Uno dentro l'altro
+    breve: N ⊂ Z ⊂ Q ⊂ R, ogni insieme sta dentro il successivo.
+    spiegazione: >
+      Il simbolo **⊂** si legge «è contenuto in».
+      Ogni naturale è anche intero, ogni intero è razionale, ogni razionale è reale.
+      Passando a un insieme più grande si possono fare cose prima impossibili: sottrarre, dividere, misurare la diagonale.

@@ -79,6 +79,22 @@ Lo stesso concetto ha **sempre** lo stesso colore, in tutto il sito:
 | Batteri | `#5E7A2A` (verde oliva), bastoncini |
 | Elemento evidenziato nel passaggio corrente | contorno `--accento`, 4 px |
 
+In matematica i colori indicano il **ruolo** di un elemento. Le tinte sono poche e si ripetono tra aree diverse (gli insiemi numerici non compaiono mai nello stesso disegno della circonferenza), ma dentro un disegno ogni tinta ha un solo significato.
+
+| Significato (matematica) | Token | Valore |
+|---|---|---|
+| Numeri naturali, insieme N | `--naturali` | `#B88400` (oro) |
+| Numeri interi relativi, insieme Z | `--interi` | `#C2367A` (magenta) |
+| Numeri razionali, insieme Q | `--razionali` | `#12827C` (verde petrolio) |
+| Numeri reali e irrazionali, insieme R | `--reali` | `#5B4B9A` (indaco) |
+| Raggio | `--geo-raggio` | `#C2367A` (magenta) |
+| Diametro | `--geo-diametro` | `#12827C` (verde petrolio) |
+| Corda | `--geo-corda` | `#B4532A` (terracotta) |
+| Arco minore | `--geo-arco-minore` | `#5B4B9A` (indaco) |
+| Arco maggiore | `--geo-arco-maggiore` | `#B88400` (oro) |
+
+Circonferenza, assi e retta dei numeri si disegnano con il colore del contorno (`--testo`); la superficie del cerchio con `--bordo`.
+
 ### Accessibilità del colore
 
 - Contrasto testo/sfondo almeno **4,5:1** (WCAG AA).

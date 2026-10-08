@@ -1,0 +1,17 @@
+titolo: Gli insiemi numerici
+sottotitolo: Naturali, interi, razionali e reali, uno dentro l'altro sulla retta dei numeri
+materia: matematica
+area: algebra
+classi: [2, 3]
+modello: passaggi
+durata_minuti: 15
+prerequisiti: []
+obiettivi:
+  - Riconoscere gli insiemi numerici N, Z, Q e R e i numeri che contengono
+  - Spiegare perché da un insieme si passa al successivo
+  - Collocare naturali, interi, razionali e irrazionali sulla retta dei numeri
+  - Leggere e scrivere la catena N ⊂ Z ⊂ Q ⊂ R
+parole_chiave: [insieme, numeri naturali, numeri interi relativi, numeri razionali, numeri irrazionali, numeri reali, retta dei numeri, frazione, numero decimale]
+stato: bozza
+revisionato_da: null
+fonti: []

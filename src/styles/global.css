@@ -28,6 +28,18 @@
   --succhi: #a3c639; /* succhi digestivi: gastrico, bile, pancreatico */
   --batteri: #5e7a2a;
 
+  /* Matematica: insiemi numerici */
+  --naturali: #b88400;
+  --interi: #c2367a;
+  --razionali: #12827c;
+  --reali: #5b4b9a;
+  /* Matematica: elementi della circonferenza */
+  --geo-raggio: #c2367a;
+  --geo-diametro: #12827c;
+  --geo-corda: #b4532a;
+  --geo-arco-minore: #5b4b9a;
+  --geo-arco-maggiore: #b88400;
+
   /* Illustrazioni: tessuti degli organi condivisi (src/components/anatomia) */
   --contorno: #1d1d1f;
   --pelle: #f4d3b5;

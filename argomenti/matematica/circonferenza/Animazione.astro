@@ -1,0 +1,439 @@
+---
+/**
+ * La circonferenza: dal centro ai punti alla stessa distanza, poi cerchio, raggio,
+ * diametro, corda e i due archi. Ogni elemento ha il suo colore (guida di stile, §3).
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Ogni pezzo dice in quali passaggi si vede:
+ * `--da` è il primo, `--a` l'ultimo (se manca, resta fino alla fine).
+ *
+ * Lo stesso disegno esiste in due disposizioni: "larga" (etichette ai lati, per la LIM)
+ * e "stretta" (etichette sopra e sotto, per il telefono), scelte con una container query.
+ */
+
+type Punto = [number, number];
+
+// --- Passaggi (indici) ---
+const CENTRO = 0;
+const CIRCONFERENZA = 1;
+const CERCHIO = 2;
+const RAGGIO = 3;
+const RAGGI_UGUALI = 4;
+const DIAMETRO = 5;
+const DOPPIO = 6;
+const CORDA = 7;
+const ARCO_MINORE = 8;
+const ARCO_MAGGIORE = 9;
+
+// Angoli in gradi, con l'asse y verso il basso come in SVG: 90° è in basso.
+const ANGOLO_RAGGIO = -50;
+const ANGOLO_A = 155;
+const ANGOLO_B = 60;
+const RAGGI_FANTASMA = [-120, 165, 80, 20];
+const PUNTI = Array.from({ length: 12 }, (_, k) => k * 30 + 15);
+
+interface Etichetta {
+  testo: string;
+  /** Dove sta il testo e da che parte si allinea. */
+  x: number;
+  y: number;
+  ancora: 'start' | 'end';
+  /** Punto dell'elemento a cui arriva la linea. */
+  verso: Punto;
+  /** Da dove parte la linea; se manca, dal lato del testo verso il disegno. */
+  inizio?: Punto;
+  da: number;
+  a?: number;
+}
+
+interface Disposizione {
+  id: 'larga' | 'stretta';
+  viewBox: string;
+  o: Punto;
+  r: number;
+  /** Etichette, in coordinate assolute: le calcola `etichette()` da centro e raggio. */
+  etichette: (p: (angolo: number, d?: number) => Punto, lungo: (a: Punto, b: Punto, t: number) => Punto) => Etichetta[];
+  lettere: { o: Punto; a: Punto; b: Punto };
+  formula: { x: number; y: number; ancora: 'start' | 'middle' };
+}
+
+const arrotonda = (v: number) => +v.toFixed(1);
+
+const disposizioni: Disposizione[] = [
+  {
+    id: 'larga',
+    viewBox: '0 0 960 600',
+    o: [480, 296],
+    r: 206,
+    etichette: (p, lungo) => [
+      { testo: 'raggio', x: 722, y: 82, ancora: 'start', verso: lungo(p(0, 0), p(ANGOLO_RAGGIO), 0.72), da: RAGGIO },
+      { testo: 'circonferenza', x: 722, y: 160, ancora: 'start', verso: p(-22), da: CIRCONFERENZA, a: CORDA },
+      { testo: 'diametro', x: 722, y: 350, ancora: 'start', verso: p(0, 0.72), da: DIAMETRO },
+      { testo: 'corda', x: 722, y: 500, ancora: 'start', verso: lungo(p(ANGOLO_A), p(ANGOLO_B), 0.82), da: CORDA },
+      { testo: 'arco maggiore', x: 238, y: 74, ancora: 'end', verso: p(-135), da: ARCO_MAGGIORE },
+      { testo: 'cerchio', x: 238, y: 214, ancora: 'end', verso: p(-160, 0.62), da: CERCHIO },
+      { testo: 'arco minore', x: 238, y: 560, ancora: 'end', verso: p(118), da: ARCO_MINORE },
+    ],
+    lettere: { o: [460, 336], a: [264, 404], b: [598, 516] },
+    formula: { x: 722, y: 268, ancora: 'start' },
+  },
+  {
+    id: 'stretta',
+    viewBox: '0 0 560 700',
+    o: [280, 340],
+    r: 190,
+    etichette: (p, lungo) => [
+      { testo: 'circonferenza', x: 14, y: 44, ancora: 'start', inizio: [150, 54], verso: p(-125), da: CIRCONFERENZA, a: CORDA },
+      { testo: 'cerchio', x: 14, y: 90, ancora: 'start', inizio: [60, 100], verso: p(-150, 0.6), da: CERCHIO },
+      { testo: 'arco maggiore', x: 546, y: 44, ancora: 'end', inizio: [420, 54], verso: p(-75), da: ARCO_MAGGIORE },
+      { testo: 'raggio', x: 546, y: 90, ancora: 'end', inizio: [480, 100], verso: lungo(p(0, 0), p(ANGOLO_RAGGIO), 0.72), da: RAGGIO },
+      { testo: 'corda', x: 546, y: 522, ancora: 'end', inizio: [456, 516], verso: lungo(p(ANGOLO_A), p(ANGOLO_B), 0.82), da: CORDA },
+      { testo: 'diametro', x: 546, y: 602, ancora: 'end', inizio: [480, 578], verso: p(0, 0.75), da: DIAMETRO },
+      { testo: 'arco minore', x: 14, y: 662, ancora: 'start', inizio: [80, 636], verso: p(118), da: ARCO_MINORE },
+    ],
+    lettere: { o: [262, 380], a: [88, 440], b: [388, 542] },
+    formula: { x: 280, y: 612, ancora: 'middle' },
+  },
+];
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni: Record<string, string> = {
+  centro: 'Un punto O al centro e dodici punti intorno, collegati a O da linee tratteggiate tutte lunghe uguali.',
+  circonferenza: 'I punti si uniscono in una linea chiusa e rotonda: la circonferenza.',
+  cerchio: 'La parte dentro la circonferenza si colora: circonferenza e parte interna insieme sono il cerchio.',
+  raggio: 'Un segmento va dal centro O a un punto della circonferenza, in alto a destra: è il raggio.',
+  'raggi-uguali': 'Il raggio fa un giro completo intorno a O; compaiono altri raggi in direzioni diverse, tutti lunghi uguali.',
+  diametro: 'Un segmento orizzontale attraversa il cerchio passando per O, da un punto all’altro della circonferenza: è il diametro.',
+  'diametro-doppio': 'Due copie del raggio si appoggiano una a destra e una a sinistra del centro, sopra il diametro: lo coprono tutto. È scritto d = 2 × r.',
+  corda: 'Un segmento unisce due punti A e B della circonferenza, in basso, senza passare per il centro: è la corda.',
+  'arco-minore': 'La parte più corta di circonferenza tra A e B, in basso, è evidenziata: è l’arco minore.',
+  'arco-maggiore': 'La parte più lunga di circonferenza tra A e B, che passa in alto, è evidenziata: è l’arco maggiore.',
+  riepilogo: 'Il disegno completo con centro O, raggio, diametro, corda AB, arco minore e arco maggiore, ognuno con la sua etichetta.',
+};
+---
+
+<div class="circ">
+  {
+    disposizioni.map((d) => {
+      const [ox, oy] = d.o;
+      const R = d.r;
+      /** Punto a un angolo, alla distanza d × raggio dal centro. */
+      const p = (angolo: number, k = 1): Punto => {
+        const a = (angolo * Math.PI) / 180;
+        return [arrotonda(ox + k * R * Math.cos(a)), arrotonda(oy + k * R * Math.sin(a))];
+      };
+      const lungo = (a: Punto, b: Punto, t: number): Punto => [arrotonda(a[0] + (b[0] - a[0]) * t), arrotonda(a[1] + (b[1] - a[1]) * t)];
+      const [P, A, B] = [p(ANGOLO_RAGGIO), p(ANGOLO_A), p(ANGOLO_B)];
+      const C = p(180);
+      const D = p(0);
+      // Archi da B ad A: il minore passa in basso (angoli crescenti, meno di 180°), il maggiore in alto.
+      const arcoMinore = `M${B[0]} ${B[1]}A${R} ${R} 0 0 1 ${A[0]} ${A[1]}`;
+      const arcoMaggiore = `M${A[0]} ${A[1]}A${R} ${R} 0 1 1 ${B[0]} ${B[1]}`;
+      const giro = `M${ox} ${oy - R}A${R} ${R} 0 1 1 ${ox} ${oy + R}A${R} ${R} 0 1 1 ${ox} ${oy - R}`;
+      const origine = `transform-origin: ${ox}px ${oy}px`;
+      return (
+        <svg class={`circ__disegno circ__disegno--${d.id}`} viewBox={d.viewBox} aria-hidden="true" focusable="false">
+          {/* --- Cerchio e circonferenza --- */}
+          <circle class="vis cerchio" cx={ox} cy={oy} r={R} style={`--da: ${CERCHIO}`} />
+          <circle class="vis alone" cx={ox} cy={oy} r={R} style={`--da: ${CIRCONFERENZA}; --a: ${CERCHIO}`} />
+          <path class="vis circonferenza" d={giro} pathLength="1" style={`--da: ${CIRCONFERENZA}`} />
+
+          {/* --- Centro e punti alla stessa distanza --- */}
+          {PUNTI.map((a, k) => {
+            const q = p(a);
+            const inizio = p(a, 0.1);
+            return (
+              <g class="vis" style={`--da: ${CENTRO}; --a: ${CIRCONFERENZA}; --ritardo: ${(0.1 * k).toFixed(1)}s`}>
+                <line class="vis tratteggio" x1={inizio[0]} y1={inizio[1]} x2={q[0]} y2={q[1]} style={`--da: ${CENTRO}; --a: ${CENTRO}`} />
+                <circle class="punto" cx={q[0]} cy={q[1]} r="7" />
+              </g>
+            );
+          })}
+
+          {/* --- Diametro, con le due copie del raggio sopra --- */}
+          <line class="vis alone" x1={C[0]} y1={C[1]} x2={D[0]} y2={D[1]} style={`--da: ${DIAMETRO}; --a: ${DIAMETRO}`} />
+          <line class="vis segmento segmento--diametro" x1={C[0]} y1={C[1]} x2={D[0]} y2={D[1]} pathLength="1" style={`--da: ${DIAMETRO}`} />
+          {[50, -130].map((rotazione, k) => (
+            <g class="vis copia" style={`--da: ${DOPPIO}; --a: ${DOPPIO}; --rot: ${rotazione}deg; --ritardo: ${0.2 + 0.6 * k}s; ${origine}`}>
+              <line class="segmento segmento--raggio" x1={ox} y1={oy} x2={P[0]} y2={P[1]} />
+            </g>
+          ))}
+          {[D, C].map((estremo, k) => (
+            <text class="vis lettera lettera--raggio" x={arrotonda((ox + estremo[0]) / 2)} y={oy - 30} style={`--da: ${DOPPIO}; --a: ${DOPPIO}; --ritardo: ${1.2 + 0.6 * k}s`}>
+              r
+            </text>
+          ))}
+          <text class="vis formula" x={d.formula.x} y={d.formula.y} text-anchor={d.formula.ancora} style={`--da: ${DOPPIO}; --a: ${DOPPIO}; --ritardo: 2s`}>
+            <tspan class="formula--diametro">d</tspan> = 2 × <tspan class="formula--raggio">r</tspan>
+          </text>
+
+          {/* --- Corda e archi --- */}
+          <path class="vis alone" d={arcoMinore} style={`--da: ${ARCO_MINORE}; --a: ${ARCO_MINORE}`} />
+          <path class="vis alone" d={arcoMaggiore} style={`--da: ${ARCO_MAGGIORE}; --a: ${ARCO_MAGGIORE}`} />
+          <path class="vis arco arco--minore" d={arcoMinore} pathLength="1" style={`--da: ${ARCO_MINORE}`} />
+          <path class="vis arco arco--maggiore" d={arcoMaggiore} pathLength="1" style={`--da: ${ARCO_MAGGIORE}`} />
+          <line class="vis alone" x1={A[0]} y1={A[1]} x2={B[0]} y2={B[1]} style={`--da: ${CORDA}; --a: ${CORDA}`} />
+          <line class="vis segmento segmento--corda" x1={A[0]} y1={A[1]} x2={B[0]} y2={B[1]} pathLength="1" style={`--da: ${CORDA}`} />
+
+          {/* --- Raggio: in "tutti i raggi sono uguali" fa un giro e lascia altri raggi --- */}
+          {RAGGI_FANTASMA.map((a, k) => {
+            const q = p(a);
+            return (
+              <line class="vis segmento segmento--raggio fantasma" x1={ox} y1={oy} x2={q[0]} y2={q[1]} style={`--da: ${RAGGI_UGUALI}; --a: ${RAGGI_UGUALI}; --ritardo: ${(0.4 + 0.45 * k).toFixed(2)}s`} />
+            );
+          })}
+          <g class="vis giro" style={`--da: ${RAGGIO}; ${origine}`}>
+            <line class="vis alone" x1={ox} y1={oy} x2={P[0]} y2={P[1]} style={`--da: ${RAGGIO}; --a: ${RAGGI_UGUALI}`} />
+            <line class="segmento segmento--raggio raggio" x1={ox} y1={oy} x2={P[0]} y2={P[1]} pathLength="1" />
+            <circle class="punto punto--pieno" cx={P[0]} cy={P[1]} r="7" />
+          </g>
+
+          {/* Estremi della corda e centro, sopra a tutto */}
+          {[A, B].map((q) => (
+            <circle class="vis punto punto--pieno" cx={q[0]} cy={q[1]} r="7" style={`--da: ${CORDA}`} />
+          ))}
+          <text class="vis lettera" x={d.lettere.a[0]} y={d.lettere.a[1]} text-anchor="end" style={`--da: ${CORDA}`}>
+            A
+          </text>
+          <text class="vis lettera" x={d.lettere.b[0]} y={d.lettere.b[1]} style={`--da: ${CORDA}`}>
+            B
+          </text>
+          <circle class="centro" cx={ox} cy={oy} r="7" />
+          <text class="lettera" x={d.lettere.o[0]} y={d.lettere.o[1]} text-anchor="end">
+            O
+          </text>
+
+          {/* --- Etichette, collegate all'elemento da una linea sottile --- */}
+          {d.etichette(p, lungo).map((e) => (
+            <g class="vis etichetta" style={`--da: ${e.da}; ${e.a !== undefined ? `--a: ${e.a};` : ''} --ritardo: 0.5s`}>
+              <line x1={e.inizio?.[0] ?? e.x + (e.ancora === 'start' ? -8 : 8)} y1={e.inizio?.[1] ?? e.y - 9} x2={e.verso[0]} y2={e.verso[1]} />
+              <circle cx={e.verso[0]} cy={e.verso[1]} r="4" />
+              <text x={e.x} y={e.y} text-anchor={e.ancora}>
+                {e.testo}
+              </text>
+            </g>
+          ))}
+        </svg>
+      );
+    })
+  }
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .circ {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+    --i: -1;
+  }
+  [data-indice='0'] .circ { --i: 0; }
+  [data-indice='1'] .circ { --i: 1; }
+  [data-indice='2'] .circ { --i: 2; }
+  [data-indice='3'] .circ { --i: 3; }
+  [data-indice='4'] .circ { --i: 4; }
+  [data-indice='5'] .circ { --i: 5; }
+  [data-indice='6'] .circ { --i: 6; }
+  [data-indice='7'] .circ { --i: 7; }
+  [data-indice='8'] .circ { --i: 8; }
+  [data-indice='9'] .circ { --i: 9; }
+  [data-indice='10'] .circ { --i: 10; }
+
+  .circ__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .circ__disegno--stretta {
+    display: none;
+  }
+  /* Palco stretto o verticale (telefono): etichette sopra e sotto invece che ai lati. */
+  @container (aspect-ratio < 1.15) {
+    .circ__disegno--larga {
+      display: none;
+    }
+    .circ__disegno--stretta {
+      display: block;
+    }
+  }
+  .circ svg :is(path, rect, circle, line):not([pathLength]) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Quando si vede un pezzo ---
+     --on vale 1 dal passaggio --da al passaggio --a, 0 altrove. */
+  .circ .vis {
+    --on: min(clamp(0, calc(var(--i) - var(--da) + 1), 1), clamp(0, calc(var(--a, 99) - var(--i) + 1), 1));
+    opacity: var(--on);
+    transition: opacity 0.6s ease-in-out var(--ritardo, 0s);
+  }
+
+  /* --- Cerchio e circonferenza --- */
+  .circ .cerchio {
+    fill: var(--bordo);
+    fill-opacity: 0.7;
+    transition-duration: 0.9s;
+  }
+  .circ .circonferenza {
+    fill: none;
+    stroke: var(--testo);
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--on));
+    transition:
+      opacity 0.2s ease-in-out,
+      stroke-dashoffset 1.6s ease-in-out;
+  }
+  .circ .tratteggio {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 3 7;
+    stroke-linecap: round;
+  }
+  .circ .punto {
+    fill: var(--superficie);
+    stroke: var(--testo);
+    stroke-width: 2.5;
+  }
+  .circ .punto--pieno,
+  .circ .centro {
+    fill: var(--testo);
+    stroke: var(--superficie);
+  }
+
+  /* --- Segmenti e archi: ognuno con il suo colore (guida di stile, §3) --- */
+  .circ .segmento,
+  .circ .arco {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .circ .segmento--raggio { stroke: var(--geo-raggio); }
+  .circ .segmento--diametro { stroke: var(--geo-diametro); }
+  .circ .segmento--corda { stroke: var(--geo-corda); }
+  .circ .arco--minore { stroke: var(--geo-arco-minore); stroke-width: 9; }
+  .circ .arco--maggiore { stroke: var(--geo-arco-maggiore); stroke-width: 9; }
+
+  /* I segmenti e gli archi si disegnano da un estremo all'altro. */
+  .circ :is(.segmento, .arco)[pathLength] {
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--on, 1));
+    transition:
+      opacity 0.2s ease-in-out,
+      stroke-dashoffset 1s ease-in-out 0.2s;
+  }
+  .circ .arco[pathLength] {
+    transition-duration: 0.2s, 1.4s;
+  }
+  .circ .giro {
+    --on: clamp(0, calc(var(--i) - var(--da) + 1), 1);
+  }
+  .circ .raggio[pathLength] {
+    stroke-dashoffset: calc(1 - var(--on));
+  }
+
+  /* Tutti i raggi sono uguali: il raggio fa un giro intero e torna al suo posto. */
+  @keyframes circ-giro {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  [data-indice='4'] .circ .giro {
+    animation: circ-giro 2.2s ease-in-out 0.3s;
+  }
+  .circ .fantasma {
+    opacity: calc(0.75 * var(--on));
+  }
+
+  /* Diametro = due raggi: due copie del raggio ruotano e si appoggiano sopra il diametro. */
+  .circ .copia {
+    transform: translateY(calc(-14px * var(--on))) rotate(calc(var(--rot) * var(--on)));
+    transition:
+      opacity 0.3s ease-in-out var(--ritardo),
+      transform 1s ease-in-out var(--ritardo);
+  }
+
+  /* Elemento evidenziato nel passaggio corrente (guida di stile, §3) */
+  .circ .alone {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 14;
+    stroke-linecap: round;
+  }
+  .circ path.alone {
+    stroke-width: 17;
+  }
+  .circ circle.alone {
+    stroke-width: 11;
+  }
+
+  /* --- Testi --- */
+  .circ text {
+    fill: var(--testo);
+    font-weight: 700;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 6px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  .circ .lettera {
+    font-size: 30px;
+  }
+  .circ .lettera--raggio {
+    fill: var(--geo-raggio);
+    font-style: italic;
+    text-anchor: middle;
+  }
+  .circ .formula {
+    font-size: 34px;
+  }
+  .circ .formula--raggio {
+    fill: var(--geo-raggio);
+    font-style: italic;
+  }
+  .circ .formula--diametro {
+    fill: var(--geo-diametro);
+    font-style: italic;
+  }
+  .circ .etichetta text {
+    font-size: 28px;
+  }
+  .circ__disegno--stretta .etichetta text {
+    font-size: 30px;
+  }
+  .circ .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .circ .etichetta circle {
+    fill: var(--testo-2);
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+  .circ .descrizione {
+    display: none;
+  }
+  [data-passaggio='centro'] .circ .descrizione[data-per='centro'],
+  [data-passaggio='circonferenza'] .circ .descrizione[data-per='circonferenza'],
+  [data-passaggio='cerchio'] .circ .descrizione[data-per='cerchio'],
+  [data-passaggio='raggio'] .circ .descrizione[data-per='raggio'],
+  [data-passaggio='raggi-uguali'] .circ .descrizione[data-per='raggi-uguali'],
+  [data-passaggio='diametro'] .circ .descrizione[data-per='diametro'],
+  [data-passaggio='diametro-doppio'] .circ .descrizione[data-per='diametro-doppio'],
+  [data-passaggio='corda'] .circ .descrizione[data-per='corda'],
+  [data-passaggio='arco-minore'] .circ .descrizione[data-per='arco-minore'],
+  [data-passaggio='arco-maggiore'] .circ .descrizione[data-per='arco-maggiore'],
+  [data-passaggio='riepilogo'] .circ .descrizione[data-per='riepilogo'] {
+    display: block;
+  }
+</style>
