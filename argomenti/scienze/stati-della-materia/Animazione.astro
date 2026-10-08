@@ -190,14 +190,14 @@ const gas = sparpaglia(rndGas, 94, 40, 3000).map(([x, y]) => {
 // Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
 const descrizioni: Record<string, string> = {
   'tre-stati': 'Tre barattoli chiusi. Nel primo ci sono due cubetti di ghiaccio, nel secondo acqua. Il terzo sta su un fornello acceso e contiene vapore acqueo, disegnato come un velo azzurro con delle ondine.',
-  particelle: 'Una lente ingrandisce il ghiaccio: dentro si vedono tante palline uguali, le particelle.',
-  solido: 'Nella lente del ghiaccio le particelle sono vicine, in file ordinate, e vibrano senza lasciare il loro posto.',
+  molecole: 'Una lente ingrandisce il ghiaccio: dentro si vedono tante palline uguali, le molecole.',
+  solido: 'Nella lente del ghiaccio le molecole sono vicine, in file ordinate, e vibrano senza lasciare il loro posto.',
   'solido-forma': 'Il barattolo del ghiaccio diventa basso e largo. I cubetti restano uguali, con la stessa forma e la stessa grandezza.',
-  liquido: 'Una lente ingrandisce l’acqua: le particelle sono vicine ma in disordine e scorrono le une sulle altre.',
+  liquido: 'Una lente ingrandisce l’acqua: le molecole sono vicine ma in disordine e scorrono le une sulle altre.',
   'liquido-forma': 'Il barattolo dell’acqua diventa basso e largo. L’acqua si allarga, il livello scende e la quantità resta la stessa.',
-  gas: 'Una lente ingrandisce il vapore: poche particelle, lontane tra loro, che si muovono in linea retta in direzioni diverse.',
-  'gas-volume': 'Il barattolo del vapore diventa più largo e il vapore lo riempie tutto. Nella lente le particelle si allontanano.',
-  confronto: 'Le tre lenti affiancate: nel solido particelle vicine e ordinate, nel liquido vicine e in disordine, nel gas lontane e veloci.',
+  gas: 'Una lente ingrandisce il vapore: poche molecole, lontane tra loro, che si muovono in linea retta in direzioni diverse.',
+  'gas-volume': 'Il barattolo del vapore diventa più largo e il vapore lo riempie tutto. Nella lente le molecole si allontanano.',
+  confronto: 'Le tre lenti affiancate: nel solido molecole vicine e ordinate, nel liquido vicine e in disordine, nel gas lontane e veloci.',
 };
 ---
 
@@ -626,7 +626,7 @@ const descrizioni: Record<string, string> = {
   }
 
   /* --- Stato di ogni passaggio ---
-     0 tre-stati · 1 particelle · 2 solido · 3 solido-forma · 4 liquido
+     0 tre-stati · 1 molecole · 2 solido · 3 solido-forma · 4 liquido
      5 liquido-forma · 6 gas · 7 gas-volume · 8 confronto */
 
   [data-indice]:not([data-indice='-1'], [data-indice='0']) .stati .colonna--solido,
@@ -671,7 +671,7 @@ const descrizioni: Record<string, string> = {
     display: none;
   }
   [data-passaggio='tre-stati'] .stati .descrizione[data-per='tre-stati'],
-  [data-passaggio='particelle'] .stati .descrizione[data-per='particelle'],
+  [data-passaggio='molecole'] .stati .descrizione[data-per='molecole'],
   [data-passaggio='solido'] .stati .descrizione[data-per='solido'],
   [data-passaggio='solido-forma'] .stati .descrizione[data-per='solido-forma'],
   [data-passaggio='liquido'] .stati .descrizione[data-per='liquido'],
