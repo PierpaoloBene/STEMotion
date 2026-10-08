@@ -1,24 +1,45 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
   <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-    <!-- busto visto di fronte, con il punto del dolore in basso a destra della persona -->
-    <path fill="#F4D3B5" d="M120 20C108 140 104 260 112 360C118 430 132 470 150 500H250C268 470 282 430 288 360C296 260 292 140 280 20Z" />
-    <path fill="none" d="M193 260C196 253 204 253 207 260C204 267 196 267 193 260Z" />
-    <path fill="#E0533F" d="M150 332L157 316L163 330L178 324L170 338L182 348L166 350L164 366L155 354L141 360L146 346L134 338L149 336Z" />
-    <path fill="#3E5A8C" d="M114 410H286L278 500H122Z" />
+    <!-- primo piano della pancia: vita stretta, fianchi larghi -->
+    <path fill="#F4D3B5" d="M74 -4C80 70 96 140 100 196C84 250 62 320 56 400L50 504H350L344 400C338 320 316 250 300 196C304 140 320 70 326 -4Z" />
+    <path fill="none" d="M120 20C150 46 178 54 200 54C222 54 250 46 280 20" />
+    <path fill="none" d="M194 214C197 206 203 206 206 214C203 222 197 222 194 214Z" />
+    <!-- pantaloncini con l'elastico -->
+    <path fill="#3E5A8C" d="M60 360C130 382 270 382 340 360L350 504H50Z" />
+    <path fill="none" stroke="#16233F" d="M64 384C134 404 266 404 336 384" />
+    <!-- la mano che preme in basso a destra della persona (a sinistra nel disegno) -->
+    <path fill="#E8BE9A" d="M-6 318C30 300 70 290 104 292L108 330C74 334 34 344 -6 358Z" />
+    <rect x="96" y="276" width="62" height="52" rx="20" fill="#E8BE9A" transform="rotate(-8 127 302)" />
+    <rect x="146" y="262" width="40" height="14" rx="7" fill="#E8BE9A" transform="rotate(-8 166 269)" />
+    <rect x="150" y="279" width="44" height="14" rx="7" fill="#E8BE9A" transform="rotate(-8 172 286)" />
+    <rect x="150" y="296" width="42" height="14" rx="7" fill="#E8BE9A" transform="rotate(-8 171 303)" />
+    <rect x="144" y="313" width="34" height="13" rx="6.5" fill="#E8BE9A" transform="rotate(-8 161 319)" />
+    <!-- segni del dolore attorno alla mano -->
+    <g fill="none" stroke="#E0533F" stroke-width="5">
+      <path d="M150 244L140 226" />
+      <path d="M176 240L180 220" />
+      <path d="M206 268L224 258" />
+      <path d="M204 312L222 320" />
+    </g>
   </g>
   <g class="dentro">
     <rect width="400" height="500" fill="#16233F" />
-    <path fill="#1F3257" stroke="#3E5A8C" stroke-width="3" stroke-linejoin="round" d="M120 20C108 140 104 260 112 360C118 430 132 470 150 500H250C268 470 282 430 288 360C296 260 292 140 280 20Z" />
-    <!-- intestino crasso con il cieco -->
-    <path fill="none" stroke="#E3A37F" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" d="M150 330C146 270 144 220 148 170C152 140 180 136 210 140C240 144 262 132 270 156C276 220 272 280 270 320C268 360 240 372 214 380L210 440" />
-    <circle cx="150" cy="330" r="22" fill="#E3A37F" />
-    <path fill="none" stroke="#F2B8A2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" d="M206 180C240 186 250 200 230 210C196 226 176 214 176 236C176 256 244 246 246 268C248 290 190 280 184 300C180 314 206 324 178 330" />
+    <path fill="#1F3257" stroke="#3E5A8C" stroke-width="3" stroke-linejoin="round" d="M74 -4C80 70 96 140 100 196C84 250 62 320 56 400L50 504H350L344 400C338 320 316 250 300 196C304 140 320 70 326 -4Z" />
+    <!-- anse dell'intestino tenue -->
+    <path fill="none" stroke="#F2B8A2" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" d="M330 70C290 80 240 70 230 96C220 122 290 120 296 146C302 172 230 170 222 196C214 222 284 224 288 250C292 276 230 280 196 274" />
+    <!-- colon ascendente e cieco, ingranditi -->
+    <path fill="none" stroke="#E3A37F" stroke-width="44" stroke-linecap="round" d="M138 -10V250" />
+    <circle cx="140" cy="262" r="36" fill="#E3A37F" />
+    <g fill="none" stroke="#16233F" stroke-width="3" opacity="0.5">
+      <path d="M116 40H160M116 90H160M116 140H160M116 190H160" />
+    </g>
     <!-- appendice gonfia e infiammata, con i batteri -->
-    <path fill="#E0533F" stroke="#F8DCDC" stroke-width="3" stroke-linejoin="round" d="M148 344C142 370 150 400 168 418C178 428 194 422 190 408C182 388 172 366 168 344Z" />
+    <path fill="#E0533F" stroke="#F8DCDC" stroke-width="3" stroke-linejoin="round" d="M150 290C172 300 200 336 222 372C236 394 232 418 214 422C196 426 184 410 176 394C162 364 146 330 128 300Z" />
     <g fill="#5E7A2A">
-      <rect x="160" y="366" width="4" height="10" rx="2" transform="rotate(20 162 371)" />
-      <rect x="168" y="386" width="4" height="10" rx="2" transform="rotate(-25 170 391)" />
-      <rect x="176" y="404" width="4" height="10" rx="2" transform="rotate(15 178 409)" />
+      <rect x="160" y="318" width="6" height="14" rx="3" transform="rotate(-30 163 325)" />
+      <rect x="178" y="342" width="6" height="14" rx="3" transform="rotate(20 181 349)" />
+      <rect x="192" y="370" width="6" height="14" rx="3" transform="rotate(-25 195 377)" />
+      <rect x="206" y="394" width="6" height="14" rx="3" transform="rotate(15 209 401)" />
     </g>
   </g>
 </svg>
