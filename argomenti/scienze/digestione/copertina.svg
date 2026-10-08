@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- busto visto di fronte, con la pancia -->
+    <path fill="#F4D3B5" d="M120 20C108 140 104 260 112 360C118 430 132 470 150 500H250C268 470 282 430 288 360C296 260 292 140 280 20Z" />
+    <path fill="none" d="M193 300C196 293 204 293 207 300C204 307 196 307 193 300Z" />
+    <!-- pantaloncini -->
+    <path fill="#3E5A8C" d="M114 400H286L276 500H124Z" />
+  </g>
+  <g class="dentro">
+    <rect width="400" height="500" fill="#16233F" />
+    <path fill="#1F3257" stroke="#3E5A8C" stroke-width="3" stroke-linejoin="round" d="M120 20C108 140 104 260 112 360C118 430 132 470 150 500H250C268 470 282 430 288 360C296 260 292 140 280 20Z" />
+    <!-- fegato e stomaco con il cibo -->
+    <path fill="#A65A40" d="M122 70C160 52 220 56 240 70C232 96 196 118 160 132C140 140 124 132 120 118Z" />
+    <path fill="#EBA5A5" stroke="#F8DCDC" stroke-width="3" d="M222 64C232 44 276 44 284 80C292 120 276 150 246 160C226 166 204 160 196 152L204 140C218 146 236 138 240 120C244 104 236 84 228 72Z" />
+    <g fill="#C98B3F">
+      <circle cx="262" cy="96" r="7" />
+      <circle cx="252" cy="124" r="6" />
+      <circle cx="270" cy="134" r="5" />
+    </g>
+    <!-- intestino crasso a cornice e tenue al centro -->
+    <path fill="none" stroke="#E3A37F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" d="M136 360C132 300 130 250 134 210C140 186 170 184 200 190C230 196 260 180 268 200C274 250 270 300 268 340C266 380 240 390 214 396L210 440" />
+    <path fill="none" stroke="#F2B8A2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" d="M200 214C236 222 244 236 226 244C196 256 160 240 160 262C160 280 236 268 240 290C244 312 170 300 164 320C160 340 230 336 238 352C244 366 190 372 150 354" />
+    <!-- sostanze nutritive -->
+    <g fill="#8E5BB5">
+      <circle cx="252" cy="250" r="5" />
+      <circle cx="150" cy="292" r="5" />
+      <circle cx="252" cy="326" r="5" />
+    </g>
+  </g>
+</svg>

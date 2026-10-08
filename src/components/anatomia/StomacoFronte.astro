@@ -1,0 +1,43 @@
+---
+// Stomaco visto di fronte, con la fine dell'esofago e il piloro (vista frontale).
+// Le pareti di muscolo sono la fascia scura lungo il bordo.
+// Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
+const forma =
+  'M428 100C440 70 520 62 548 110C566 160 556 230 510 262C470 285 410 282 384 262L392 240C420 250 452 236 462 200C470 170 456 130 444 104Z';
+---
+
+<g class="stomaco-fronte">
+  <path class="stomaco-fronte__esofago" d="M428 -20V104H444V-20"></path>
+  <path class="stomaco-fronte__parete" d={forma}></path>
+  <path class="stomaco-fronte__contorno" d={forma}></path>
+  <!-- piloro: due labbra di muscolo che chiudono l'uscita -->
+  <g class="piloro">
+    <g class="piloro__su"><rect x="379" y="236" width="14" height="12" rx="5"></rect></g>
+    <g class="piloro__giu"><rect x="377" y="250" width="14" height="12" rx="5"></rect></g>
+  </g>
+</g>
+
+<style>
+  .stomaco-fronte__esofago {
+    fill: var(--tessuto);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .stomaco-fronte__parete {
+    fill: var(--tessuto-chiaro);
+    stroke: var(--muscolo);
+    stroke-width: 10;
+    stroke-linejoin: round;
+  }
+  .stomaco-fronte__contorno {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .piloro rect {
+    fill: var(--muscolo);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+</style>

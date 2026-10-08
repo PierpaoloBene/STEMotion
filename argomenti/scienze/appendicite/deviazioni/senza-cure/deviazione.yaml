@@ -1,0 +1,27 @@
+pulsante: Se non si opera
+titolo: Se non si opera in tempo
+passaggi:
+  - id: pus
+    titolo: Il pus
+    breve: Dentro l'appendice si forma il pus e la parete si indebolisce.
+    spiegazione: >
+      Batteri e globuli bianchi morti formano il **pus**, un liquido giallastro.
+      L'appendice si riempie sempre di più.
+      La parete, tesa e con poco sangue, diventa sempre più debole.
+
+  - id: perforazione
+    titolo: La perforazione
+    breve: La parete si rompe e il pus esce dall'appendice.
+    spiegazione: >
+      A un certo punto la parete si apre: è la **perforazione**.
+      Non è un'esplosione come quella di un palloncino: si apre un buco e il pus esce.
+      Il rischio cresce con le ore, per questo non si aspetta.
+
+  - id: peritonite
+    titolo: La peritonite
+    breve: "Il pus si spande nella pancia: è la peritonite."
+    spiegazione: >
+      Pus e batteri si spargono nell'addome e infiammano il **peritoneo**,
+      la sottile pellicola che riveste la pancia e l'intestino.
+      È la **peritonite**, un'infezione grave.
+      Si cura in ospedale, con un'operazione urgente e con gli antibiotici.

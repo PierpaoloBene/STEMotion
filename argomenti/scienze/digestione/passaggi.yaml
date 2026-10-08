@@ -1,0 +1,95 @@
+passaggi:
+  - id: percorso
+    fase: panoramica
+    titolo: Il viaggio del cibo
+    breve: Dallo stomaco il cibo passa nell'intestino tenue e poi nel crasso.
+    spiegazione: >
+      Dopo la deglutizione il bolo arriva nello **stomaco**.
+      Da lì passa nell'**intestino tenue**, un tubo lungo circa 6 m ripiegato su sé stesso.
+      Poi arriva nell'**intestino crasso**, più corto e più largo.
+      In tutto il viaggio dura da uno a tre giorni.
+
+  - id: rimescolamento
+    fase: stomaco
+    titolo: Lo stomaco rimescola
+    breve: Le pareti muscolose dello stomaco rimescolano il cibo.
+    spiegazione: >
+      Lo stomaco è un sacco elastico con pareti di muscolo.
+      Le pareti si contraggono a onde e rimescolano il cibo, un po' come una lavatrice.
+      Il cibo resta nello stomaco per alcune ore.
+
+  - id: succo-gastrico
+    fase: stomaco
+    titolo: Il succo gastrico
+    breve: Il succo gastrico scioglie il cibo e lo trasforma in chimo.
+    spiegazione: >
+      Le pareti dello stomaco producono il **succo gastrico**, acido e ricco di **enzimi**:
+      sostanze che spezzano il cibo in pezzi più piccoli.
+      L'acido uccide anche molti microbi.
+      Alla fine il cibo diventa una pappa chiamata **chimo**.
+
+  - id: piloro
+    fase: stomaco
+    titolo: Il piloro
+    breve: Il piloro lascia passare il chimo poco alla volta.
+    spiegazione: >
+      In fondo allo stomaco c'è un anello di muscolo, il **piloro**.
+      Si apre ogni tanto e lascia passare un po' di chimo nel **duodeno**,
+      il primo tratto dell'intestino tenue.
+
+  - id: bile-pancreas
+    fase: intestino tenue
+    titolo: Bile e succo pancreatico
+    breve: Nel duodeno arrivano la bile e il succo pancreatico.
+    spiegazione: >
+      Il **fegato** produce la **bile**, che si raccoglie nella **cistifellea**:
+      divide i grassi in goccioline piccolissime.
+      Il **pancreas** produce il **succo pancreatico**, pieno di enzimi.
+      Insieme continuano la digestione.
+
+  - id: molecole
+    fase: intestino tenue
+    titolo: Le sostanze nutritive
+    breve: Il cibo viene spezzato in sostanze nutritive piccolissime.
+    spiegazione: >
+      Gli enzimi spezzano il cibo fino alle **molecole**, i pezzi più piccoli.
+      Le proteine diventano amminoacidi, i carboidrati zuccheri semplici come il glucosio,
+      i grassi acidi grassi.
+      Sono le **sostanze nutritive**, così piccole da attraversare la parete dell'intestino.
+
+  - id: villi
+    fase: intestino tenue
+    titolo: I villi
+    breve: I villi dell'intestino tenue assorbono le sostanze nutritive.
+    spiegazione: >
+      La parete interna dell'intestino tenue è coperta da milioni di **villi**,
+      piccole sporgenze simili a dita.
+      Rendono enorme la superficie che assorbe.
+      Le sostanze nutritive entrano nei villi: è l'**assorbimento**.
+
+  - id: sangue
+    fase: intestino tenue
+    titolo: Nel sangue
+    breve: Il sangue porta le sostanze nutritive a tutto il corpo.
+    spiegazione: >
+      Dentro ogni villo ci sono i **capillari**, vasi sanguigni sottilissimi.
+      Le sostanze nutritive entrano nel sangue,
+      che le porta prima al fegato e poi a tutte le cellule del corpo.
+
+  - id: acqua
+    fase: intestino crasso
+    titolo: L'acqua viene recuperata
+    breve: Nell'intestino crasso viene riassorbita l'acqua rimasta.
+    spiegazione: >
+      Ciò che non è stato assorbito passa nell'**intestino crasso**.
+      Gran parte dell'acqua è già stata assorbita nel tenue: il crasso recupera quella che resta.
+      Qui vivono miliardi di **batteri** utili, che producono anche alcune vitamine.
+
+  - id: feci
+    fase: intestino crasso
+    titolo: Le feci
+    breve: Ciò che resta forma le feci, espulse attraverso l'ano.
+    spiegazione: >
+      Senza più acqua, i resti diventano più solidi: sono le **feci**.
+      Si raccolgono nel **retto**, l'ultimo tratto dell'intestino,
+      ed escono attraverso l'**ano**.

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- busto visto di fronte, con il punto del dolore in basso a destra della persona -->
+    <path fill="#F4D3B5" d="M120 20C108 140 104 260 112 360C118 430 132 470 150 500H250C268 470 282 430 288 360C296 260 292 140 280 20Z" />
+    <path fill="none" d="M193 260C196 253 204 253 207 260C204 267 196 267 193 260Z" />
+    <path fill="#E0533F" d="M150 332L157 316L163 330L178 324L170 338L182 348L166 350L164 366L155 354L141 360L146 346L134 338L149 336Z" />
+    <path fill="#3E5A8C" d="M114 410H286L278 500H122Z" />
+  </g>
+  <g class="dentro">
+    <rect width="400" height="500" fill="#16233F" />
+    <path fill="#1F3257" stroke="#3E5A8C" stroke-width="3" stroke-linejoin="round" d="M120 20C108 140 104 260 112 360C118 430 132 470 150 500H250C268 470 282 430 288 360C296 260 292 140 280 20Z" />
+    <!-- intestino crasso con il cieco -->
+    <path fill="none" stroke="#E3A37F" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" d="M150 330C146 270 144 220 148 170C152 140 180 136 210 140C240 144 262 132 270 156C276 220 272 280 270 320C268 360 240 372 214 380L210 440" />
+    <circle cx="150" cy="330" r="22" fill="#E3A37F" />
+    <path fill="none" stroke="#F2B8A2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" d="M206 180C240 186 250 200 230 210C196 226 176 214 176 236C176 256 244 246 246 268C248 290 190 280 184 300C180 314 206 324 178 330" />
+    <!-- appendice gonfia e infiammata, con i batteri -->
+    <path fill="#E0533F" stroke="#F8DCDC" stroke-width="3" stroke-linejoin="round" d="M148 344C142 370 150 400 168 418C178 428 194 422 190 408C182 388 172 366 168 344Z" />
+    <g fill="#5E7A2A">
+      <rect x="160" y="366" width="4" height="10" rx="2" transform="rotate(20 162 371)" />
+      <rect x="168" y="386" width="4" height="10" rx="2" transform="rotate(-25 170 391)" />
+      <rect x="176" y="404" width="4" height="10" rx="2" transform="rotate(15 178 409)" />
+    </g>
+  </g>
+</svg>

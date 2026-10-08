@@ -1,0 +1,38 @@
+---
+// Fegato con la cistifellea e il dotto che porta la bile nel duodeno (vista frontale).
+// Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
+---
+
+<g class="fegato">
+  <path class="fegato__forma" d="M238 102C300 74 410 78 470 100C478 104 476 112 468 118C430 140 380 168 330 196C296 214 256 214 242 196C232 180 230 130 238 102Z"></path>
+  <!-- dotto biliare: dalla cistifellea al duodeno -->
+  <path class="fegato__dotto-bordo" d="M322 222C330 250 336 276 343 300"></path>
+  <path class="fegato__dotto" d="M322 222C330 250 336 276 343 300"></path>
+  <ellipse class="fegato__cistifellea" cx="318" cy="208" rx="12" ry="19" transform="rotate(-20 318 208)"></ellipse>
+</g>
+
+<style>
+  .fegato__forma {
+    fill: var(--fegato);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .fegato__cistifellea {
+    fill: var(--succhi);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+  }
+  .fegato__dotto-bordo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 8;
+    stroke-linecap: round;
+  }
+  .fegato__dotto {
+    fill: none;
+    stroke: var(--succhi);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+</style>

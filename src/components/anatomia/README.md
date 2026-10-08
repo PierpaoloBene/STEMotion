@@ -25,5 +25,30 @@ così l'animazione li ruota o li sposta con un semplice `transform` CSS:
 | `Esofago` | — | — |
 | `Stomaco` | `.cardias__sx`, `.cardias__dx` | cardias `(391, 934)` |
 
+## Vista frontale dell'addome
+
+Gli organi della digestione hanno un secondo sistema di riferimento, il busto **visto di fronte**:
+
+- la persona ci guarda, quindi il suo lato **destro è a sinistra** nel disegno (fegato, cieco, appendice);
+- unità del disegno: busto da `x = 228` a `x = 572`, da `y = -20` (sotto il petto) a `y = 660` (bacino);
+  si usa con `viewBox="0 0 800 640"`;
+- riferimenti utili: ombelico `(400, 400)`, piloro `(386, 250)`, sbocco di bile e succo pancreatico
+  nel duodeno `(343, 300)`, cieco `(298, 520)`, attacco dell'appendice `(310, 538)`.
+
+| Componente | Classi animabili | Note |
+|---|---|---|
+| `AddomeFronte` | — | pelle, diaframma, arcate delle costole |
+| `Fegato` | — | con cistifellea e dotto della bile |
+| `Pancreas` | — | con il dotto del succo pancreatico |
+| `StomacoFronte` | `.piloro__su`, `.piloro__giu` | `translateY(∓6px)` apre il piloro |
+| `IntestinoTenue` | `.duodeno`, `.anse` | tubi disegnati come tratti: crescono con lo zoom |
+| `IntestinoCrasso` | `.appendice`, `.appendice__corpo`, `.appendice__parete` | slot `appendice`: asse lungo y, attacco in `(0, 0)`, punta a `y = 56` |
+| `AppendiceInterno` | `.tappo`, `.batteri--1/2/3`, `.vasi`, `.pus`, `.crepa` | va nello slot `appendice`; tutto parte nascosto |
+| `Villi` | — | riquadro al microscopio da `(60, 30)` a `(740, 610)` |
+
+Ordine consigliato: `AddomeFronte`, `Pancreas`, `Fegato`, `IntestinoTenue`, `StomacoFronte`, `IntestinoCrasso`.
+
+## Vista di profilo
+
 Ordine consigliato: `Corpo`, `Polmoni`, `Diaframma`, `BoccaFaringe`, `Esofago`, `Laringe`, `Stomaco`.
 I colori sono i token "Illustrazioni" di `src/styles/global.css`.

@@ -1,0 +1,62 @@
+---
+// Parete dell'intestino tenue vista al microscopio: villi con i capillari.
+// Ha un suo sistema di riferimento: riempie un riquadro da (60, 30) a (740, 610),
+// il lume (dove passa il cibo digerito) è in alto, la parete in basso.
+// In ogni villo il capillare sale rosso (sangue ricco di ossigeno) e scende blu.
+const villi = [190, 330, 470, 610];
+const villo = (x: number) => `M${x - 42} 470C${x - 42} 330 ${x - 38} 210 ${x} 200C${x + 38} 210 ${x + 42} 330 ${x + 42} 470Z`;
+---
+
+<g class="villi">
+  <rect class="villi__fondo" x="60" y="30" width="680" height="580" rx="24"></rect>
+  <path class="villi__parete" d="M62 470H738V586C738 600 728 608 714 608H86C72 608 62 600 62 586Z"></path>
+  <path class="villi__muscolo" d="M62 570H738V586C738 600 728 608 714 608H86C72 608 62 600 62 586Z"></path>
+  {villi.map((x) => <path class="villi__villo" d={villo(x)} />)}
+  <!-- capillari: salgono rossi e scendono blu, poi confluiscono nei vasi sotto la parete -->
+  {villi.map((x) => <path class="villi__arteria" d={`M${x - 22} 522V330C${x - 22} 270 ${x - 16} 240 ${x} 236`} />)}
+  {villi.map((x) => <path class="villi__vena" d={`M${x} 236C${x + 16} 240 ${x + 22} 270 ${x + 22} 330V546`} />)}
+  <path class="villi__arteria" d="M80 522H632"></path>
+  <path class="villi__vena" d="M168 546H700"></path>
+  <path class="villi__freccia" d="M700 546H726M716 536L728 546L716 556"></path>
+  <rect class="villi__cornice" x="60" y="30" width="680" height="580" rx="24"></rect>
+</g>
+
+<style>
+  .villi__fondo {
+    fill: var(--tessuto-chiaro);
+  }
+  .villi__parete,
+  .villi__villo {
+    fill: var(--intestino);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+  .villi__muscolo {
+    fill: var(--muscolo);
+  }
+  .villi__arteria,
+  .villi__vena {
+    fill: none;
+    stroke-width: 7;
+    stroke-linecap: round;
+  }
+  .villi__arteria {
+    stroke: var(--arterioso);
+  }
+  .villi__vena {
+    stroke: var(--venoso);
+  }
+  .villi__freccia {
+    fill: none;
+    stroke: var(--venoso);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .villi__cornice {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 3;
+  }
+</style>

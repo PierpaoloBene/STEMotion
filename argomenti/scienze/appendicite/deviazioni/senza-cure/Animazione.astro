@@ -1,0 +1,237 @@
+---
+/**
+ * Deviazione dell'appendicite: che cosa succede se non si opera in tempo.
+ *
+ * Stessa scena dell'argomento (organi condivisi in vista frontale). Si parte
+ * dall'appendice già gonfia e infiammata, come nel passaggio "dolore" che apre il box.
+ * Ogni stato è disegnato solo con CSS a partire da [data-passaggio] del palco.
+ *
+ * Inquadrature: appendice ingrandita (pus, perforazione), tutto l'addome (peritonite).
+ */
+import AddomeFronte from '../../../../../src/components/anatomia/AddomeFronte.astro';
+import Pancreas from '../../../../../src/components/anatomia/Pancreas.astro';
+import Fegato from '../../../../../src/components/anatomia/Fegato.astro';
+import IntestinoTenue from '../../../../../src/components/anatomia/IntestinoTenue.astro';
+import StomacoFronte from '../../../../../src/components/anatomia/StomacoFronte.astro';
+import IntestinoCrasso from '../../../../../src/components/anatomia/IntestinoCrasso.astro';
+import AppendiceInterno from '../../../../../src/components/anatomia/AppendiceInterno.astro';
+
+const Z = 3.2;
+const etichette = [
+  { testo: 'Pus', x: 372, y: 612, linea: [372, 608, 331, 566], passaggio: 'pus', zoom: Z },
+  { testo: 'Perforazione', x: 362, y: 640, linea: [370, 632, 347, 594], passaggio: 'perforazione', zoom: Z },
+  { testo: 'Pus', x: 20, y: 612, linea: [70, 604, 300, 604], passaggio: 'peritonite', zoom: 1 },
+  { testo: 'Peritonite', x: 600, y: 520, linea: [592, 512, 470, 520], passaggio: 'peritonite', zoom: 1 },
+];
+
+const descrizioni: Record<string, string> = {
+  pus: 'L’appendice gonfia e rossa, ingrandita. Dentro si riempie di un liquido giallo: il pus.',
+  perforazione: 'In fondo all’appendice la parete si apre: dal buco escono pus e batteri.',
+  peritonite: 'Di nuovo tutto l’addome. Macchie gialle di pus si allargano nella pancia attorno all’intestino.',
+};
+
+// Pus e batteri che escono dal buco in fondo all'appendice (che è in 345, 588).
+const fuoriuscita = [
+  { x: 330, y: 606, r: 5 },
+  { x: 356, y: 604, r: 4 },
+  { x: 346, y: 614, r: 6 },
+  { x: 366, y: 594, r: 3.5 },
+  { x: 336, y: 620, r: 3.5 },
+];
+const batteriFuori = [
+  [326, 598, 20],
+  [360, 612, -30],
+  [350, 624, 60],
+  [370, 602, 10],
+];
+// Macchie di peritonite che si allargano nell'addome.
+const macchie = [
+  { x: 340, y: 578, r: 70, ritardo: 0 },
+  { x: 410, y: 540, r: 85, ritardo: 0.15 },
+  { x: 476, y: 584, r: 70, ritardo: 0.3 },
+  { x: 372, y: 470, r: 60, ritardo: 0.45 },
+  { x: 460, y: 460, r: 55, ritardo: 0.6 },
+];
+const larghezzaTesto = (t: string, fs: number) => t.length * fs * 0.56;
+const ids = ['pus', 'perforazione', 'peritonite'];
+const da = (lista: string[]) => lista.map((id) => `[data-passaggio='${id}']`).join(', ');
+---
+
+<div class="senza-cure">
+  <svg viewBox="0 0 800 640" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="senza-cure-macchia">
+        <stop offset="0" style="stop-color: var(--pus); stop-opacity: 0.8"></stop>
+        <stop offset="0.7" style="stop-color: var(--pus); stop-opacity: 0.45"></stop>
+        <stop offset="1" style="stop-color: var(--pus); stop-opacity: 0"></stop>
+      </radialGradient>
+    </defs>
+    <g class="camera">
+      <AddomeFronte />
+      <Pancreas />
+      <Fegato />
+      <IntestinoTenue />
+      <StomacoFronte />
+      <IntestinoCrasso>
+        <AppendiceInterno slot="appendice" />
+      </IntestinoCrasso>
+
+      <g class="fuoriuscita">
+        {fuoriuscita.map((p) => <circle class="goccia-pus" cx={p.x} cy={p.y} r={p.r} />)}
+        {batteriFuori.map(([x, y, a]) => <rect class="batterio-fuori" x="-1" y="-2.6" width="2" height="5.2" rx="1" transform={`translate(${x} ${y}) rotate(${a})`} />)}
+      </g>
+      {
+        macchie.map((m) => (
+          <circle class="macchia" cx={m.x} cy={m.y} r={m.r} style={`--ritardo: ${m.ritardo}s`} />
+        ))
+      }
+
+      {
+        etichette.map((e) => {
+          const fs = 24 / e.zoom;
+          return (
+            <g class="etichetta" data-per={e.passaggio}>
+              <line x1={e.linea[0]} y1={e.linea[1]} x2={e.linea[2]} y2={e.linea[3]} />
+              <circle cx={e.linea[2]} cy={e.linea[3]} r={3.5 / e.zoom} />
+              <rect x={e.x - fs * 0.3} y={e.y - fs * 0.95} width={larghezzaTesto(e.testo, fs) + fs * 0.6} height={fs * 1.3} rx={fs * 0.65} />
+              <text x={e.x} y={e.y} style={`font-size: ${fs}px`}>
+                {e.testo}
+              </text>
+            </g>
+          );
+        })
+      }
+    </g>
+  </svg>
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:inline set:html={`
+  .senza-cure {
+    position: absolute;
+    inset: 0;
+  }
+  .senza-cure svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .senza-cure svg :is(.addome__pelle, .fegato__forma, .fegato__cistifellea, .pancreas__forma, .stomaco-fronte__contorno, .stomaco-fronte__esofago, .piloro rect, .crasso__cieco, .appendice__parete, .appendice__lume, .tappo ellipse, .vasi path, .goccia-pus, .etichetta line) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Inquadratura: appendice ingrandita, poi tutto l'addome --- */
+  .senza-cure .camera {
+    transform: translate(-630.4px, -1433.6px) scale(${Z});
+    transition: transform 1.2s ease-in-out;
+  }
+  [data-passaggio='peritonite'] .senza-cure .camera {
+    transform: translate(0, 0) scale(1);
+  }
+  .senza-cure .tubo-bordo { stroke-width: 19.6; transition: stroke-width 1.2s ease-in-out; }
+  .senza-cure .crasso__bordo { stroke-width: 41.6; transition: stroke-width 1.2s ease-in-out; }
+  [data-passaggio='peritonite'] .senza-cure .tubo-bordo { stroke-width: 23; }
+  [data-passaggio='peritonite'] .senza-cure .crasso__bordo { stroke-width: 46; }
+
+  /* --- Si parte dall'appendicite del passaggio "dolore": tappo, batteri, gonfia e rossa --- */
+  .senza-cure .tappo { opacity: 1; transform: translateY(6px); }
+  .senza-cure .batteri { opacity: 1; }
+  .senza-cure .appendice__corpo { transform: scale(1.8, 1.1); }
+  .senza-cure .appendice__parete { fill: var(--tessuto-infiammato); }
+  .senza-cure .vasi path { opacity: 1; }
+
+  /* --- Il pus --- */
+  .senza-cure .pus {
+    transition: opacity 1.2s ease-in-out;
+  }
+  :is(${da(ids)}) .senza-cure .pus {
+    opacity: 0.95;
+  }
+
+  /* --- La perforazione: la parete si apre e il pus esce --- */
+  .senza-cure .crepa {
+    transform-box: fill-box;
+    transform-origin: center top;
+    transform: scale(0.2);
+    transition: opacity 0.3s ease-in-out, transform 0.6s ease-in-out;
+  }
+  :is(${da(['perforazione', 'peritonite'])}) .senza-cure .crepa {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .senza-cure .fuoriuscita {
+    transform-box: view-box;
+    opacity: 0;
+    transform: translate(345px, 588px) scale(0.2) translate(-345px, -588px);
+    transition: opacity 0.4s ease-in-out, transform 1.2s ease-in-out;
+  }
+  :is(${da(['perforazione', 'peritonite'])}) .senza-cure .fuoriuscita {
+    opacity: 1;
+    transform: translate(345px, 588px) scale(1) translate(-345px, -588px);
+  }
+  [data-passaggio='perforazione'] .senza-cure .fuoriuscita {
+    transition-delay: 0.6s;
+  }
+  .senza-cure .goccia-pus {
+    fill: var(--pus);
+    stroke: var(--contorno);
+    stroke-width: 1;
+  }
+  .senza-cure .batterio-fuori {
+    fill: var(--batteri);
+  }
+
+  /* --- La peritonite: il pus si allarga nella pancia --- */
+  .senza-cure .macchia {
+    fill: url(#senza-cure-macchia);
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.1);
+    opacity: 0;
+    transition: transform 1s ease-in-out, opacity 0.4s ease-in-out;
+  }
+  [data-passaggio='peritonite'] .senza-cure .macchia {
+    transform: scale(1);
+    opacity: 1;
+    transition-delay: calc(0.6s + var(--ritardo));
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+  [data-passaggio='pus'] .senza-cure .appendice__parete,
+  [data-passaggio='perforazione'] .senza-cure .goccia-pus {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Etichette --- */
+  .senza-cure .etichetta {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+  .senza-cure .etichetta line { stroke: var(--testo-2); stroke-width: 1.5; }
+  .senza-cure .etichetta circle { fill: var(--testo-2); }
+  .senza-cure .etichetta rect { fill: var(--superficie); opacity: 0.92; }
+  .senza-cure .etichetta text { fill: var(--testo); font-weight: 700; }
+  ${ids.map((id) => `[data-passaggio='${id}'] .senza-cure .etichetta[data-per='${id}']`).join(',\n  ')} {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out 1.2s;
+  }
+  [data-passaggio='peritonite'] .senza-cure .etichetta[data-per='peritonite'] {
+    transition-delay: 1.8s;
+  }
+
+  /* --- Descrizione per gli screen reader --- */
+  .senza-cure .descrizione { display: none; }
+  ${ids.map((id) => `[data-passaggio='${id}'] .senza-cure .descrizione[data-per='${id}']`).join(',\n  ')} {
+    display: block;
+  }
+`}></style>

@@ -1,0 +1,16 @@
+titolo: L'appendicite
+sottotitolo: Come nasce, come peggiora e perché si opera
+materia: scienze
+area: anatomia
+classi: [2]
+modello: passaggi
+durata_minuti: 10
+prerequisiti: [digestione]
+obiettivi:
+  - Indicare dove si trova l'appendice
+  - Descrivere come nasce e come peggiora un'appendicite
+  - Spiegare perché un'appendicite va curata subito
+parole_chiave: [appendice, cieco, batteri, infiammazione, pus, perforazione, peritonite, appendicectomia]
+stato: bozza
+revisionato_da: null
+fonti: []

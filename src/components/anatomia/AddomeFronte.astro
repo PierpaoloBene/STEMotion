@@ -1,0 +1,32 @@
+---
+// Busto visto di fronte: pelle, diaframma e arcate delle costole.
+// L'ombelico è a (400, 400): chi ne ha bisogno lo disegna sopra gli organi.
+// Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
+---
+
+<g class="addome">
+  <path class="addome__pelle" d="M236 -20C226 110 220 250 228 370C236 470 256 548 292 660H508C544 548 564 470 572 370C580 250 574 110 564 -20Z"></path>
+  <path class="addome__costole" d="M244 150C300 210 360 228 400 196C440 228 500 210 556 150"></path>
+  <path class="addome__diaframma" d="M238 96C300 58 370 66 400 88C430 66 500 58 562 96"></path>
+</g>
+
+<style>
+  .addome__pelle {
+    fill: var(--pelle);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .addome__costole {
+    fill: none;
+    stroke: var(--osso);
+    stroke-width: 8;
+    stroke-linecap: round;
+  }
+  .addome__diaframma {
+    fill: none;
+    stroke: var(--muscolo);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+</style>

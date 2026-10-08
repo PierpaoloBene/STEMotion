@@ -1,0 +1,64 @@
+passaggi:
+  - id: appendice
+    fase: anatomia
+    titolo: L'appendice
+    breve: L'appendice è un piccolo tubo chiuso attaccato all'intestino crasso.
+    spiegazione: >
+      L'**appendice** è lunga circa 8–10 cm, più o meno come un dito.
+      È attaccata al **cieco**, il primo tratto dell'intestino crasso, in basso a destra nella pancia.
+      È chiusa in fondo, come la punta di un guanto.
+
+  - id: tappo
+    fase: infiammazione
+    titolo: Un tappo
+    breve: Un piccolo tappo chiude l'ingresso dell'appendice.
+    spiegazione: >
+      L'**appendicite** comincia spesso così: l'ingresso dell'appendice si chiude.
+      Di solito il tappo è un pezzetto di feci indurito; a volte è la parete che si gonfia.
+      Quello che c'è dentro non riesce più a uscire.
+
+  - id: batteri
+    fase: infiammazione
+    titolo: I batteri si moltiplicano
+    breve: Chiusi dentro, i batteri si moltiplicano.
+    spiegazione: >
+      Nell'intestino vivono sempre moltissimi **batteri**, quasi tutti utili.
+      Quelli rimasti chiusi nell'appendice si moltiplicano in fretta.
+
+  - id: gonfiore
+    fase: infiammazione
+    titolo: L'appendice si gonfia
+    breve: Muco e batteri si accumulano e l'appendice si gonfia.
+    spiegazione: >
+      La parete dell'appendice continua a produrre muco, che non può uscire.
+      La pressione dentro cresce e l'appendice si gonfia come un palloncino lungo.
+
+  - id: infiammazione
+    fase: infiammazione
+    titolo: Rossa e infiammata
+    breve: La parete si infiamma e diventa rossa.
+    spiegazione: >
+      Il corpo si difende con l'**infiammazione**:
+      nella parete arriva più sangue, con i globuli bianchi che combattono i batteri.
+      Per questo la parete diventa rossa, calda e dolorante.
+
+  - id: dolore
+    fase: sintomi
+    titolo: Il mal di pancia
+    breve: Il dolore parte vicino all'ombelico e poi scende in basso a destra.
+    spiegazione: >
+      All'inizio il dolore è vicino all'ombelico, poi si sposta in basso a destra e diventa forte.
+      Spesso ci sono anche febbre, nausea e poca fame.
+      Con questi segnali bisogna farsi visitare subito da un medico.
+      Nel disegno il dolore è a sinistra perché la persona ci guarda.
+    deviazioni: [senza-cure]
+
+  - id: intervento
+    fase: cura
+    titolo: L'operazione
+    breve: Il chirurgo toglie l'appendice infiammata.
+    spiegazione: >
+      L'operazione si chiama **appendicectomia**.
+      Spesso si fa con tre piccoli tagli e una telecamera sottile: è la **laparoscopia**.
+      Dopo pochi giorni si torna a casa.
+      Senza appendice si vive benissimo.
