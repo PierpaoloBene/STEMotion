@@ -1,0 +1,88 @@
+passaggi:
+  - id: centro
+    titolo: Il centro
+    breve: Tanti punti, tutti alla stessa distanza dal centro O.
+    spiegazione: >
+      Fissiamo un punto O, il **centro**.
+      Intorno segniamo tanti punti, tutti alla stessa distanza da O.
+      Le linee tratteggiate sono lunghe tutte uguali.
+
+  - id: circonferenza
+    titolo: La circonferenza
+    breve: Tutti i punti alla stessa distanza da O formano la circonferenza.
+    spiegazione: >
+      Se prendiamo tutti i punti che hanno quella distanza da O, otteniamo una linea chiusa.
+      Questa linea si chiama **circonferenza**.
+      È proprio la linea che disegna il compasso.
+
+  - id: cerchio
+    titolo: Il cerchio
+    breve: La circonferenza con tutta la parte interna è il cerchio.
+    spiegazione: >
+      La circonferenza è solo la linea, il "bordo".
+      La circonferenza insieme a tutti i punti al suo interno forma il **cerchio**.
+      Una moneta appoggiata sul foglio occupa un cerchio; il suo contorno è una circonferenza.
+
+  - id: raggio
+    titolo: Il raggio
+    breve: Il raggio unisce il centro a un punto della circonferenza.
+    spiegazione: >
+      Il segmento che va dal centro O a un punto della circonferenza si chiama **raggio**.
+      La sua lunghezza si indica con la lettera **r**.
+      Nel compasso, il raggio è l'apertura tra la punta e la mina.
+
+  - id: raggi-uguali
+    titolo: Tutti i raggi sono uguali
+    breve: Una circonferenza ha infiniti raggi, tutti lunghi uguali.
+    spiegazione: >
+      Il raggio può partire verso qualsiasi punto della circonferenza.
+      I raggi sono infiniti, ma hanno tutti la stessa lunghezza.
+      È proprio la regola con cui abbiamo costruito la circonferenza.
+
+  - id: diametro
+    titolo: Il diametro
+    breve: Il diametro passa per il centro e tocca due punti della circonferenza.
+    spiegazione: >
+      Il **diametro** è un segmento che unisce due punti della circonferenza passando per il centro.
+      Divide il cerchio in due metà uguali.
+      Anche i diametri sono infiniti e tutti lunghi uguali.
+
+  - id: diametro-doppio
+    titolo: Diametro e raggio
+    breve: Il diametro è lungo il doppio del raggio, d = 2 × r.
+    spiegazione: >
+      Il diametro è formato da due raggi, uno da una parte e uno dall'altra del centro.
+      Per questo è lungo il doppio del raggio: **d = 2 × r**.
+      E il raggio è la metà del diametro: r = d : 2.
+
+  - id: corda
+    titolo: La corda
+    breve: La corda unisce due punti qualsiasi della circonferenza.
+    spiegazione: >
+      Un segmento che unisce due punti A e B della circonferenza si chiama **corda**.
+      Non deve per forza passare per il centro.
+      Il diametro è una corda speciale: quella che passa per il centro, ed è la più lunga.
+
+  - id: arco-minore
+    titolo: L'arco minore
+    breve: L'arco minore è la parte più corta di circonferenza tra A e B.
+    spiegazione: >
+      I punti A e B dividono la circonferenza in due parti, che si chiamano **archi**.
+      L'**arco minore** è il più corto dei due.
+      A e B sono gli estremi dell'arco.
+
+  - id: arco-maggiore
+    titolo: L'arco maggiore
+    breve: L'arco maggiore è la parte più lunga di circonferenza tra A e B.
+    spiegazione: >
+      L'altra parte di circonferenza tra A e B è l'**arco maggiore**.
+      Arco minore e arco maggiore insieme formano tutta la circonferenza.
+      Se A e B sono gli estremi di un diametro, i due archi sono uguali: sono due semicirconferenze.
+
+  - id: riepilogo
+    titolo: Tutti gli elementi
+    breve: Centro, raggio, diametro, corda, arco minore e arco maggiore.
+    spiegazione: >
+      Ricapitoliamo: il **centro** O è il punto da cui tutti i punti della circonferenza hanno la stessa distanza.
+      Raggio, diametro e corda sono segmenti; gli archi sono parti della circonferenza.
+      Il diametro è lungo il doppio del raggio.

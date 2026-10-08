@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori" stroke-linejoin="round" stroke-linecap="round">
+    <!-- matrioska chiusa: fuori si vede solo la più grande -->
+    <g transform="translate(200 470) scale(1)"><g fill="#1D1D1F" stroke="#1D1D1F" stroke-width="6.00" stroke-linejoin="round"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g><g fill="#5B4B9A"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g></g>
+    <g transform="translate(200 470)" stroke="#1D1D1F" stroke-width="3">
+      <!-- viso -->
+      <ellipse cx="0" cy="-296" rx="48" ry="44" fill="#F4D3B5"/>
+      <path d="M-48 -306Q0 -350 48 -306Q30 -334 0 -336Q-30 -334 -48 -306Z" fill="#1D1D1F"/>
+      <circle cx="-17" cy="-298" r="5" fill="#1D1D1F" stroke="none"/>
+      <circle cx="17" cy="-298" r="5" fill="#1D1D1F" stroke="none"/>
+      <circle cx="-28" cy="-280" r="8" fill="#E58A9A" stroke="none"/>
+      <circle cx="28" cy="-280" r="8" fill="#E58A9A" stroke="none"/>
+      <path d="M-10 -274Q0 -266 10 -274" fill="none" stroke-width="2.5"/>
+      <!-- grembiule con un fiore nei colori degli insiemi che stanno dentro -->
+      <ellipse cx="0" cy="-118" rx="78" ry="98" fill="#E6E4F0"/>
+      <circle cx="0" cy="-148" r="22" fill="#12827C"/>
+      <circle cx="-30" cy="-112" r="22" fill="#C2367A"/>
+      <circle cx="30" cy="-112" r="22" fill="#C2367A"/>
+      <circle cx="0" cy="-80" r="22" fill="#12827C"/>
+      <circle cx="0" cy="-114" r="16" fill="#B88400"/>
+      <path d="M-115 -40H115" fill="none"/>
+    </g>
+  </g>
+  <g class="dentro">
+    <rect width="400" height="500" fill="#16233F"/>
+    <!-- dentro ogni bambola ce n'è una più piccola: R, Q, Z, N -->
+    <g transform="translate(200 470) scale(1)"><g fill="#D8E2F0" stroke="#D8E2F0" stroke-width="5.00" stroke-linejoin="round"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g><g fill="#5B4B9A"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g></g>
+    <g transform="translate(200 470) scale(0.76)"><g fill="#D8E2F0" stroke="#D8E2F0" stroke-width="6.58" stroke-linejoin="round"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g><g fill="#12827C"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g></g>
+    <g transform="translate(200 470) scale(0.54)"><g fill="#D8E2F0" stroke="#D8E2F0" stroke-width="9.26" stroke-linejoin="round"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g><g fill="#C2367A"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g></g>
+    <g transform="translate(200 470) scale(0.34)"><g fill="#D8E2F0" stroke="#D8E2F0" stroke-width="14.71" stroke-linejoin="round"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g><g fill="#B88400"><circle cx="0" cy="-300" r="75"/><path d="M-60 -250C-130 -220 -135 -120 -115 -40C-108 -10 -90 0 -60 0H60C90 0 108 -10 115 -40C135 -120 130 -220 60 -250Z"/></g></g>
+  </g>
+</svg>

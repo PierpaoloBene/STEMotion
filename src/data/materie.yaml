@@ -17,6 +17,7 @@
   nome: Matematica
   descrizione: Numeri, figure e relazioni, da vedere e da muovere.
   aree:
-    - { id: aritmetica, nome: Aritmetica }
-    - { id: geometria, nome: Geometria }
     - { id: algebra, nome: Algebra }
+    - { id: geometria, nome: Geometria }
+    - { id: aritmetica, nome: Aritmetica }
+    - { id: informatica, nome: Informatica }

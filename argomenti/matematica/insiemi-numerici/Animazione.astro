@@ -1,0 +1,616 @@
+---
+/**
+ * Gli insiemi numerici: in alto la retta dei numeri, in basso il diagramma con
+ * N, Z, Q e R uno dentro l'altro. A ogni passaggio compare un insieme nuovo,
+ * o il problema che lo rende necessario.
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Ogni pezzo dice in quali passaggi si vede:
+ * `--da` è il primo, `--a` l'ultimo (se manca, resta fino alla fine).
+ *
+ * Lo stesso disegno esiste in due disposizioni: "larga" (insiemi affiancati, per la LIM)
+ * e "stretta" (insiemi impilati, per il telefono in verticale), scelte con una container query.
+ */
+
+type Punto = [number, number];
+type Insieme = 'N' | 'Z' | 'Q' | 'R';
+
+/** Un numero da scrivere: testo semplice, frazione (con segno) o radice quadrata. */
+type Numero = { testo: string } | { segno?: string; num: string; den: string } | { radice: string };
+
+interface Voce {
+  id: string;
+  insieme: Insieme;
+  numero: Numero;
+  /** Valore sulla retta, se il numero ci viene segnato. */
+  valore?: number;
+  /** Scrittura decimale, mostrata accanto nel diagramma da `decimaleDa` in poi. */
+  decimale?: string;
+  decimaleDa?: number;
+}
+
+// --- Passaggi (indici) ---
+const NATURALI = 0;
+const SOTTRAZIONE = 1;
+const INTERI = 2;
+const DIVISIONE = 3;
+const RAZIONALI = 4;
+const DECIMALI = 5;
+const RADICE = 6;
+const IRRAZIONALI = 7;
+const REALI = 8;
+const INCLUSIONE = 9;
+
+const comparsa: Record<Insieme, number> = { N: NATURALI, Z: INTERI, Q: RAZIONALI, R: REALI };
+// I numeri di un insieme compaiono con l'insieme; gli irrazionali prima di R (fuori da Q).
+const voci: (Voce & { da: number })[] = [
+  { id: 'n0', insieme: 'N', numero: { testo: '0' }, valore: 0 },
+  { id: 'n1', insieme: 'N', numero: { testo: '1' }, valore: 1 },
+  { id: 'n2', insieme: 'N', numero: { testo: '2' }, valore: 2 },
+  { id: 'n3', insieme: 'N', numero: { testo: '3' }, valore: 3 },
+  { id: 'z1', insieme: 'Z', numero: { testo: '−1' }, valore: -1 },
+  { id: 'z2', insieme: 'Z', numero: { testo: '−2' }, valore: -2 },
+  { id: 'z3', insieme: 'Z', numero: { testo: '−3' }, valore: -3 },
+  { id: 'q1', insieme: 'Q', numero: { num: '1', den: '2' }, valore: 0.5, decimale: '= 0,5', decimaleDa: DECIMALI },
+  { id: 'q2', insieme: 'Q', numero: { segno: '−', num: '3', den: '4' }, valore: -0.75 },
+  { id: 'q3', insieme: 'Q', numero: { num: '1', den: '3' }, decimale: '= 0,333…', decimaleDa: DECIMALI },
+  { id: 'r1', insieme: 'R', numero: { radice: '2' }, valore: Math.SQRT2, decimale: '= 1,4142…', decimaleDa: IRRAZIONALI },
+  { id: 'r2', insieme: 'R', numero: { testo: 'π' }, valore: Math.PI, decimale: '= 3,1415…', decimaleDa: IRRAZIONALI },
+].map((v) => ({ ...v, da: v.insieme === 'R' ? (v.id === 'r1' ? RADICE : IRRAZIONALI) : comparsa[v.insieme] }));
+
+// Sulla retta: anche 4 tra i naturali e −4 tra gli interi, per riempirla fino ai bordi.
+const puntiRetta = [
+  ...voci.filter((v) => v.valore !== undefined),
+  { id: 'n4', insieme: 'N' as Insieme, numero: { testo: '4' }, valore: 4, da: NATURALI },
+  { id: 'z4', insieme: 'Z' as Insieme, numero: { testo: '−4' }, valore: -4, da: INTERI },
+];
+const interiSullaRetta = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+
+interface Disposizione {
+  id: 'larga' | 'stretta';
+  viewBox: string;
+  /** Retta: altezza, x dello 0, lunghezza dell'unità, estremi. */
+  retta: { y: number; zero: number; u: number; da: number; a: number };
+  /** Righe delle etichette sotto la retta: interi e altri numeri. */
+  righe: [number, number];
+  /** Dimensione dei numeri: sulla retta e nel diagramma. */
+  f: [number, number];
+  insiemi: Record<Insieme, { x: number; y: number; w: number; h: number; lettera: Punto }>;
+  posti: Record<string, Punto>;
+  /** Distanza della scrittura decimale dal centro del numero. */
+  scarto: number;
+  didascalia: Punto;
+  domanda: Punto;
+  formula: Punto;
+}
+
+const disposizioni: Disposizione[] = [
+  {
+    id: 'larga',
+    viewBox: '0 0 960 600',
+    retta: { y: 110, zero: 480, u: 100, da: 30, a: 930 },
+    righe: [146, 192],
+    f: [26, 30],
+    insiemi: {
+      R: { x: 30, y: 212, w: 900, h: 368, lettera: [906, 256] },
+      Q: { x: 58, y: 238, w: 657, h: 318, lettera: [691, 282] },
+      Z: { x: 86, y: 264, w: 424, h: 266, lettera: [486, 308] },
+      N: { x: 114, y: 290, w: 206, h: 214, lettera: [296, 334] },
+    },
+    posti: {
+      n0: [165, 400], n1: [255, 400], n2: [165, 472], n3: [255, 472],
+      z1: [415, 356], z2: [415, 426], z3: [415, 496],
+      q1: [550, 342], q2: [550, 420], q3: [550, 498],
+      r1: [755, 360], r2: [755, 445],
+    },
+    scarto: 26,
+    didascalia: [822, 548],
+    domanda: [36, 52],
+    formula: [480, 56],
+  },
+  {
+    id: 'stretta',
+    viewBox: '0 0 560 760',
+    retta: { y: 110, zero: 280, u: 58, da: 14, a: 546 },
+    righe: [148, 196],
+    f: [28, 32],
+    insiemi: {
+      R: { x: 14, y: 216, w: 532, h: 530, lettera: [530, 668] },
+      Q: { x: 34, y: 236, w: 492, h: 390, lettera: [510, 556] },
+      Z: { x: 54, y: 256, w: 452, h: 260, lettera: [490, 446] },
+      N: { x: 74, y: 276, w: 412, h: 136, lettera: [470, 318] },
+    },
+    posti: {
+      n0: [125, 372], n1: [205, 372], n2: [285, 372], n3: [365, 372],
+      z1: [130, 484], z2: [250, 484], z3: [370, 484],
+      q1: [72, 594], q2: [250, 594], q3: [322, 594],
+      r1: [62, 702], r2: [300, 702],
+    },
+    scarto: 28,
+    didascalia: [280, 734],
+    domanda: [14, 46],
+    formula: [280, 52],
+  },
+];
+
+const tinta: Record<Insieme, string> = { N: 'naturali', Z: 'interi', Q: 'razionali', R: 'reali' };
+const ordine: Insieme[] = ['R', 'Q', 'Z', 'N'];
+
+const arrotonda = (v: number) => +v.toFixed(1);
+
+/**
+ * Scrive un numero in SVG centrato in `cx`, con la linea di base in `y` e corpo `f`.
+ * Frazioni in colonna e radice disegnata a mano: il simbolo √ non è nel font del sito.
+ */
+function numero(n: Numero, cx: number, y: number, f: number, classe = '') {
+  const t = (tx: number, ty: number, testo: string, corpo = f) => `<text class="num" x="${arrotonda(tx)}" y="${arrotonda(ty)}" font-size="${corpo}">${testo}</text>`;
+  let dentro: string;
+  if ('testo' in n) {
+    dentro = t(cx, y, n.testo);
+  } else if ('radice' in n) {
+    const x0 = cx - 0.55 * f;
+    const segno = `M${arrotonda(x0)} ${arrotonda(y - 0.36 * f)}l${arrotonda(0.13 * f)} ${arrotonda(-0.07 * f)}l${arrotonda(0.16 * f)} ${arrotonda(0.45 * f)}l${arrotonda(0.2 * f)} ${arrotonda(-0.86 * f)}h${arrotonda(0.66 * f)}`;
+    dentro = `<path class="num-segno" d="${segno}"/>` + t(x0 + 0.84 * f, y, n.radice);
+  } else {
+    const corpo = Math.round(0.82 * f);
+    const meta = Math.max(n.num.length, n.den.length) * 0.32 * f + 0.1 * f;
+    const c = n.segno ? cx + 0.3 * f : cx;
+    const barra = y - 0.34 * f;
+    dentro =
+      (n.segno ? t(cx - 0.42 * f, y, n.segno) : '') +
+      t(c, barra - 0.14 * f, n.num, corpo) +
+      `<path class="num-segno" d="M${arrotonda(c - meta)} ${arrotonda(barra)}H${arrotonda(c + meta)}"/>` +
+      t(c, barra + 0.14 * f + 0.62 * corpo, n.den, corpo);
+  }
+  return `<g class="${classe}">${dentro}</g>`;
+}
+
+const x = (d: Disposizione, v: number) => arrotonda(d.retta.zero + v * d.retta.u);
+
+/** Salti sopra la retta da `da` a `a`, uno per unità `passo`: archi di mezza circonferenza. */
+function salti(d: Disposizione, da: number, a: number, passo: number) {
+  const { y } = d.retta;
+  const n = Math.round(Math.abs(a - da) / passo);
+  const verso = Math.sign(a - da);
+  return Array.from({ length: n }, (_, i) => {
+    const x1 = x(d, da + verso * passo * i);
+    const x2 = x(d, da + verso * passo * (i + 1));
+    const r = arrotonda(Math.abs(x2 - x1) / 2);
+    // verso sinistra l'arco gira in senso antiorario (sweep 0), verso destra orario (sweep 1)
+    const arco = `M${x1} ${y - 4}A${r} ${r} 0 0 ${verso > 0 ? 1 : 0} ${x2} ${y - 4}`;
+    const punta = `M${x2 - 7} ${y - 15}L${x2} ${y - 5}L${x2 + 7} ${y - 15}`;
+    return { arco, punta, ritardo: +(0.28 * i).toFixed(2) };
+  });
+}
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni: Record<string, string> = {
+  naturali: 'Sulla retta dei numeri sono segnati 0, 1, 2, 3, 4 a destra dello zero. Sotto, un riquadro chiamato N contiene 0, 1, 2 e 3.',
+  sottrazione: 'Partendo da 3, cinque salti verso sinistra sulla retta superano lo zero e finiscono su un punto interrogativo: a sinistra dello zero non ci sono numeri naturali.',
+  interi: 'A sinistra dello zero compaiono −1, −2, −3, −4. Il salto finisce su −2. Un riquadro più grande, Z, contiene N e i numeri −1, −2, −3.',
+  divisione: 'Il tratto tra 0 e 1 è diviso in due salti uguali; a metà c’è un punto interrogativo, perché lì non c’è nessun intero.',
+  razionali: 'A metà tra 0 e 1 compare un mezzo, e prima dello zero meno tre quarti. Un riquadro più grande, Q, contiene Z e le frazioni un mezzo, meno tre quarti, un terzo.',
+  decimali: 'Accanto alle frazioni compare la loro scrittura decimale: un mezzo è 0,5, un terzo è 0,333 periodico.',
+  'radice-di-2': 'Sulla retta, tra 0 e 1, c’è un quadrato di lato 1. Il compasso porta la sua diagonale sulla retta: il punto trovato è radice di 2, poco dopo 1,4.',
+  irrazionali: 'Radice di 2, uguale a 1,4142…, e pi greco, uguale a 3,1415…, compaiono nel diagramma fuori da Q. Pi greco è segnato sulla retta poco dopo 3.',
+  reali: 'Un riquadro ancora più grande, R, contiene Q e i numeri irrazionali. La retta diventa una linea piena: ogni suo punto è un numero reale.',
+  inclusione: 'In alto è scritto N contenuto in Z, contenuto in Q, contenuto in R. Tutti e quattro i riquadri sono evidenziati, uno dentro l’altro.',
+};
+---
+
+<div class="ins">
+  {
+    disposizioni.map((d) => {
+      const { y, u, zero } = d.retta;
+      const [fr, fd] = d.f;
+      const sottrazione = salti(d, 3, -2, 1);
+      const divisione = salti(d, 0, 1, 0.5);
+      const radice = { x: x(d, Math.SQRT2), r: arrotonda(u * Math.SQRT2) };
+      return (
+        <svg class={`ins__disegno ins__disegno--${d.id}`} viewBox={d.viewBox} aria-hidden="true" focusable="false">
+          {/* --- Diagramma degli insiemi: dal più grande al più piccolo --- */}
+          {ordine.map((s) => {
+            const r = d.insiemi[s];
+            return (
+              <g class={`insieme insieme--${tinta[s]}`} style={`--da: ${comparsa[s]}`}>
+                <rect class="vis alone" x={r.x - 6} y={r.y - 6} width={r.w + 12} height={r.h + 12} rx="32" style={`--da: ${comparsa[s]}; --a: ${comparsa[s]}`} />
+                <rect class="vis alone alone--fine" x={r.x - 6} y={r.y - 6} width={r.w + 12} height={r.h + 12} rx="32" style={`--da: ${INCLUSIONE}`} />
+                <rect class="insieme__fondo" x={r.x} y={r.y} width={r.w} height={r.h} rx="26" />
+                <text class="insieme__lettera" x={r.lettera[0]} y={r.lettera[1]}>
+                  {s}
+                </text>
+              </g>
+            );
+          })}
+
+          {voci.map((v, k) => {
+            const [px, py] = d.posti[v.id];
+            const ritardo = 0.3 + 0.12 * (k % 4);
+            return (
+              <g class={`voce voce--${tinta[v.insieme]}`}>
+                <g class="vis comparsa" style={`--da: ${v.da}; --ritardo: ${ritardo}s; transform-origin: ${px}px ${py - fd * 0.35}px`}>
+                  <Fragment set:html={numero(v.numero, px, py, fd)} />
+                </g>
+                {v.decimale && (
+                  <text class="vis decimale" x={px + d.scarto} y={py} style={`--da: ${v.decimaleDa}; --ritardo: 0.3s; font-size: ${fd - 2}px`}>
+                    {v.decimale}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+          <text class="vis didascalia" x={d.didascalia[0]} y={d.didascalia[1]} style={`--da: ${REALI}; --ritardo: 0.6s`}>
+            irrazionali
+          </text>
+
+          {/* --- Retta dei numeri --- */}
+          <g class="retta">
+            <line class="vis retta__vuota" x1={d.retta.da} y1={y} x2={zero} y2={y} style={`--da: 0; --a: ${INTERI - 1}`} />
+            <line class="vis retta__linea" x1={d.retta.da} y1={y} x2={zero} y2={y} style={`--da: ${INTERI}`} />
+            <line class="retta__linea" x1={zero} y1={y} x2={d.retta.a - 4} y2={y} />
+            <path class="retta__freccia" d={`M${d.retta.a - 14} ${y - 9}L${d.retta.a} ${y}L${d.retta.a - 14} ${y + 9}`} />
+            <line class="vis retta__piena" x1={d.retta.da} y1={y} x2={d.retta.a - 14} y2={y} pathLength="1" style={`--da: ${REALI}`} />
+            {interiSullaRetta.map((n) => (
+              <g class="vis" style={`--da: ${n < 0 ? INTERI : 0}; --ritardo: ${n < 0 ? 0.2 + 0.1 * -n : 0}s`}>
+                <line class="retta__tacca" x1={x(d, n)} y1={y - 10} x2={x(d, n)} y2={y + 10} />
+                <Fragment set:html={numero({ testo: n < 0 ? `−${-n}` : String(n) }, x(d, n), d.righe[0], fr, 'retta__numero')} />
+              </g>
+            ))}
+            {puntiRetta
+              .filter((v) => !Number.isInteger(v.valore))
+              .map((v) => (
+                <g class="vis" style={`--da: ${v.da}; --ritardo: ${v.id === 'r1' ? 1.6 : 0.5}s`}>
+                  <line class="retta__tacca retta__tacca--fine" x1={x(d, v.valore!)} y1={y + 12} x2={x(d, v.valore!)} y2={d.righe[1] - fr - 8} />
+                  <Fragment set:html={numero(v.numero, x(d, v.valore!), d.righe[1], fr, 'retta__numero')} />
+                </g>
+              ))}
+          </g>
+
+          {/* --- 3 − 5: cinque salti indietro da 3, oltre lo zero --- */}
+          <g class="vis" style={`--da: ${SOTTRAZIONE}; --a: ${INTERI}`}>
+            {sottrazione.map((s) => (
+              <g class="salto" style={`--ritardo: ${s.ritardo}s`}>
+                <path class="salto__arco" d={s.arco} pathLength="1" />
+                <path class="salto__punta" d={s.punta} />
+              </g>
+            ))}
+          </g>
+          <g class="vis domanda" style={`--da: ${SOTTRAZIONE}; --a: ${SOTTRAZIONE}; --ritardo: 1.3s`}>
+            <circle cx={x(d, -2)} cy={y} r="19" />
+            <text x={x(d, -2)} y={y + 10}>?</text>
+          </g>
+          <text class="vis formula-domanda" x={d.domanda[0]} y={d.domanda[1]} style={`--da: ${SOTTRAZIONE}; --a: ${SOTTRAZIONE}`}>
+            3 − 5 = ?
+          </text>
+          <text class="vis formula-domanda" x={d.domanda[0]} y={d.domanda[1]} style={`--da: ${INTERI}; --a: ${INTERI}`}>
+            3 − 5 = <tspan class="formula-domanda__risposta">−2</tspan>
+          </text>
+
+          {/* --- 1 : 2: il tratto da 0 a 1 diviso in due salti uguali --- */}
+          <g class="vis" style={`--da: ${DIVISIONE}; --a: ${RAZIONALI}`}>
+            {divisione.map((s) => (
+              <g class="salto" style={`--ritardo: ${s.ritardo}s`}>
+                <path class="salto__arco" d={s.arco} pathLength="1" />
+                <path class="salto__punta" d={s.punta} />
+              </g>
+            ))}
+          </g>
+          <g class="vis domanda" style={`--da: ${DIVISIONE}; --a: ${DIVISIONE}; --ritardo: 0.7s`}>
+            <circle cx={x(d, 0.5)} cy={y} r="19" />
+            <text x={x(d, 0.5)} y={y + 10}>?</text>
+          </g>
+          <text class="vis formula-domanda" x={d.domanda[0]} y={d.domanda[1]} style={`--da: ${DIVISIONE}; --a: ${DIVISIONE}`}>
+            1 : 2 = ?
+          </text>
+          <g class="vis" style={`--da: ${RAZIONALI}; --a: ${RAZIONALI}`}>
+            <text class="formula-domanda" x={d.domanda[0]} y={d.domanda[1]}>
+              1 : 2 =
+            </text>
+            <Fragment set:html={numero({ num: '1', den: '2' }, d.domanda[0] + 128, d.domanda[1], 28, 'formula-domanda__risposta')} />
+          </g>
+
+          {/* --- √2: la diagonale del quadrato di lato 1, portata sulla retta con il compasso --- */}
+          <g class="vis costruzione" style={`--da: ${RADICE}; --a: ${RADICE}`}>
+            <rect class="costruzione__quadrato" x={zero} y={y - u} width={u} height={u} />
+            <line class="costruzione__diagonale" x1={zero} y1={y} x2={zero + u} y2={y - u} pathLength="1" />
+            <path class="costruzione__arco" d={`M${zero + u} ${y - u}A${radice.r} ${radice.r} 0 0 1 ${radice.x} ${y}`} pathLength="1" />
+          </g>
+
+          {/* Punti sulla retta, sopra a tutto */}
+          {puntiRetta.map((v) => (
+            <circle
+              class={`vis punto punto--${tinta[v.insieme]}`}
+              cx={x(d, v.valore!)}
+              cy={y}
+              r="8"
+              style={`--da: ${v.da}; --ritardo: ${v.id === 'r1' ? 1.6 : v.id === 'z2' ? 0.1 : 0.2 + 0.08 * Math.abs(v.valore!)}s; transform-origin: ${x(d, v.valore!)}px ${y}px`}
+            />
+          ))}
+
+          {/* --- N ⊂ Z ⊂ Q ⊂ R --- */}
+          <text class="vis formula" x={d.formula[0]} y={d.formula[1]} style={`--da: ${INCLUSIONE}; --ritardo: 0.4s`}>
+            <tspan class="formula--naturali">N</tspan> ⊂ <tspan class="formula--interi">Z</tspan> ⊂ <tspan class="formula--razionali">Q</tspan> ⊂{' '}
+            <tspan class="formula--reali">R</tspan>
+          </text>
+        </svg>
+      );
+    })
+  }
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .ins {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+    --i: -1;
+  }
+  [data-indice='0'] .ins { --i: 0; }
+  [data-indice='1'] .ins { --i: 1; }
+  [data-indice='2'] .ins { --i: 2; }
+  [data-indice='3'] .ins { --i: 3; }
+  [data-indice='4'] .ins { --i: 4; }
+  [data-indice='5'] .ins { --i: 5; }
+  [data-indice='6'] .ins { --i: 6; }
+  [data-indice='7'] .ins { --i: 7; }
+  [data-indice='8'] .ins { --i: 8; }
+  [data-indice='9'] .ins { --i: 9; }
+
+  .ins__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .ins__disegno--stretta {
+    display: none;
+  }
+  /* Palco stretto o verticale (telefono): insiemi impilati invece che affiancati. */
+  @container (aspect-ratio < 1.15) {
+    .ins__disegno--larga {
+      display: none;
+    }
+    .ins__disegno--stretta {
+      display: block;
+    }
+  }
+  .ins svg :is(path, rect, circle, line):not([pathLength]) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Quando si vede un pezzo ---
+     --on vale 1 dal passaggio --da al passaggio --a, 0 altrove. */
+  .ins .vis {
+    --on: min(clamp(0, calc(var(--i) - var(--da) + 1), 1), clamp(0, calc(var(--a, 99) - var(--i) + 1), 1));
+    opacity: var(--on);
+    transition: opacity 0.6s ease-in-out var(--ritardo, 0s);
+  }
+  .ins .comparsa,
+  .ins .punto {
+    transform: scale(calc(0.4 + 0.6 * var(--on)));
+    transition:
+      opacity 0.5s ease-in-out var(--ritardo, 0s),
+      transform 0.5s ease-in-out var(--ritardo, 0s);
+  }
+
+  /* --- Insiemi: ognuno con la sua tinta (guida di stile, §3) --- */
+  .ins .insieme--naturali { --c: var(--naturali); --t: #f4edd9; }
+  .ins .insieme--interi { --c: var(--interi); --t: #f6e1eb; }
+  .ins .insieme--razionali { --c: var(--razionali); --t: #dbeceb; }
+  .ins .insieme--reali { --c: var(--reali); --t: #e6e4f0; }
+  .ins :is(.voce, .punto, tspan)[class*='--naturali'] { --c: var(--naturali); }
+  .ins :is(.voce, .punto, tspan)[class*='--interi'] { --c: var(--interi); }
+  .ins :is(.voce, .punto, tspan)[class*='--razionali'] { --c: var(--razionali); }
+  .ins :is(.voce, .punto, tspan)[class*='--reali'] { --c: var(--reali); }
+
+  .ins .insieme {
+    --on: clamp(0, calc(var(--i) - var(--da) + 1), 1);
+  }
+  .ins .insieme > :not(.alone) {
+    opacity: var(--on);
+    transform: scale(calc(0.94 + 0.06 * var(--on)));
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 0.7s ease-in-out,
+      transform 0.9s ease-in-out;
+  }
+  .ins .insieme__fondo {
+    fill: var(--t);
+    stroke: var(--c);
+    stroke-width: 3;
+  }
+  .ins .insieme__lettera {
+    fill: var(--c);
+    font-size: 44px;
+    font-weight: 700;
+    text-anchor: end;
+  }
+  /* Elemento evidenziato nel passaggio corrente (guida di stile, §3) */
+  .ins .alone {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  .ins .alone--fine {
+    --ritardo: 0.2s;
+  }
+
+  /* --- Numeri --- */
+  .ins text {
+    font-weight: 700;
+    fill: var(--testo);
+  }
+  .ins .voce text,
+  .ins .voce .num {
+    fill: var(--c);
+  }
+  .ins .voce .num-segno {
+    stroke: var(--c);
+  }
+  .ins .num {
+    text-anchor: middle;
+  }
+  .ins .num-segno {
+    fill: none;
+    stroke: var(--testo);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .ins .decimale {
+    fill: var(--testo) !important;
+    font-weight: 400;
+  }
+  .ins .didascalia {
+    fill: var(--reali);
+    font-size: 24px;
+    font-weight: 400;
+    font-style: italic;
+    text-anchor: middle;
+  }
+  .ins__disegno--stretta .didascalia {
+    font-size: 28px;
+  }
+
+  /* --- Retta --- */
+  .ins .retta__linea,
+  .ins .retta__freccia,
+  .ins .retta__tacca {
+    fill: none;
+    stroke: var(--testo);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .ins .retta__tacca--fine {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .ins .retta__vuota {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 4 10;
+    stroke-linecap: round;
+  }
+  /* Con i reali la retta è piena: ogni punto è un numero. */
+  .ins .retta__piena {
+    stroke: var(--reali);
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--on));
+    transition:
+      opacity 0.3s ease-in-out,
+      stroke-dashoffset 1.6s ease-in-out 0.3s;
+  }
+  .ins .retta__numero,
+  .ins .retta__numero .num {
+    fill: var(--testo);
+  }
+  .ins .punto {
+    fill: var(--c);
+    stroke: var(--superficie);
+    stroke-width: 2.5;
+  }
+
+  /* --- Salti e domande --- */
+  .ins .salto__arco {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 2.5;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--on, 0));
+    transition: stroke-dashoffset 0.35s ease-in-out var(--ritardo, 0s);
+  }
+  .ins .salto__punta {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: var(--on, 0);
+    transition: opacity 0.1s ease-in-out calc(var(--ritardo, 0s) + 0.3s);
+  }
+  .ins .domanda circle {
+    fill: var(--superficie);
+    stroke: var(--accento);
+    stroke-width: 4;
+    stroke-dasharray: 6 5;
+  }
+  .ins .domanda text {
+    fill: var(--accento);
+    font-size: 28px;
+    text-anchor: middle;
+  }
+  .ins .formula-domanda {
+    font-size: 32px;
+  }
+  .ins .formula-domanda__risposta,
+  .ins .formula-domanda__risposta .num {
+    fill: var(--accento);
+  }
+  .ins .formula-domanda__risposta .num-segno {
+    stroke: var(--accento);
+  }
+
+  /* --- La costruzione di √2 --- */
+  .ins .costruzione__quadrato {
+    fill: var(--reali);
+    fill-opacity: 0.08;
+    stroke: var(--testo-2);
+    stroke-width: 2.5;
+  }
+  .ins .costruzione__diagonale,
+  .ins .costruzione__arco {
+    fill: none;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--on));
+  }
+  .ins .costruzione__diagonale {
+    stroke: var(--reali);
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s ease-in-out 0.3s;
+  }
+  .ins .costruzione__arco {
+    stroke: var(--accento);
+    stroke-width: 4;
+    transition: stroke-dashoffset 0.8s ease-in-out 0.9s;
+  }
+
+  /* --- N ⊂ Z ⊂ Q ⊂ R --- */
+  .ins .formula {
+    font-size: 40px;
+    text-anchor: middle;
+  }
+  .ins .formula tspan {
+    fill: var(--c);
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+  .ins .descrizione {
+    display: none;
+  }
+  [data-passaggio='naturali'] .ins .descrizione[data-per='naturali'],
+  [data-passaggio='sottrazione'] .ins .descrizione[data-per='sottrazione'],
+  [data-passaggio='interi'] .ins .descrizione[data-per='interi'],
+  [data-passaggio='divisione'] .ins .descrizione[data-per='divisione'],
+  [data-passaggio='razionali'] .ins .descrizione[data-per='razionali'],
+  [data-passaggio='decimali'] .ins .descrizione[data-per='decimali'],
+  [data-passaggio='radice-di-2'] .ins .descrizione[data-per='radice-di-2'],
+  [data-passaggio='irrazionali'] .ins .descrizione[data-per='irrazionali'],
+  [data-passaggio='reali'] .ins .descrizione[data-per='reali'],
+  [data-passaggio='inclusione'] .ins .descrizione[data-per='inclusione'] {
+    display: block;
+  }
+</style>

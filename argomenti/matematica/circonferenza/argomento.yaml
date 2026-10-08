@@ -1,0 +1,17 @@
+titolo: La circonferenza
+sottotitolo: Centro, raggio, diametro, corda e archi, uno alla volta
+materia: matematica
+area: geometria
+classi: [2]
+modello: passaggi
+durata_minuti: 12
+prerequisiti: []
+obiettivi:
+  - Definire la circonferenza come insieme di punti alla stessa distanza dal centro
+  - Distinguere la circonferenza dal cerchio
+  - Riconoscere raggio, diametro e corda e la relazione d = 2 × r
+  - Distinguere arco minore e arco maggiore
+parole_chiave: [circonferenza, cerchio, centro, raggio, diametro, corda, arco, arco minore, arco maggiore]
+stato: bozza
+revisionato_da: null
+fonti: []
