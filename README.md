@@ -20,7 +20,7 @@ Poi apri http://localhost:4321/STEMotion/
 argomenti/<materia>/<argomento>/   un argomento = una cartella (vedi docs/STRUTTURA-ARGOMENTO.md)
 src/data/materie.yaml              elenco delle materie e delle loro sottomaterie (aree)
 src/components/Lettore.astro       il lettore a passaggi comune a tutti gli argomenti
-src/components/anatomia/           organi SVG condivisi, da riusare negli argomenti
+src/components/anatomia/           organi SVG condivisi (corpo di profilo e addome di fronte), da riusare negli argomenti
 src/pages/                         landing, pagina materia, pagina argomento
 docs/                              guida di stile e struttura di un argomento
 ```
@@ -28,9 +28,14 @@ docs/                              guida di stile e struttura di un argomento
 ## Aggiungere un argomento
 
 1. Leggi `docs/GUIDA-STILE.md` e `docs/STRUTTURA-ARGOMENTO.md`.
-2. Crea `argomenti/<materia>/<nome-argomento>/` con `argomento.yaml`, `passaggi.yaml`, `insegnante.md`.
-3. Aggiungi `Animazione.astro` (finché manca, compare un segnaposto).
-4. `npm run build` controlla che i file siano compilati correttamente.
+2. Crea `argomenti/<materia>/<nome-argomento>/` con `argomento.yaml`, `passaggi.yaml`, `insegnante.md` e `copertina.svg`.
+3. Aggiungi `Animazione.astro` (finché manca, compare un segnaposto), usando gli organi di `src/components/anatomia/`
+   (il loro `README.md` spiega i sistemi di riferimento).
+4. Se un passaggio può prendere un'altra strada (es. il cibo va di traverso), aggiungi una deviazione in `deviazioni/<nome>/`.
+5. `npm run build` controlla che i file siano compilati correttamente.
+
+Lo stile delle illustrazioni è uno solo, piatto e semplificato (guida di stile, §7): non si cambia
+argomento per argomento, ma solo aggiornando la guida.
 
 Un argomento resta in bozza finché un insegnante non ne ha verificato i contenuti.
 

@@ -152,8 +152,10 @@ Regole:
 
 - **Solo SVG originali**, disegnati per il sito. Niente immagini prese da libri, siti o banche immagini.
 - **Stile:** piatto e semplificato, contorni di 2–3 px, colori pieni, nessuna ombra realistica. Anatomia chiara ma non splatter.
+  È lo stile scelto per tutto il sito dopo aver provato alternative (atlante sfumato, disegno a mano, radiografia a colori, 3D): resta leggibile sulla LIM, pesa poco e funziona su ogni dispositivo. Per cambiarlo si aggiorna questa guida, non un singolo argomento.
 - **Etichette** collegate all'elemento con una linea sottile, mai sovrapposte al disegno.
-- **Coerenza:** uno stesso organo o oggetto si disegna una volta sola e si riusa (libreria di componenti condivisi). Il polmone della respirazione e quello della circolazione sono lo stesso disegno.
+- **Coerenza:** uno stesso organo o oggetto si disegna una volta sola e si riusa (libreria di componenti condivisi in `src/components/anatomia/`). Il polmone della respirazione e quello della circolazione sono lo stesso disegno.
+- **Due viste del corpo:** di profilo (testa, collo, torace: deglutizione, respirazione) e di fronte (addome: digestione, appendicite). Nella vista di fronte la persona ci guarda, quindi il suo lato destro è a sinistra nel disegno: quando conta (es. "dolore in basso a destra"), il testo lo dice.
 
 ---
 

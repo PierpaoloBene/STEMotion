@@ -197,7 +197,7 @@ Regole tecniche:
 - Anima la **transizione** verso lo stato del passaggio, poi si ferma.
 - Il pulsante "Ripeti" riporta per un istante il contenitore al passaggio precedente senza transizioni e poi torna a quello corrente: con le transizioni CSS funziona da solo.
 - Riempie il contenitore (`width: 100%; height: 100%`) e si adatta sia al 16:10 della LIM sia al 4:3 del telefono.
-- Usa i componenti SVG condivisi (organi, oggetti) invece di ridisegnarli.
+- Usa i componenti SVG condivisi (organi, oggetti) invece di ridisegnarli: `src/components/anatomia/README.md` spiega le due viste del corpo, i perni dei pezzi che si muovono e gli slot (es. il contenuto dell'appendice).
 - Nessuna libreria esterna caricata da internet.
 
 ---
