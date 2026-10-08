@@ -33,10 +33,10 @@ passaggi:
 
   - id: raggi-uguali
     titolo: Tutti i raggi sono uguali
-    breve: Una circonferenza ha infiniti raggi, tutti lunghi uguali.
+    breve: Una circonferenza ha tanti raggi quanti sono i suoi punti, tutti lunghi uguali.
     spiegazione: >
       Il raggio può partire verso qualsiasi punto della circonferenza.
-      I raggi sono infiniti, ma hanno tutti la stessa lunghezza.
+      Ci sono tanti raggi quanti sono i punti della circonferenza, e hanno tutti la stessa lunghezza.
       È proprio la regola con cui abbiamo costruito la circonferenza.
 
   - id: diametro
@@ -45,7 +45,7 @@ passaggi:
     spiegazione: >
       Il **diametro** è un segmento che unisce due punti della circonferenza passando per il centro.
       Divide il cerchio in due metà uguali.
-      Anche i diametri sono infiniti e tutti lunghi uguali.
+      Da ogni punto della circonferenza parte un diametro, e i diametri sono tutti lunghi uguali.
 
   - id: diametro-doppio
     titolo: Diametro e raggio
