@@ -72,7 +72,7 @@ Lo stesso concetto ha **sempre** lo stesso colore, in tutto il sito:
 | Anidride carbonica (CO₂) | `#7A7A85` (grigio) |
 | Cibo / bolo | `#C98B3F` (ocra) |
 | Aria | `#8EC9F0` (azzurro) |
-| Acqua in ogni stato (ghiaccio, liquida, vapore) e sue particelle | `#2C9AD1` (blu acqua) |
+| Acqua in ogni stato (ghiaccio, liquida, vapore) e sue molecole | `#2C9AD1` (blu acqua) |
 | Calore (fornello, fiamma, piastra accesa) | `#F26B1D` (arancione) |
 | Sostanze nutritive (molecole del cibo digerito) | `#8E5BB5` (viola), pallini |
 | Succhi digestivi (succo gastrico, bile, succo pancreatico) | `#A3C639` (verde lime), gocce |

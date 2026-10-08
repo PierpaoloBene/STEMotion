@@ -8,20 +8,20 @@ passaggi:
       Il vapore acqueo in realtà è invisibile: qui lo coloriamo appena per vederlo.
       Il fornello tiene caldo il barattolo, così l'acqua resta vapore.
 
-  - id: particelle
-    titolo: Le particelle
-    breve: Ingrandita moltissimo, la materia è fatta di particelle.
+  - id: molecole
+    titolo: Le molecole
+    breve: Ingrandito moltissimo, il ghiaccio è fatto di molecole.
     spiegazione: >
-      Se potessimo ingrandire il ghiaccio decine di milioni di volte, vedremmo **particelle** piccolissime.
-      Tutta la materia è fatta di particelle, che si attraggono tra loro.
+      Se potessimo ingrandire il ghiaccio decine di milioni di volte, vedremmo **molecole** piccolissime.
+      Ghiaccio, acqua e vapore sono fatti delle stesse molecole d'acqua, che si attraggono tra loro.
       Sono così piccole che non si vedono nemmeno con un normale microscopio.
 
   - id: solido
     fase: solida
     titolo: Nel solido
-    breve: Particelle vicine e ordinate, che vibrano senza spostarsi.
+    breve: Molecole vicine e ordinate, che vibrano senza spostarsi.
     spiegazione: >
-      Nel solido le particelle sono molto vicine e si attraggono con forza.
+      Nel solido le molecole sono molto vicine e si attraggono con forza.
       Ognuna resta al suo posto, in file ordinate come i mattoni di un muro.
       Non stanno ferme: **vibrano**, cioè oscillano avanti e indietro attorno al loro posto.
 
@@ -32,14 +32,14 @@ passaggi:
     spiegazione: >
       In un recipiente diverso il cubetto di ghiaccio resta un cubo, grande come prima.
       Il solido ha **forma propria** e **volume proprio**: non dipendono dal recipiente.
-      Le sue particelle sono legate al loro posto e non possono scorrere.
+      Le sue molecole sono legate al loro posto e non possono scorrere.
 
   - id: liquido
     fase: liquida
     titolo: Nel liquido
-    breve: Particelle vicine ma in disordine, che scorrono le une sulle altre.
+    breve: Molecole vicine ma in disordine, che scorrono le une sulle altre.
     spiegazione: >
-      Nel liquido le particelle sono ancora vicine, ma si attraggono meno che nel solido.
+      Nel liquido le molecole sono ancora vicine, ma si attraggono meno che nel solido.
       Non hanno un posto fisso e sono in disordine.
       Possono **scorrere** le une sulle altre: per questo un liquido si può versare.
 
@@ -55,9 +55,9 @@ passaggi:
   - id: gas
     fase: gassosa
     titolo: Nel gas
-    breve: Particelle lontane, che si muovono veloci in tutte le direzioni.
+    breve: Molecole lontane, che si muovono veloci in tutte le direzioni.
     spiegazione: >
-      Nel gas le particelle sono molto lontane tra loro e quasi non si attraggono.
+      Nel gas le molecole sono molto lontane tra loro e quasi non si attraggono.
       Si muovono veloci in linea retta, in tutte le direzioni.
       Si urtano tra loro e contro le pareti del recipiente.
 
@@ -66,14 +66,14 @@ passaggi:
     titolo: Tutto lo spazio
     breve: Il gas occupa tutto lo spazio che ha a disposizione.
     spiegazione: >
-      Se il recipiente diventa più grande, le particelle del gas si allontanano e lo riempiono tutto.
+      Se il recipiente diventa più grande, le molecole del gas si allontanano e lo riempiono tutto.
       Il gas non ha né **forma propria** né **volume proprio**.
       Per lo stesso motivo un gas si può comprimere in poco spazio.
 
   - id: confronto
     titolo: I tre stati a confronto
-    breve: Cambiano disposizione e movimento delle particelle, non le particelle.
+    breve: Cambiano disposizione e movimento delle molecole, non le molecole.
     spiegazione: >
-      Dal solido al liquido al gas le particelle sono sempre più libere di muoversi.
+      Dal solido al liquido al gas le molecole sono sempre più libere di muoversi.
       Nel gas sono anche molto più lontane tra loro.
-      Le particelle restano le stesse: non diventano più grandi né più piccole.
+      Le molecole restano le stesse: non diventano più grandi né più piccole.
