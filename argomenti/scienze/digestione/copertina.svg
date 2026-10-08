@@ -1,30 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
   <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-    <!-- busto visto di fronte, con la pancia -->
-    <path fill="#F4D3B5" d="M120 20C108 140 104 260 112 360C118 430 132 470 150 500H250C268 470 282 430 288 360C296 260 292 140 280 20Z" />
-    <path fill="none" d="M193 300C196 293 204 293 207 300C204 307 196 307 193 300Z" />
+    <!-- una persona vista di fronte, intera dalla testa ai fianchi -->
+    <path fill="#F4D3B5" d="M92 178C70 200 62 270 60 330C58 350 64 364 75 364C86 364 90 350 90 332C92 284 98 244 106 222Z" />
+    <path fill="#F4D3B5" d="M308 178C330 200 338 270 340 330C342 350 336 364 325 364C314 364 310 350 310 332C308 284 302 244 294 222Z" />
+    <path fill="#F4D3B5" d="M184 118H216V152H184Z" />
+    <path fill="#F4D3B5" d="M92 176C112 156 160 150 184 148H216C240 150 288 156 308 176L314 250C310 296 300 326 298 352C312 392 320 440 324 500H76C80 440 88 392 102 352C100 326 90 296 86 250Z" />
+    <path fill="none" d="M150 214C168 226 186 226 196 216M204 216C214 226 232 226 250 214" />
+    <path fill="none" d="M194 352C197 345 203 345 206 352C203 359 197 359 194 352Z" />
+    <!-- testa -->
+    <circle cx="200" cy="78" r="46" fill="#F4D3B5" />
+    <path fill="#5A3E2B" d="M156 70C156 40 176 28 200 28C226 28 246 42 246 70C232 56 214 52 200 52C184 52 168 58 156 70Z" />
+    <circle cx="184" cy="82" r="4" fill="#1D1D1F" stroke="none" />
+    <circle cx="216" cy="82" r="4" fill="#1D1D1F" stroke="none" />
+    <path fill="none" d="M188 102C196 108 204 108 212 102" />
     <!-- pantaloncini -->
-    <path fill="#3E5A8C" d="M114 400H286L276 500H124Z" />
+    <path fill="#3E5A8C" d="M92 420C150 432 250 432 308 420L322 500H78Z" />
   </g>
   <g class="dentro">
     <rect width="400" height="500" fill="#16233F" />
-    <path fill="#1F3257" stroke="#3E5A8C" stroke-width="3" stroke-linejoin="round" d="M120 20C108 140 104 260 112 360C118 430 132 470 150 500H250C268 470 282 430 288 360C296 260 292 140 280 20Z" />
-    <!-- fegato e stomaco con il cibo -->
-    <path fill="#A65A40" d="M122 70C160 52 220 56 240 70C232 96 196 118 160 132C140 140 124 132 120 118Z" />
-    <path fill="#EBA5A5" stroke="#F8DCDC" stroke-width="3" d="M222 64C232 44 276 44 284 80C292 120 276 150 246 160C226 166 204 160 196 152L204 140C218 146 236 138 240 120C244 104 236 84 228 72Z" />
+    <g fill="#1F3257" stroke="#3E5A8C" stroke-width="3" stroke-linejoin="round">
+      <path d="M92 178C70 200 62 270 60 330C58 350 64 364 75 364C86 364 90 350 90 332C92 284 98 244 106 222Z" />
+      <path d="M308 178C330 200 338 270 340 330C342 350 336 364 325 364C314 364 310 350 310 332C308 284 302 244 294 222Z" />
+      <path d="M184 118H216V152H184Z" />
+      <path d="M92 176C112 156 160 150 184 148H216C240 150 288 156 308 176L314 250C310 296 300 326 298 352C312 392 320 440 324 500H76C80 440 88 392 102 352C100 326 90 296 86 250Z" />
+      <circle cx="200" cy="78" r="46" />
+    </g>
+    <!-- esofago dalla bocca allo stomaco -->
+    <path fill="none" stroke="#EBA5A5" stroke-width="10" stroke-linecap="round" d="M200 104V196" />
+    <!-- fegato, stomaco con il cibo -->
+    <path fill="#A65A40" d="M108 238C140 220 196 222 214 234C206 258 176 276 146 284C126 290 110 282 106 268Z" />
+    <path fill="#EBA5A5" stroke="#F8DCDC" stroke-width="3" d="M198 194C210 176 258 180 268 216C276 252 260 280 232 290C212 296 192 290 184 282L192 270C206 276 222 268 226 252C230 236 220 214 206 204Z" />
     <g fill="#C98B3F">
-      <circle cx="262" cy="96" r="7" />
-      <circle cx="252" cy="124" r="6" />
-      <circle cx="270" cy="134" r="5" />
+      <circle cx="246" cy="226" r="7" />
+      <circle cx="236" cy="254" r="6" />
+      <circle cx="254" cy="262" r="5" />
     </g>
     <!-- intestino crasso a cornice e tenue al centro -->
-    <path fill="none" stroke="#E3A37F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" d="M136 360C132 300 130 250 134 210C140 186 170 184 200 190C230 196 260 180 268 200C274 250 270 300 268 340C266 380 240 390 214 396L210 440" />
-    <path fill="none" stroke="#F2B8A2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" d="M200 214C236 222 244 236 226 244C196 256 160 240 160 262C160 280 236 268 240 290C244 312 170 300 164 320C160 340 230 336 238 352C244 366 190 372 150 354" />
+    <path fill="none" stroke="#E3A37F" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" d="M134 444C130 400 128 360 132 328C138 306 168 304 200 310C232 316 262 302 270 322C276 364 272 404 270 430C268 456 244 464 220 468L214 500" />
+    <path fill="none" stroke="#F2B8A2" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" d="M196 332C230 338 240 350 222 358C194 370 160 356 160 374C160 390 234 380 238 400C242 420 172 408 166 426C162 442 226 440 232 452C236 462 186 466 152 452" />
     <!-- sostanze nutritive -->
     <g fill="#8E5BB5">
-      <circle cx="252" cy="250" r="5" />
-      <circle cx="150" cy="292" r="5" />
-      <circle cx="252" cy="326" r="5" />
+      <circle cx="252" cy="364" r="5" />
+      <circle cx="148" cy="404" r="5" />
+      <circle cx="252" cy="430" r="5" />
     </g>
   </g>
 </svg>
