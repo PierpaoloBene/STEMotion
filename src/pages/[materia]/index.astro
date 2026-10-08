@@ -25,8 +25,6 @@ const gruppi = materia.data.aree
 const senzaArea = argomenti.filter((a) => !materia.data.aree.some((area) => area.id === a.data.area));
 if (senzaArea.length) gruppi.push({ nome: 'Altri argomenti', voci: senzaArea });
 
-// Filtri per classe: solo le classi che hanno almeno un argomento.
-const classi = [1, 2, 3].filter((c) => argomenti.some((a) => a.data.classi.includes(c)));
 const n = argomenti.length;
 ---
 
@@ -46,21 +44,6 @@ const n = argomenti.length;
 
   <div class="contenitore contenitore--largo" data-materia={materia.id}>
     {
-      classi.length > 1 && (
-        <div class="filtri" role="group" aria-label="Filtra per classe" data-filtri hidden>
-          <button type="button" class="pillola filtro" data-classe="" aria-pressed="true">
-            Tutte
-          </button>
-          {classi.map((c) => (
-            <button type="button" class="pillola filtro" data-classe={c} aria-pressed="false">
-              Classe {c}ª
-            </button>
-          ))}
-        </div>
-      )
-    }
-
-    {
       gruppi.length === 0 && (
         <div class="vuoto">
           <IconaMateria materia={materia.id} />
@@ -70,7 +53,7 @@ const n = argomenti.length;
     }
     {
       gruppi.map((g) => (
-        <section class="gruppo" data-gruppo>
+        <section class="gruppo">
           <h2>{g.nome}</h2>
           <ul class="griglia">
             {g.voci.map((a) => (
@@ -84,28 +67,6 @@ const n = argomenti.length;
     }
   </div>
 </Base>
-
-<script>
-  document.querySelectorAll<HTMLElement>('[data-filtri]').forEach((filtri) => {
-    const pulsanti = [...filtri.querySelectorAll<HTMLButtonElement>('[data-classe]')];
-    filtri.hidden = false;
-    filtri.addEventListener('click', (e) => {
-      const scelto = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-classe]');
-      if (!scelto) return;
-      const classe = scelto.dataset.classe!;
-      pulsanti.forEach((p) => p.setAttribute('aria-pressed', String(p === scelto)));
-      document.querySelectorAll<HTMLElement>('[data-gruppo]').forEach((gruppo) => {
-        let visibili = 0;
-        gruppo.querySelectorAll<HTMLElement>('[data-classi]').forEach((scheda) => {
-          const mostra = !classe || scheda.dataset.classi!.split(' ').includes(classe);
-          scheda.parentElement!.hidden = !mostra;
-          if (mostra) visibili++;
-        });
-        gruppo.hidden = visibili === 0;
-      });
-    });
-  });
-</script>
 
 <style>
   .fascia {
@@ -166,26 +127,8 @@ const n = argomenti.length;
     }
   }
 
-  .filtri {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 32px;
-  }
-  .filtri[hidden] {
-    display: none;
-  }
-  .filtro[aria-pressed='true'] {
-    background: var(--scuro);
-    border-color: var(--scuro);
-    color: #fff;
-  }
-
   .gruppo {
     margin-top: 40px;
-  }
-  .gruppo[hidden] {
-    display: none;
   }
   .gruppo h2 {
     font-size: 28px;
@@ -198,9 +141,6 @@ const n = argomenti.length;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 24px;
-  }
-  .griglia li[hidden] {
-    display: none;
   }
   /* Telefono: due colonne, come la griglia di un profilo. */
   @media (max-width: 519px) {

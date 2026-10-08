@@ -134,7 +134,7 @@ button {
   --tinta: var(--matematica-tinta);
 }
 
-/* Etichetta a pillola per le informazioni (classe, durata, stato) */
+/* Etichetta a pillola per le informazioni (durata, passaggi, stato) */
 .badge {
   display: inline-flex;
   align-items: center;

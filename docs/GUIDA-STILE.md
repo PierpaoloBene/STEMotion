@@ -16,7 +16,7 @@ Questa guida vale per **ogni** argomento del sito. Chi crea un nuovo argomento (
 
 ## 2. Pubblico e linguaggio
 
-- **Destinatari:** studenti di 11–14 anni (classi 1ª, 2ª, 3ª media) e i loro insegnanti.
+- **Destinatari:** studenti di 11–14 anni (scuola media) e i loro insegnanti.
 - **Frasi brevi:** massimo ~20 parole. Una idea per frase.
 - **Termini tecnici:** si usano quelli corretti (*epiglottide*, non "la valvolina"), ma la prima volta vanno in **grassetto** e spiegati subito con parole semplici.
 - **Registro:**
