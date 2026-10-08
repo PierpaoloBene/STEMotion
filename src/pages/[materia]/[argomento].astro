@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Lettore from '../../components/Lettore.astro';
 import Segnaposto from '../../components/Segnaposto.astro';
 import { url } from '../../lib/url';
-import { elencoClassi, tornaA } from '../../lib/testo';
+import { tornaA } from '../../lib/testo';
 
 export async function getStaticPaths() {
   const argomenti = await getCollection('argomenti');
@@ -76,7 +76,6 @@ const prossimo = dopo ? { titolo: dopo.data.titolo, href: url(`${materia.id}/${s
       <h1>{data.titolo}</h1>
       <p class="sottotitolo">{data.sottotitolo}</p>
       <p class="info">
-        <span class="badge">{elencoClassi(data.classi)}</span>
         <span class="badge">{data.durata_minuti} min</span>
         <span class="badge">{passaggi.data.passaggi.length} passaggi</span>
         {data.stato !== 'pubblicato' && <span class="badge badge--bozza">Bozza: contenuti da revisionare</span>}

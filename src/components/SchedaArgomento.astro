@@ -6,7 +6,6 @@
 import type { CollectionEntry } from 'astro:content';
 import IconaMateria from './IconaMateria.astro';
 import { url } from '../lib/url';
-import { elencoClassi } from '../lib/testo';
 
 interface Props {
   argomento: CollectionEntry<'argomenti'>;
@@ -26,7 +25,6 @@ const copertina = copertine[`/argomenti/${argomento.id}/copertina.svg`];
   href={url(`${argomento.id}/`)}
   data-materia={materia}
   data-argomento={argomento.id}
-  data-classi={data.classi.join(' ')}
 >
   <span class="scheda__copertina" class:list={{ 'scheda__copertina--vuota': !copertina }}>
     {copertina ? <Fragment set:html={copertina} /> : <IconaMateria materia={materia} />}
@@ -40,8 +38,6 @@ const copertina = copertine[`/argomenti/${argomento.id}/copertina.svg`];
     <span class="scheda__titolo">{data.titolo}</span>
     <span class="scheda__sottotitolo">{data.sottotitolo}</span>
     <span class="scheda__info">
-      <span>{elencoClassi(data.classi)}</span>
-      <span aria-hidden="true">·</span>
       <span>{data.durata_minuti} min</span>
       {data.stato !== 'pubblicato' && <span class="badge badge--bozza">Bozza</span>}
     </span>

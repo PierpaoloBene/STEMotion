@@ -16,7 +16,7 @@
 - Nella scuola media si distingue tra il naturale 3 e l'intero +3. Qui li consideriamo lo stesso numero, come si fa poi alle superiori: per questo N sta dentro Z.
 - Il diagramma mostra solo alcuni numeri di esempio per ogni insieme: tutti gli insiemi sono infiniti.
 - Non dimostriamo che √2 è irrazionale: lo affermiamo, mostrando le sue cifre che non si ripetono.
-- La costruzione di √2 con il compasso usa il teorema di Pitagora senza nominarlo (diagonale² = 1² + 1² = 2). In 2ª si può riprendere quando lo si studia.
+- La costruzione di √2 con il compasso usa il teorema di Pitagora senza nominarlo (diagonale² = 1² + 1² = 2). Si può riprendere quando si studia il teorema.
 
 ## Collegamenti
 - Prima: numeri naturali e frazioni (aritmetica); la retta dei numeri

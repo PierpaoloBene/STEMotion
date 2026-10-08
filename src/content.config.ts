@@ -24,7 +24,6 @@ const argomenti = defineCollection({
       sottotitolo: z.string(),
       materia: reference('materie'),
       area: z.string().optional(),
-      classi: z.array(z.number().int().min(1).max(3)).min(1),
       modello: z.enum(['passaggi', 'simulazione', 'confronto']),
       durata_minuti: z.number().int().positive(),
       prerequisiti: z.array(z.string()).default([]),
