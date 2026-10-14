@@ -1,0 +1,47 @@
+---
+// Bilancia elettronica. L'oggetto si appoggia sul piatto, in (0, 0).
+// Lo slot va nel display: un <text> con text-anchor="middle" in (0, 0) è centrato.
+// Sistema di riferimento: vedi README.md in questa cartella.
+interface Props {
+  /** Larghezza del piatto. */
+  larghezza?: number;
+  class?: string;
+}
+const { larghezza = 240, class: classe } = Astro.props;
+const m = larghezza / 2;
+const display = Math.min(150, larghezza - 30) / 2;
+---
+
+<g class:list={['bilancia', classe]}>
+  <rect class="bilancia__corpo" x={-m - 10} y="18" width={larghezza + 20} height="66" rx="12"></rect>
+  <rect class="bilancia__colonna" x="-16" y="9" width="32" height="10"></rect>
+  <rect class="bilancia__piatto" x={-m} y="0" width={larghezza} height="10" rx="4"></rect>
+  <rect class="bilancia__display" x={-display} y="30" width={display * 2} height="44" rx="7"></rect>
+  <g class="bilancia__valore" transform="translate(0 63)">
+    <slot />
+  </g>
+</g>
+
+<style>
+  .bilancia rect {
+    stroke: var(--contorno);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+  .bilancia__corpo {
+    fill: var(--superficie);
+  }
+  .bilancia__colonna,
+  .bilancia__piatto {
+    fill: var(--bordo);
+  }
+  .bilancia__display {
+    fill: var(--radiografia);
+  }
+  .bilancia__valore :global(text) {
+    fill: #fff;
+    font-size: 30px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+</style>

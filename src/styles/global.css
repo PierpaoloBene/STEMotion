@@ -56,6 +56,14 @@
   --tessuto-infiammato: #e0533f;
   --pus: #e8cf6a;
 
+  /* Illustrazioni: materiali degli oggetti di laboratorio (src/components/laboratorio).
+     Il colore aiuta a riconoscerli, ma c'è sempre anche il nome scritto. */
+  --alluminio: #c3cbd5;
+  --ferro: #6b7380;
+  --rame: #b4532a;
+  --legno: #e2bf8a;
+  --roccia: #a49d90;
+
   /* Forme (guida di stile, §9) */
   --raggio: 24px;
   --raggio-piccolo: 14px;

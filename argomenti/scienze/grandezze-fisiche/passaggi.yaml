@@ -1,0 +1,81 @@
+passaggi:
+  - id: grandezze
+    titolo: Le grandezze fisiche
+    breve: Una grandezza fisica è una proprietà che si può misurare.
+    spiegazione: >
+      Di questo cubo di alluminio possiamo misurare lunghezza, massa, volume e densità.
+      Sono **grandezze fisiche**: proprietà che si esprimono con un numero e un'unità di misura.
+      Quanto è bello il cubo, invece, non si può misurare.
+
+  - id: lunghezza
+    titolo: La lunghezza
+    breve: Con il righello si misura lo spigolo del cubo, lungo 3 cm.
+    spiegazione: >
+      Misurare vuol dire contare quante volte l'**unità di misura** sta nella grandezza.
+      Il centimetro sta 3 volte nello spigolo del cubo.
+      Nel Sistema Internazionale l'unità della lunghezza è il **metro** (m): 1 m = 100 cm.
+
+  - id: massa
+    titolo: La massa
+    breve: Con la bilancia si misura la massa del cubo, 72,9 g.
+    spiegazione: >
+      La **massa** dice quanta materia c'è in un corpo.
+      Si misura con la bilancia.
+      Nel Sistema Internazionale l'unità della massa è il **kilogrammo** (kg): 1 kg = 1000 g.
+
+  - id: fondamentali
+    titolo: Grandezze fondamentali
+    breve: Lunghezza e massa sono grandezze fondamentali, dette anche primitive.
+    spiegazione: >
+      Le grandezze **fondamentali** (o **primitive**) non si ricavano da altre grandezze.
+      Ognuna ha una sua unità di misura, scelta una volta per tutte.
+      Nel Sistema Internazionale sono sette: tra queste ci sono anche il tempo e la temperatura.
+
+  - id: volume
+    titolo: Il volume
+    breve: Il volume si calcola dalle lunghezze, 3 × 3 × 3 = 27 cm³.
+    spiegazione: >
+      Il **volume** è lo spazio occupato da un corpo.
+      Il cubo si può dividere in cubetti con lo spigolo di 1 cm: sono 3 × 3 × 3 = 27.
+      Ogni cubetto è un **centimetro cubo** (1 cm³), quindi il volume è 27 cm³.
+
+  - id: derivate
+    titolo: Grandezze derivate
+    breve: Il volume è una grandezza derivata, si ottiene dalla lunghezza.
+    spiegazione: >
+      Le grandezze **derivate** si ottengono con un calcolo da quelle fondamentali.
+      Anche la loro unità deriva da quelle fondamentali: m × m × m = m³, il **metro cubo**.
+      Per il volume del cubo non serve uno strumento nuovo: basta il righello.
+
+  - id: densita
+    titolo: La densità
+    breve: La densità dice quanta massa c'è in 1 cm³ di materiale.
+    spiegazione: >
+      Un cubetto di alluminio da 1 cm³ ha una massa di 2,7 g.
+      Ogni centimetro cubo del cubo grande ha la stessa massa.
+      Questo numero è la **densità** dell'alluminio: 2,7 grammi per centimetro cubo (2,7 g/cm³).
+
+  - id: densita-formula
+    titolo: La densità è derivata
+    breve: "Densità = massa : volume, cioè 72,9 g : 27 cm³ = 2,7 g/cm³."
+    spiegazione: >
+      Non serve tagliare il cubo: basta dividere la massa per il volume.
+      La densità si calcola da massa e volume, quindi è una grandezza derivata.
+      Nel Sistema Internazionale si misura in kg/m³: 2,7 g/cm³ = 2700 kg/m³.
+
+  - id: materiali
+    titolo: Ogni materiale ha la sua densità
+    breve: Cubi uguali di materiali diversi hanno masse diverse.
+    spiegazione: >
+      I tre cubi hanno lo spigolo di 3 cm e lo stesso volume, 27 cm³.
+      Il ferro ha più massa in ogni centimetro cubo: la sua densità è più alta.
+      La densità non dipende dalla grandezza del corpo, ma dal materiale di cui è fatto.
+      Il legno è di abete: la densità del legno cambia da albero ad albero.
+
+  - id: riepilogo
+    titolo: Fondamentali e derivate
+    breve: Le grandezze derivate si ottengono da quelle fondamentali.
+    spiegazione: >
+      Lunghezza e massa sono fondamentali.
+      Il volume deriva dalla lunghezza, la densità da massa e volume.
+      Anche le unità del Sistema Internazionale seguono lo stesso schema: m, kg, m³, kg/m³.

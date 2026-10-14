@@ -1,0 +1,110 @@
+---
+// Cubo (o blocco di cubi affiancati) di un materiale, in prospettiva cavaliera:
+// la faccia davanti è vera, la profondità sale a 45° ed è accorciata.
+// Sistema di riferimento: vedi README.md in questa cartella.
+type Materiale = 'alluminio' | 'ferro' | 'rame' | 'legno' | 'roccia';
+
+interface Props {
+  /** Lato del cubo, in unità del disegno. */
+  lato?: number;
+  /** Quanti cubi affiancati in larghezza (2 = blocco lungo il doppio). */
+  largo?: number;
+  materiale: Materiale;
+  /** Divide ogni lato in n parti con linee sottili (es. 3 → 27 cubetti). 0 = nessuna linea. */
+  griglia?: number;
+  /** Anellino sulla faccia di sopra, per appenderlo a un gancio. */
+  occhiello?: boolean;
+  class?: string;
+}
+const { lato: l = 100, largo = 1, materiale, griglia = 0, occhiello = false, class: classe } = Astro.props;
+
+const r = (v: number) => +v.toFixed(1);
+const o = r(l * 0.354); // profondità vista di sbieco
+const w = l * largo;
+const a = r(-(w + o) / 2); // spigolo davanti a sinistra
+const b = r(a + w); // spigolo davanti a destra
+const poli = (pts: number[][]) => 'M' + pts.map(([x, y]) => `${r(x)} ${r(y)}`).join('L') + 'Z';
+
+const davanti = poli([[a, 0], [b, 0], [b, -l], [a, -l]]);
+const sopra = poli([[a, -l], [b, -l], [b + o, -l - o], [a + o, -l - o]]);
+const fianco = poli([[b, 0], [b + o, -o], [b + o, -l - o], [b, -l]]);
+
+// Linee della griglia sulle tre facce visibili.
+const linee: string[] = [];
+if (griglia > 0) {
+  const n = griglia;
+  const nl = griglia * largo;
+  for (let k = 1; k < nl; k++) {
+    const x = a + (k * w) / nl;
+    linee.push(`M${r(x)} 0V${r(-l)}l${o} ${-o}`);
+  }
+  for (let k = 1; k < n; k++) {
+    const y = (-k * l) / n;
+    const d = (k * o) / n;
+    linee.push(`M${a} ${r(y)}H${b}l${o} ${-o}`); // davanti e fianco
+    linee.push(`M${r(a + d)} ${r(-l - d)}H${r(b + d)}V${r(-d)}`); // sopra e fianco
+  }
+}
+
+// Venature del legno, solo sulla faccia davanti.
+const venature =
+  materiale === 'legno'
+    ? [0.3, 0.55, 0.8].map((t) => `M${a} ${r(-l * t)}c${r(w * 0.3)} ${r(-l * 0.06)} ${r(w * 0.6)} ${r(l * 0.06)} ${r(w)} 0`).join('')
+    : '';
+const cima = r(-l - o / 2);
+---
+
+<g class:list={['cubo', `cubo--${materiale}`, classe]}>
+  <path class="cubo__davanti" d={davanti}></path>
+  <path class="cubo__sopra" d={sopra}></path>
+  <path class="cubo__fianco" d={fianco}></path>
+  {venature && <path class="cubo__venature" d={venature}></path>}
+  {linee.length > 0 && <path class="cubo__griglia" d={linee.join('')}></path>}
+  {occhiello && <path class="cubo__occhiello" d={`M-9 ${cima}v-8a9 9 0 0 1 18 0v8`}></path>}
+</g>
+
+<style>
+  .cubo--alluminio {
+    --m: var(--alluminio);
+  }
+  .cubo--ferro {
+    --m: var(--ferro);
+  }
+  .cubo--rame {
+    --m: var(--rame);
+  }
+  .cubo--legno {
+    --m: var(--legno);
+  }
+  .cubo--roccia {
+    --m: var(--roccia);
+  }
+  .cubo path {
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .cubo__davanti {
+    fill: var(--m);
+  }
+  .cubo__sopra {
+    fill: color-mix(in srgb, var(--m) 55%, #fff);
+  }
+  .cubo__fianco {
+    fill: color-mix(in srgb, var(--m) 75%, #000);
+  }
+  .cubo__venature {
+    fill: none;
+    stroke: color-mix(in srgb, var(--m) 70%, #000) !important;
+    stroke-width: 2 !important;
+  }
+  .cubo__griglia {
+    fill: none;
+    stroke-width: 1.5 !important;
+  }
+  .cubo__occhiello {
+    fill: none;
+    stroke-width: 3 !important;
+  }
+</style>

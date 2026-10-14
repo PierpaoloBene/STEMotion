@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- bilancia elettronica -->
+    <rect x="70" y="380" width="280" height="66" rx="12" fill="#FFFFFF" />
+    <rect x="194" y="371" width="32" height="10" fill="#DDDDE3" />
+    <rect x="80" y="362" width="260" height="10" rx="4" fill="#DDDDE3" />
+    <rect x="148" y="394" width="124" height="38" rx="7" fill="#16233F" />
+    <!-- righello in piedi accanto al cubo -->
+    <rect x="54.5" y="150" width="44" height="224" rx="5" fill="#F3E5D0" />
+    <path d="M98.5 362h-16M98.5 357h-6M98.5 352h-6M98.5 347h-6M98.5 342h-6M98.5 337h-10M98.5 332h-6M98.5 327h-6M98.5 322h-6M98.5 317h-6M98.5 312h-16M98.5 307h-6M98.5 302h-6M98.5 297h-6M98.5 292h-6M98.5 287h-10M98.5 282h-6M98.5 277h-6M98.5 272h-6M98.5 267h-6M98.5 262h-16M98.5 257h-6M98.5 252h-6M98.5 247h-6M98.5 242h-6M98.5 237h-10M98.5 232h-6M98.5 227h-6M98.5 222h-6M98.5 217h-6M98.5 212h-16M98.5 207h-6M98.5 202h-6M98.5 197h-6M98.5 192h-6M98.5 187h-10M98.5 182h-6M98.5 177h-6M98.5 172h-6M98.5 167h-6M98.5 162h-16" fill="none" stroke-width="1.5" />
+    <!-- cubo di alluminio -->
+    <path d="M108.5 362L258.4 362L258.4 212L108.5 212Z" fill="#C3CBD5" stroke-width="2.5" />
+    <path d="M108.5 212L258.4 212L311.6 158.9L161.6 158.9Z" fill="#DEE2E8" stroke-width="2.5" />
+    <path d="M258.4 362L311.6 308.9L311.6 158.9L258.4 212Z" fill="#92989F" stroke-width="2.5" />
+  </g>
+  <g class="dentro">
+    <rect width="400" height="500" fill="#16233F" />
+    <!-- bilancia e righello in trasparenza -->
+    <g fill="none" stroke="#8FA6CC" stroke-width="3" stroke-linejoin="round">
+      <rect x="70" y="380" width="280" height="66" rx="12" />
+      <rect x="80" y="362" width="260" height="10" rx="4" />
+      <rect x="194" y="371" width="32" height="10" />
+      <rect x="54.5" y="150" width="44" height="224" rx="5" />
+      <path d="M98.5 362h-16M98.5 357h-6M98.5 352h-6M98.5 347h-6M98.5 342h-6M98.5 337h-10M98.5 332h-6M98.5 327h-6M98.5 322h-6M98.5 317h-6M98.5 312h-16M98.5 307h-6M98.5 302h-6M98.5 297h-6M98.5 292h-6M98.5 287h-10M98.5 282h-6M98.5 277h-6M98.5 272h-6M98.5 267h-6M98.5 262h-16M98.5 257h-6M98.5 252h-6M98.5 247h-6M98.5 242h-6M98.5 237h-10M98.5 232h-6M98.5 227h-6M98.5 222h-6M98.5 217h-6M98.5 212h-16M98.5 207h-6M98.5 202h-6M98.5 197h-6M98.5 192h-6M98.5 187h-10M98.5 182h-6M98.5 177h-6M98.5 172h-6M98.5 167h-6M98.5 162h-16" stroke-width="1.5" />
+    </g>
+    <!-- il cubo è fatto di 27 cubetti da 1 cm³: uno è illuminato -->
+    <path d="M108.5 362L258.4 362L311.6 308.9L311.6 158.9L161.6 158.9L108.5 212Z" fill="#1F3257" />
+    <path d="M208.4 262L258.4 262L276.1 244.3L276.1 194.3L226.1 194.3L208.4 212Z" fill="#D8E2F0" fill-opacity="0.35" />
+    <path d="M158.4 362V212l53.1 -53.1M108.5 312H258.4l53.1 -53.1M126.2 194.3H276.1V344.3M208.4 362V212l53.1 -53.1M108.5 262H258.4l53.1 -53.1M143.8 176.6H293.8V326.6" fill="none" stroke="#8FA6CC" stroke-width="1.5" />
+    <path d="M208.4 262L258.4 262L276.1 244.3L276.1 194.3L226.1 194.3L208.4 212Z" fill="none" stroke="#D8E2F0" stroke-width="3" stroke-linejoin="round" />
+    <path d="M108.5 362L258.4 362L311.6 308.9L311.6 158.9L161.6 158.9L108.5 212ZM108.5 212H258.4V362M258.4 212l53.1 -53.1" fill="none" stroke="#D8E2F0" stroke-width="3" stroke-linejoin="round" />
+  </g>
+</svg>

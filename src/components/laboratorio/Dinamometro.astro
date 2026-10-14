@@ -1,0 +1,85 @@
+---
+// Dinamometro a molla: un tubo trasparente con dentro una molla che si allunga col peso.
+// La molla, l'indice e il gancio si muovono con la variabile CSS --forza (da 0 a 1 = portata).
+// Il carico (lo slot) è appeso al gancio e scende con lui.
+// Sistema di riferimento: vedi README.md in questa cartella.
+interface Props {
+  /** Numero di intervalli della scala (es. 10). */
+  tacche?: number;
+  class?: string;
+}
+const { tacche = 10, class: classe } = Astro.props;
+
+const ZERO = 50; // indice a riposo
+const CORSA = 130; // da zero a fondo scala
+const MOLLA = ZERO - 26; // lunghezza della molla a riposo
+
+// Molla a zig-zag, da y = 0 a y = MOLLA (la si allunga con scaleY).
+const spire = 8;
+const molla = `M0 0L0 3${Array.from({ length: spire }, (_, i) => `L${i % 2 ? -11 : 11} ${+(3 + ((i + 0.5) * (MOLLA - 6)) / spire).toFixed(1)}`).join('')}L0 ${MOLLA - 3}L0 ${MOLLA}`;
+const scala = Array.from({ length: tacche + 1 }, (_, k) => ({ y: ZERO + (k * CORSA) / tacche, lunga: k % 5 === 0 }));
+---
+
+<g class:list={['dinamometro', classe]} style={`--corsa: ${CORSA}px; --allunga: ${+(CORSA / MOLLA).toFixed(3)}`}>
+  <circle class="dinamometro__anello" cy="9" r="8"></circle>
+  <rect class="dinamometro__tubo" x="-20" y="17" width="40" height="185" rx="9"></rect>
+  <g class="dinamometro__scala">
+    {scala.map((t) => <line x1={t.lunga ? 4 : 9} x2="19" y1={t.y} y2={t.y}></line>)}
+  </g>
+  <g transform="translate(0 26)">
+    <path class="dinamometro__molla" d={molla}></path>
+  </g>
+  <g class="dinamometro__cursore">
+    <path class="dinamometro__asta" d={`M0 ${ZERO}V222`}></path>
+    <rect class="dinamometro__indice" x="-17" y={ZERO - 3} width="34" height="6" rx="3"></rect>
+    <path class="dinamometro__gancio" d="M0 222v10a8 8 0 1 1 -8 8"></path>
+    <g transform="translate(0 240)">
+      <slot />
+    </g>
+  </g>
+  <rect class="dinamometro__vetro" x="-20" y="17" width="40" height="185" rx="9"></rect>
+</g>
+
+<style>
+  .dinamometro :is(circle, rect, path, line) {
+    vector-effect: non-scaling-stroke;
+  }
+  .dinamometro__anello,
+  .dinamometro__gancio {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .dinamometro__tubo {
+    fill: var(--superficie);
+  }
+  .dinamometro__vetro {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .dinamometro__scala line {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+  }
+  .dinamometro__molla {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    transform: scaleY(calc(1 + var(--forza, 0) * var(--allunga)));
+    transition: transform 1.2s ease-in-out;
+  }
+  .dinamometro__asta {
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .dinamometro__indice {
+    fill: var(--contorno);
+  }
+  .dinamometro__cursore {
+    transform: translateY(calc(var(--forza, 0) * var(--corsa)));
+    transition: transform 1.2s ease-in-out;
+  }
+</style>

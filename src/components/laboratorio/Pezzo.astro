@@ -1,0 +1,76 @@
+---
+// Oggetto di forma irregolare (un sasso, un pezzo di metallo) appeso a un filo.
+// Origine: il punto in cima al filo, da agganciare al dinamometro. L'oggetto pende in basso.
+// La forma irregolare è il motivo per cui il volume si misura nel cilindro graduato.
+// Sistema di riferimento: vedi README.md in questa cartella.
+type Materiale = 'alluminio' | 'ferro' | 'rame' | 'roccia';
+
+interface Props {
+  materiale: Materiale;
+  /** Quale delle forme disegnate. */
+  forma?: 'sasso' | 'blocco' | 'lingotto';
+  /** Ingrandimento rispetto alla forma di base (larga circa 60). */
+  scala?: number;
+  class?: string;
+}
+const { materiale, forma = 'sasso', scala = 1, class: classe } = Astro.props;
+
+// Forme di base, larghe circa 60 e alte circa 50, con il punto di aggancio in (0, 0).
+const forme = {
+  sasso: {
+    corpo: 'M-6 1C14 -1 30 8 31 24C32 40 18 50 -2 49C-22 48 -32 38 -30 22C-28 8 -20 2 -6 1Z',
+    luce: 'M-18 12C-12 7 -4 6 4 7',
+  },
+  blocco: {
+    corpo: 'M-24 2L22 0L30 14L27 46L-20 48L-29 34Z',
+    luce: 'M-20 8L18 6',
+  },
+  lingotto: {
+    corpo: 'M-20 2L20 2L30 40L-30 40Z',
+    luce: 'M-15 8L15 8',
+  },
+}[forma];
+const filo = 16; // il filo va dal gancio all'oggetto
+---
+
+<g class:list={['pezzo', `pezzo--${materiale}`, classe]}>
+  <path class="pezzo__filo" d={`M0 0V${filo + 4 * scala}`}></path>
+  <g transform={`translate(0 ${filo}) scale(${scala})`}>
+    <path class="pezzo__corpo" d={forme.corpo}></path>
+    <path class="pezzo__luce" d={forme.luce}></path>
+  </g>
+</g>
+
+<style>
+  .pezzo--alluminio {
+    --m: var(--alluminio);
+  }
+  .pezzo--ferro {
+    --m: var(--ferro);
+  }
+  .pezzo--rame {
+    --m: var(--rame);
+  }
+  .pezzo--roccia {
+    --m: var(--roccia);
+  }
+  .pezzo path {
+    vector-effect: non-scaling-stroke;
+  }
+  .pezzo__filo {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+  }
+  .pezzo__corpo {
+    fill: var(--m);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+  .pezzo__luce {
+    fill: none;
+    stroke: color-mix(in srgb, var(--m) 40%, #fff);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+</style>

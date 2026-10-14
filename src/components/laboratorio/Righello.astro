@@ -1,0 +1,53 @@
+---
+// Righello verticale: lo zero è in basso, in (0, 0); le tacche guardano a destra,
+// verso l'oggetto da misurare, e il corpo sta a sinistra.
+// Sistema di riferimento: vedi README.md in questa cartella.
+interface Props {
+  /** Quanti centimetri. */
+  cm?: number;
+  /** Unità del disegno per centimetro. */
+  passo?: number;
+  class?: string;
+}
+const { cm = 5, passo = 50, class: classe } = Astro.props;
+
+const lunghezza = cm * passo;
+const tacche = Array.from({ length: cm * 10 + 1 }, (_, i) => ({
+  y: +(-i * passo / 10).toFixed(1),
+  l: i % 10 === 0 ? 18 : i % 5 === 0 ? 12 : 7,
+}));
+const numeri = Array.from({ length: cm + 1 }, (_, i) => ({ y: -i * passo, n: i }));
+---
+
+<g class:list={['righello', classe]}>
+  <rect class="righello__corpo" x="-52" y={-lunghezza - 12} width="52" height={lunghezza + 24} rx="5"></rect>
+  <path class="righello__tacche" d={tacche.map((t) => `M0 ${t.y}h${-t.l}`).join('')}></path>
+  {
+    numeri.map((t) => (
+      <text class="righello__numero" x="-24" y={t.y + 7}>
+        {t.n}
+      </text>
+    ))
+  }
+</g>
+
+<style>
+  .righello__corpo {
+    fill: color-mix(in srgb, var(--legno) 40%, #fff);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+  .righello__tacche {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .righello__numero {
+    fill: var(--testo);
+    font-size: 20px;
+    font-weight: 700;
+    text-anchor: end;
+  }
+</style>
