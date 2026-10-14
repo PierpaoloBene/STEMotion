@@ -1,0 +1,90 @@
+passaggi:
+  - id: peso
+    fase: formula
+    titolo: Il peso
+    breve: Il peso è la forza con cui la Terra attira un corpo.
+    spiegazione: >
+      Il **peso** è una forza: la Terra attira ogni corpo verso il basso.
+      Si misura con il **dinamometro**, una molla che si allunga di più se il peso è maggiore.
+      L'unità di misura è il **newton** (N): questo cubo di alluminio pesa 26,5 N.
+
+  - id: stesso-volume
+    fase: formula
+    titolo: Stesso volume, peso diverso
+    breve: Tre cubi da 1 dm³ di materiali diversi hanno pesi diversi.
+    spiegazione: >
+      I tre cubi hanno lo stesso volume: 1 **decimetro cubo** (1 dm³), cioè 1 litro.
+      Il legno pesa 4,4 N, l'alluminio 26,5 N, il ferro 77,1 N.
+      Per confrontare due materiali bisogna confrontare pezzi con lo stesso volume.
+
+  - id: formula
+    fase: formula
+    titolo: La formula
+    breve: "Peso specifico = peso : volume, cioè Ps = P : V."
+    spiegazione: >
+      Il **peso specifico** è il peso di un'unità di volume di un materiale.
+      Si calcola dividendo il peso per il volume: 26,5 N : 1 dm³ = 26,5 N/dm³.
+      Si legge "newton al decimetro cubo". Nel Sistema Internazionale si usa il N/m³.
+
+  - id: grandezza
+    fase: formula
+    titolo: Grande o piccolo, non conta
+    breve: Un blocco più grande pesa di più, ma il peso specifico non cambia.
+    spiegazione: >
+      Il blocco da 2 dm³ pesa il doppio del cubo: 53 N.
+      Dividendo, 53 N : 2 dm³ = 26,5 N/dm³, come per il cubo.
+      Il peso specifico dipende dal materiale, non dalla grandezza dell'oggetto.
+
+  - id: densita
+    fase: formula
+    titolo: Peso specifico e densità
+    breve: Il peso specifico è la densità moltiplicata per 9,8 N/kg.
+    spiegazione: >
+      Sulla Terra ogni kilogrammo pesa circa 9,8 N: questo numero si chiama *g*.
+      Il cubo ha una massa di 2,7 kg: la densità dell'alluminio è 2,7 kg/dm³, cioè 2,7 g/cm³.
+      Il suo peso è 2,7 × 9,8 = 26,5 N. Quindi Ps = d × g.
+
+  - id: luna
+    fase: formula
+    titolo: Sulla Luna
+    breve: Sulla Luna il peso specifico cambia, la densità no.
+    spiegazione: >
+      La Luna attira i corpi circa 6 volte meno della Terra: lì *g* vale 1,62 N/kg.
+      Lo stesso cubo pesa solo 4,4 N, quindi il suo peso specifico è 4,4 N/dm³.
+      La massa e la densità invece non cambiano: 2,7 kg e 2,7 kg/dm³.
+
+  - id: esp-peso
+    fase: esperimento
+    titolo: "Esperimento: il peso"
+    breve: Il dinamometro misura il peso del sasso, 2,6 N.
+    spiegazione: >
+      Ora misuriamo il peso specifico di un sasso.
+      Lo appendiamo con un filo a un dinamometro più sensibile, che arriva a 10 N.
+      La molla si allunga fino a 2,6 N: è il peso del sasso.
+
+  - id: esp-volume
+    fase: esperimento
+    titolo: "Esperimento: il volume"
+    breve: Il sasso fa salire l'acqua da 200 mL a 300 mL.
+    spiegazione: >
+      Il sasso ha una forma irregolare: il suo volume non si calcola con il righello.
+      Lo immergiamo in un **cilindro graduato** con 200 mL di acqua, e il livello sale a 300 mL.
+      Il sasso occupa il posto di 100 mL di acqua: il suo volume è 100 cm³, perché 1 mL = 1 cm³.
+
+  - id: esp-calcolo
+    fase: esperimento
+    titolo: "Esperimento: il calcolo"
+    breve: "Ps = 2,6 N : 0,1 dm³ = 26 N/dm³."
+    spiegazione: >
+      Prima trasformiamo il volume: 100 cm³ = 0,1 dm³, perché 1 dm³ = 1000 cm³.
+      Poi dividiamo il peso per il volume: 2,6 N : 0,1 dm³ = 26 N/dm³.
+      È un valore tipico di molte rocce, come il granito.
+
+  - id: prova-tu
+    fase: esperimento
+    titolo: "Prova tu: di che materiale è?"
+    breve: Scegli un oggetto e scopri il suo peso specifico.
+    spiegazione: >
+      Ogni oggetto viene pesato con il dinamometro e poi immerso nel cilindro graduato.
+      Con il peso e il volume si calcola il peso specifico.
+      Confrontalo con la tabella: ogni materiale ha il suo, così scopri di che cosa è fatto l'oggetto.

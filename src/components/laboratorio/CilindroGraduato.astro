@@ -1,0 +1,72 @@
+---
+// Cilindro graduato con l'acqua. Il livello si imposta con la variabile CSS --livello
+// (in mL, da 0 alla portata): l'acqua sale e scende con una transizione.
+// È trasparente: quello che si disegna prima (un oggetto immerso) si vede attraverso l'acqua.
+// Sistema di riferimento: vedi README.md in questa cartella.
+interface Props {
+  /** Volume massimo, in mL. */
+  portata?: number;
+  /** Ogni quanti mL c'è una tacca (lunga ogni 2). */
+  tacca?: number;
+  /** Altezza della scala, in unità del disegno. */
+  altezza?: number;
+  /** Larghezza interna. */
+  larghezza?: number;
+  class?: string;
+}
+const { portata = 500, tacca = 50, altezza = 300, larghezza = 90, class: classe } = Astro.props;
+
+const FONDO = 14; // spessore del piede
+const mezzo = larghezza / 2;
+const passo = altezza / portata; // unità del disegno per mL
+const tacche = Array.from({ length: Math.floor(portata / tacca) }, (_, i) => ({
+  y: +(-FONDO - (i + 1) * tacca * passo).toFixed(1),
+  lunga: (i + 1) % 2 === 0,
+}));
+const cima = -FONDO - altezza - 30;
+---
+
+<g class:list={['cilindro', classe]} style={`--passo: ${+passo.toFixed(4)}px; --portata: ${portata}`}>
+  <g transform={`translate(0 ${-FONDO})`}>
+    <rect class="cilindro__acqua" x={-mezzo} y={-altezza} width={larghezza} height={altezza}></rect>
+    <line class="cilindro__pelo" x1={-mezzo} x2={mezzo}></line>
+  </g>
+  <g class="cilindro__scala">
+    {tacche.map((t) => <line x1={-mezzo} x2={-mezzo + (t.lunga ? 22 : 12)} y1={t.y} y2={t.y}></line>)}
+  </g>
+  <path class="cilindro__vetro" d={`M${-mezzo - 8} ${cima}H${-mezzo}V${-FONDO}H${mezzo}V${cima}H${mezzo + 8}`}></path>
+  <rect class="cilindro__piede" x={-mezzo - 30} y={-FONDO} width={larghezza + 60} height={FONDO} rx="5"></rect>
+</g>
+
+<style>
+  .cilindro :is(rect, path, line) {
+    vector-effect: non-scaling-stroke;
+  }
+  .cilindro__acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.45;
+    transform: scaleY(calc(var(--livello, 0) / var(--portata)));
+    transition: transform 1.2s ease-in-out;
+  }
+  .cilindro__pelo {
+    stroke: var(--acqua);
+    stroke-width: 3;
+    transform: translateY(calc(var(--livello, 0) * var(--passo) * -1));
+    transition: transform 1.2s ease-in-out;
+  }
+  .cilindro__scala line {
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .cilindro__vetro {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .cilindro__piede {
+    fill: var(--bordo);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+</style>

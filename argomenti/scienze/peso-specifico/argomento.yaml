@@ -1,0 +1,19 @@
+titolo: Il peso specifico
+sottotitolo: Quanto pesa un decimetro cubo di materiale? La formula e un esperimento
+materia: scienze
+area: fisica
+modello: passaggi
+durata_minuti: 20
+prerequisiti: [grandezze-fisiche]
+obiettivi:
+  - Distinguere il peso (una forza, in newton) dalla massa
+  - "Calcolare il peso specifico con la formula Ps = P : V"
+  - Spiegare perché il peso specifico dipende dal materiale e non dalla grandezza dell'oggetto
+  - Misurare il peso specifico di un oggetto irregolare con dinamometro e cilindro graduato
+parole_chiave: [peso, newton, dinamometro, peso specifico, volume, cilindro graduato, densità]
+stato: bozza
+revisionato_da: null
+fonti:
+  - "BIPM, Il Sistema Internazionale di Unità (SI), 9ª edizione, 2019: newton e unità derivate"
+  - "Accelerazione di gravità: 9,8 N/kg sulla Terra, 1,62 N/kg sulla Luna (NASA, Moon Fact Sheet)"
+  - "Densità: alluminio 2,70, ferro 7,87, rame 8,96, piombo 11,34 g/cm³; legno di abete circa 0,45 g/cm³ (CRC Handbook of Chemistry and Physics)"

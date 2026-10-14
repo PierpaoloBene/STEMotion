@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- asta del sostegno -->
+    <rect x="30" y="44" width="340" height="12" rx="3" fill="#DDDDE3" stroke-width="2.5" />
+    <!-- dinamometro chiuso: da fuori si vede solo la scala -->
+    <circle cx="130" cy="70" r="9" fill="none" />
+    <rect x="108" y="82" width="44" height="200" rx="10" fill="#DDDDE3" />
+    <path d="M136 120h14M136 135h14M136 150h14M136 165h14M136 180h14M136 195h14M136 210h14M136 225h14M136 240h14M136 255h14M136 270h14" fill="none" stroke-width="2" />
+    <path d="M130 282V304v10a8 8 0 1 1 -8 8" fill="none" />
+    <!-- sasso appeso con un filo -->
+    <path d="M130 322V338" stroke="#5A5A63" stroke-width="2" />
+    <path d="M122 334C146 332 166 344 167 363C168 382 151 394 127 393C103 392 92 380 94 361C96 344 106 336 122 334Z" fill="#A49D90" stroke-width="2.5" />
+    <!-- cilindro graduato con l'acqua -->
+    <rect x="252" y="330" width="76" height="106" fill="#2C9AD1" fill-opacity="0.45" stroke="none" />
+    <path d="M252 330h76" stroke="#2C9AD1" />
+    <path d="M250 412h10M250 388h18M250 364h10M250 340h18M250 316h10M250 292h18M250 268h10M250 244h18M250 220h10M250 196h18" fill="none" stroke-width="2" />
+    <path d="M244 170H252V436H328V170H336" fill="none" />
+    <rect x="224" y="436" width="132" height="14" rx="5" fill="#DDDDE3" />
+  </g>
+  <g class="dentro">
+    <rect width="400" height="500" fill="#16233F" />
+    <g fill="none" stroke="#8FA6CC" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="30" y="44" width="340" height="12" rx="3" />
+      <circle cx="130" cy="70" r="9" />
+      <rect x="108" y="82" width="44" height="200" rx="10" fill="#1F3257" />
+      <path d="M136 120h14M136 135h14M136 150h14M136 165h14M136 180h14M136 195h14M136 210h14M136 225h14M136 240h14M136 255h14M136 270h14" stroke-width="2" />
+      <path d="M244 170H252V436H328V170H336" />
+      <rect x="224" y="436" width="132" height="14" rx="5" />
+    </g>
+    <!-- dentro il tubo: la molla tesa dal peso del sasso -->
+    <path d="M130 90v4L142 98.2L118 106.6L142 115L118 123.4L142 131.8L118 140.2L142 148.6L118 157L142 165.4L118 173.8L130 178L130 182" fill="none" stroke="#D8E2F0" stroke-width="3" stroke-linejoin="round" />
+    <rect x="112" y="179" width="36" height="6" rx="3" fill="#D8E2F0" />
+    <path d="M130 182V304v10a8 8 0 1 1 -8 8" fill="none" stroke="#D8E2F0" stroke-width="3" stroke-linecap="round" />
+    <path d="M130 322V338" stroke="#8FA6CC" stroke-width="2" />
+    <path d="M122 334C146 332 166 344 167 363C168 382 151 394 127 393C103 392 92 380 94 361C96 344 106 336 122 334Z" fill="#1F3257" stroke="#D8E2F0" stroke-width="3" />
+    <!-- l'acqua nel cilindro -->
+    <rect x="252" y="330" width="76" height="106" fill="#2C9AD1" fill-opacity="0.6" />
+    <path d="M252 330h76" stroke="#2C9AD1" stroke-width="3" />
+  </g>
+</svg>

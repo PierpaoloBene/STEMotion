@@ -1,0 +1,550 @@
+---
+/**
+ * Grandezze fondamentali e derivate: un cubo di alluminio di cui si misurano lunghezza e massa
+ * e si calcolano volume e densità. Accanto, una scheda a quattro caselle si riempie passo per passo
+ * e alla fine mostra lo schema: lunghezza → volume, massa e volume → densità.
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4).
+ *
+ * Due disposizioni dello stesso disegno, come in "Gli stati della materia": "larga" (scena a sinistra
+ * e scheda a destra, per la LIM) e "stretta" (scena sopra e scheda sotto, per il telefono).
+ * Sceglie il CSS con una container query. Le posizioni che cambiano da un passaggio all'altro
+ * sono variabili CSS sull'<svg> di ogni disposizione.
+ */
+import Cubo from '../../../src/components/laboratorio/Cubo.astro';
+import Bilancia from '../../../src/components/laboratorio/Bilancia.astro';
+import Righello from '../../../src/components/laboratorio/Righello.astro';
+
+// --- La scena, in coordinate proprie: origine sul piano del tavolo, sotto il centro del cubo ---
+
+const L = 150; // spigolo del cubo: 3 cm, quindi 50 per centimetro
+const CM = L / 3;
+const O = +(L * 0.354).toFixed(1); // profondità vista di sbieco (come in Cubo.astro)
+const A = -(L + O) / 2; // spigolo davanti a sinistra
+const B = A + L; // spigolo davanti a destra
+const ALTO = 84; // altezza della bilancia: il cubo ci sale sopra
+const PICCOLA = 230; // la bilancia piccola, con il cubetto da 1 cm³
+const r = (v: number) => +v.toFixed(1);
+
+// Il cubetto in alto a destra davanti, evidenziato nel passaggio del volume.
+const angolo = { x: r(B - CM + (CM + CM * 0.354) / 2), y: -2 * CM };
+
+// --- Le due disposizioni ---
+
+interface Disposizione {
+  id: 'larga' | 'stretta';
+  viewBox: string;
+  larghezza: number;
+  tavolo: number;
+  /** Scena: posizione e scala di base, poi nel passaggio dei materiali. */
+  scena: { x: number; y: number; s: number; x8: number; y8: number; s8: number };
+  formula: { x: number; y1: number; y2: number };
+  /** Scheda: centro e scala di base e nel riepilogo; caselle larghe bw e alte bh. */
+  scheda: { x: number; y: number; x9: number; y9: number; s9: number; bw: number; bh: number; colonna: number; spazio: number };
+  /** Gli altri due cubi (legno e ferro) e le scritte sopra ai tre cubi. */
+  materiali: { x: [number, number, number]; y: number; s: number; nome: number; densita: number };
+}
+
+const disposizioni: Disposizione[] = [
+  {
+    id: 'larga',
+    viewBox: '0 0 960 600',
+    larghezza: 960,
+    tavolo: 520,
+    scena: { x: 240, y: 520, s: 1, x8: 480, y8: 520, s8: 1 },
+    formula: { x: 270, y1: 80, y2: 132 },
+    scheda: { x: 752, y: 270, x9: 480, y9: 290, s9: 1.25, bw: 168, bh: 125, colonna: 107, spazio: 60 },
+    materiali: { x: [160, 480, 800], y: 520, s: 1, nome: 168, densita: 204 },
+  },
+  {
+    id: 'stretta',
+    viewBox: '0 0 560 640',
+    larghezza: 560,
+    tavolo: 330,
+    scena: { x: 205, y: 330, s: 0.8, x8: 280, y8: 470, s8: 0.68 },
+    formula: { x: 280, y1: 40, y2: 84 },
+    scheda: { x: 280, y: 505, x9: 280, y9: 330, s9: 1, bw: 240, bh: 100, colonna: 140, spazio: 30 },
+    materiali: { x: [95, 280, 465], y: 470, s: 0.68, nome: 226, densita: 260 },
+  },
+];
+
+// Le quattro caselle della scheda: colonna 0 = fondamentali, 1 = derivate.
+const caselle = [
+  { id: 'lunghezza', nome: 'Lunghezza', valore: '3 cm', unita: 'm', col: 0, riga: 0 },
+  { id: 'massa', nome: 'Massa', valore: '72,9 g', unita: 'kg', col: 0, riga: 1 },
+  { id: 'volume', nome: 'Volume', valore: '27 cm³', unita: 'm³', col: 1, riga: 0 },
+  { id: 'densita', nome: 'Densità', valore: '2,7 g/cm³', unita: 'kg/m³', col: 1, riga: 1 },
+];
+
+function geometria(k: Disposizione['scheda']) {
+  const box = (col: number, riga: number) => {
+    const x = (col ? 1 : -1) * k.colonna - k.bw / 2;
+    const y = riga ? k.spazio / 2 : -k.bh - k.spazio / 2;
+    return { x, y, cx: x + k.bw / 2 };
+  };
+  const destra0 = box(0, 0).x + k.bw;
+  const sinistra1 = box(1, 0).x;
+  const meta = (riga: number) => box(0, riga).y + k.bh / 2;
+  const frecce = {
+    'lunghezza-volume': `M${destra0 + 5} ${meta(0)}H${sinistra1 - 6}`,
+    'massa-densita': `M${destra0 + 5} ${meta(1)}H${sinistra1 - 6}`,
+    'volume-densita': `M${k.colonna} ${-k.spazio / 2 + 4}V${k.spazio / 2 - 6}`,
+  };
+  const testata = -k.bh - k.spazio / 2 - 16;
+  // Fondo grigio di ogni gruppo, dietro la sua colonna.
+  const gruppo = (col: number) => ({ x: box(col, 0).x - 10, y: testata - 34, w: k.bw + 20, h: 2 * k.bh + k.spazio + 34 + 16 + 10 });
+  return { box, frecce, testata, gruppo };
+}
+
+const materiali = [
+  { id: 'legno', nome: 'Legno', densita: '0,45 g/cm³', massa: '12,2 g', i: 0 },
+  { id: 'alluminio', nome: 'Alluminio', densita: '2,7 g/cm³', massa: '72,9 g', i: 1 },
+  { id: 'ferro', nome: 'Ferro', densita: '7,87 g/cm³', massa: '212,5 g', i: 2 },
+] as const;
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni: Record<string, string> = {
+  grandezze: 'Un cubo di alluminio sul tavolo. Accanto, una scheda con quattro caselle ancora vuote: lunghezza, massa, volume e densità.',
+  lunghezza: 'Un righello accanto al cubo: lo spigolo arriva alla tacca dei 3 cm. Nella scheda, lunghezza 3 cm.',
+  massa: 'Il cubo è sulla bilancia, che segna 72,9 g. Nella scheda, massa 72,9 g.',
+  fondamentali: 'Nella scheda lunghezza e massa finiscono nel gruppo delle grandezze fondamentali.',
+  volume: 'Il cubo è diviso in 27 cubetti da 1 cm³. Sopra, il calcolo 3 cm per 3 cm per 3 cm uguale 27 cm³. Nella scheda, volume 27 cm³.',
+  derivate: 'Nella scheda il volume finisce nel gruppo delle grandezze derivate, con una freccia che parte dalla lunghezza.',
+  densita: 'Accanto al cubo grande, un cubetto di alluminio da 1 cm³ su una bilancia piccola: segna 2,7 g. Nella scheda, densità 2,7 g/cm³.',
+  'densita-formula': 'Sopra il cubo il calcolo: densità uguale massa diviso volume, 72,9 g diviso 27 cm³ uguale 2,7 g/cm³. Nella scheda due frecce portano dalla massa e dal volume alla densità.',
+  materiali: 'Tre cubi uguali su tre bilance: legno 12,2 g, alluminio 72,9 g, ferro 212,5 g. Sopra ogni cubo la sua densità: 0,45, 2,7 e 7,87 g/cm³.',
+  riepilogo: 'La scheda completa: a sinistra le fondamentali, lunghezza in metri e massa in kilogrammi. A destra le derivate, volume in metri cubi e densità in kg/m³, con le frecce che le collegano.',
+};
+---
+
+<div class="grandezze">
+  {
+    disposizioni.map((d) => {
+      const k = d.scheda;
+      const g = geometria(k);
+      const m = d.materiali;
+      return (
+        <svg
+          class={`grandezze__disegno grandezze__disegno--${d.id}`}
+          viewBox={d.viewBox}
+          aria-hidden="true"
+          focusable="false"
+          style={[
+            `--sx: ${d.scena.x}px; --sy: ${d.scena.y}px; --ss: ${d.scena.s}`,
+            `--sx8: ${d.scena.x8}px; --sy8: ${d.scena.y8}px; --ss8: ${d.scena.s8}`,
+            `--kx: ${k.x}px; --ky: ${k.y}px; --kx9: ${k.x9}px; --ky9: ${k.y9}px; --ks9: ${k.s9}`,
+            `--ty8: ${m.y - d.tavolo}px`,
+          ].join('; ')}
+        >
+          <line class="tavolo" x1="10" x2={d.larghezza - 10} y1={d.tavolo} y2={d.tavolo} />
+
+          {/* --- Gli altri due cubi, per il confronto tra materiali --- */}
+          {materiali
+            .filter((x) => x.id !== 'alluminio')
+            .map((x) => (
+              <g class="altro" transform={`translate(${m.x[x.i]} ${m.y}) scale(${m.s})`}>
+                <g transform={`translate(0 ${-ALTO})`}>
+                  <Bilancia larghezza={240}>
+                    <text>{x.massa}</text>
+                  </Bilancia>
+                  <Cubo lato={L} materiale={x.id} />
+                </g>
+              </g>
+            ))}
+          {materiali.map((x) => (
+            <g class="materiale-nome">
+              <text class="nome" x={m.x[x.i]} y={m.nome}>
+                {x.nome}
+              </text>
+              <text class="densita-testo" x={m.x[x.i]} y={m.densita}>
+                {x.densita}
+              </text>
+            </g>
+          ))}
+
+          {/* --- La scena: cubo di alluminio, righello, bilance --- */}
+          <g class="scena">
+            <g class="bilancia-grande" transform={`translate(0 ${-ALTO})`}>
+              <Bilancia larghezza={240}>
+                <text>72,9 g</text>
+              </Bilancia>
+            </g>
+            <g class="piccola" transform={`translate(${PICCOLA} ${-ALTO})`}>
+              <Bilancia larghezza={130}>
+                <text>2,7 g</text>
+              </Bilancia>
+              <Cubo lato={CM} materiale="alluminio" class="cubetto-solo" />
+              <text class="etichetta-scena" x="0" y={-CM - 40}>
+                1 cm³
+              </text>
+            </g>
+            <g class="sopra">
+              <g class="righello-g">
+                <g transform={`translate(${r(A - 8)} 0)`}>
+                  <Righello cm={4} passo={CM} />
+                </g>
+              </g>
+              <Cubo lato={L} materiale="alluminio" class="cubo-pieno" />
+              <line class="segno" x1={A} x2={A} y1="0" y2={-L} />
+              <Cubo lato={L} materiale="alluminio" griglia={3} class="cubo-griglia" />
+              <g class="angolo">
+                <g transform={`translate(${angolo.x} ${angolo.y})`}>
+                  <Cubo lato={CM} materiale="alluminio" class="cubetto-segno" />
+                </g>
+                <line class="filo" x1={r(B - 12)} y1={-2.5 * CM} x2={r(B + O + 24)} y2={-L + 2} />
+                <text class="etichetta-scena etichetta-scena--sx" x={r(B + O + 30)} y={-L + 12}>
+                  1 cm³
+                </text>
+              </g>
+            </g>
+          </g>
+
+          {/* --- Calcoli --- */}
+          <g class="formula formula--volume">
+            <text x={d.formula.x} y={d.formula.y1}>
+              V = l × l × l
+            </text>
+            <text class="formula__conto" x={d.formula.x} y={d.formula.y2}>
+              3 cm × 3 cm × 3 cm = 27 cm³
+            </text>
+          </g>
+          <g class="formula formula--densita">
+            <text x={d.formula.x} y={d.formula.y1}>
+              d = m : V
+            </text>
+            <text class="formula__conto" x={d.formula.x} y={d.formula.y2}>
+              72,9 g : 27 cm³ = 2,7 g/cm³
+            </text>
+          </g>
+
+          {/* --- La scheda: fondamentali a sinistra, derivate a destra --- */}
+          <g class="scheda">
+            {[0, 1].map((col) => {
+              const f = g.gruppo(col);
+              return (
+                <g class={`gruppo gruppo--${col ? 'derivate' : 'fondamentali'}`}>
+                  <rect x={f.x} y={f.y} width={f.w} height={f.h} rx="18" />
+                  <text x={f.x + f.w / 2} y={g.testata}>
+                    {col ? 'Derivate' : 'Fondamentali'}
+                  </text>
+                </g>
+              );
+            })}
+            {Object.entries(g.frecce).map(([id, dd]) => (
+              <path class={`freccia freccia--${id}`} d={dd} marker-end={`url(#grandezze-punta-${d.id})`} />
+            ))}
+            {caselle.map((c) => {
+              const b = g.box(c.col, c.riga);
+              return (
+                <g class={`casella casella--${c.id}`}>
+                  <rect x={b.x} y={b.y} width={k.bw} height={k.bh} rx="14" />
+                  <text class="casella__nome" x={b.cx} y={b.y + k.bh * 0.38}>
+                    {c.nome}
+                  </text>
+                  <text class="casella__vuota" x={b.cx} y={b.y + k.bh * 0.8}>
+                    ?
+                  </text>
+                  <text class="casella__valore" x={b.cx} y={b.y + k.bh * 0.8}>
+                    {c.valore}
+                  </text>
+                  <text class="casella__unita" x={b.cx} y={b.y + k.bh * 0.8}>
+                    {c.unita}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+
+          <defs>
+            <marker id={`grandezze-punta-${d.id}`} viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path class="punta" d="M0 0L10 5L0 10Z" />
+            </marker>
+          </defs>
+        </svg>
+      );
+    })
+  }
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .grandezze {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+  }
+  .grandezze__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .grandezze__disegno--stretta {
+    display: none;
+  }
+  /* Palco stretto o verticale (telefono): scena sopra e scheda sotto. */
+  @container (aspect-ratio < 1.15) {
+    .grandezze__disegno--larga {
+      display: none;
+    }
+    .grandezze__disegno--stretta {
+      display: block;
+    }
+  }
+  .grandezze svg :is(path, rect, circle, line) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Tutto ciò che compare e scompare lo fa con una dissolvenza. */
+  .grandezze :is(.righello-g, .segno, .bilancia-grande, .piccola, .cubo-griglia, .angolo, .formula, .altro, .materiale-nome, .gruppo, .freccia, .casella__vuota, .casella__valore, .casella__unita) {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+
+  .grandezze .tavolo {
+    stroke: var(--bordo);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition:
+      transform 1.4s ease-in-out,
+      opacity 0.6s ease-in-out;
+  }
+  /* Nel confronto il tavolo segue i cubi; nel riepilogo non serve. */
+  [data-indice='8'] .grandezze .tavolo {
+    transform: translateY(var(--ty8));
+  }
+  [data-indice='9'] .grandezze .tavolo {
+    opacity: 0;
+  }
+
+  /* --- Scena --- */
+
+  .grandezze .scena {
+    transform: translate(var(--sx), var(--sy)) scale(var(--ss));
+    transition:
+      transform 1.4s ease-in-out,
+      opacity 0.6s ease-in-out;
+  }
+  .grandezze .sopra {
+    transition: transform 1.2s ease-in-out;
+  }
+  .grandezze .segno {
+    stroke: var(--accento);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+  .grandezze .cubetto-segno path,
+  .grandezze .cubetto-solo path {
+    stroke-width: 2.5;
+  }
+  .grandezze .angolo .cubetto-segno path {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  .grandezze .filo {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+
+  /* --- Testi --- */
+
+  .grandezze text {
+    fill: var(--testo);
+    font-weight: 700;
+    text-anchor: middle;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  .grandezze .bilancia__valore text {
+    stroke: none;
+  }
+  .grandezze .etichetta-scena {
+    font-size: 28px;
+  }
+  .grandezze .etichetta-scena--sx {
+    text-anchor: start;
+  }
+  .grandezze .formula text {
+    font-size: 34px;
+  }
+  .grandezze .formula .formula__conto {
+    font-size: 30px;
+    font-weight: 400;
+  }
+  .grandezze .nome {
+    font-size: 30px;
+  }
+  .grandezze .densita-testo {
+    font-size: 26px;
+    font-weight: 400;
+  }
+
+  /* --- Scheda --- */
+
+  .grandezze .scheda {
+    transform: translate(var(--kx), var(--ky));
+    transition:
+      transform 1.4s ease-in-out,
+      opacity 0.6s ease-in-out;
+  }
+  .grandezze .gruppo rect {
+    fill: var(--bordo);
+    fill-opacity: 0.45;
+  }
+  .grandezze .gruppo text {
+    font-size: 26px;
+    fill: var(--testo-2);
+    stroke: none;
+  }
+  .grandezze .casella rect {
+    fill: var(--superficie);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .grandezze .casella text {
+    stroke: none;
+  }
+  .grandezze .casella__nome {
+    font-size: 28px;
+  }
+  .grandezze .casella__vuota {
+    font-size: 30px;
+    fill: var(--testo-2);
+  }
+  .grandezze .casella__valore {
+    font-size: 30px;
+    font-weight: 400;
+  }
+  .grandezze .casella__unita {
+    font-size: 30px;
+    fill: var(--accento);
+  }
+  .grandezze .freccia {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .grandezze .punta {
+    fill: var(--contorno);
+  }
+
+  /* --- Stato di ogni passaggio ---
+     0 grandezze · 1 lunghezza · 2 massa · 3 fondamentali · 4 volume
+     5 derivate · 6 densita · 7 densita-formula · 8 materiali · 9 riepilogo */
+
+  [data-indice='1'] .grandezze :is(.righello-g, .segno),
+  [data-indice='4'] .grandezze .angolo,
+  [data-indice='6'] .grandezze .piccola,
+  [data-indice='8'] .grandezze :is(.altro, .materiale-nome),
+  :is([data-indice='4'], [data-indice='5']) .grandezze .formula--volume,
+  [data-indice='7'] .grandezze .formula--densita {
+    opacity: 1;
+  }
+
+  /* Dal passaggio 2 il cubo sta sulla bilancia. */
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1']) .grandezze .bilancia-grande {
+    opacity: 1;
+  }
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1']) .grandezze .sopra {
+    transform: translateY(-84px);
+  }
+
+  /* I 27 cubetti si vedono dal volume fino alla formula della densità. */
+  :is([data-indice='4'], [data-indice='5'], [data-indice='6'], [data-indice='7']) .grandezze .cubo-griglia {
+    opacity: 1;
+  }
+
+  /* Materiali: la scena si sposta tra gli altri due cubi, la scheda scompare. */
+  [data-indice='8'] .grandezze .scena {
+    transform: translate(var(--sx8), var(--sy8)) scale(var(--ss8));
+  }
+  [data-indice='8'] .grandezze .scheda {
+    opacity: 0;
+  }
+  [data-indice='8'] .grandezze .materiale-nome {
+    transition-delay: 0.8s;
+  }
+
+  /* Riepilogo: resta solo la scheda, al centro e più grande. */
+  [data-indice='9'] .grandezze .scena {
+    opacity: 0;
+  }
+  [data-indice='9'] .grandezze .scheda {
+    transform: translate(var(--kx9), var(--ky9)) scale(var(--ks9));
+  }
+
+  /* Valori nelle caselle, nel passaggio in cui si misurano o si calcolano. */
+  .grandezze .casella__vuota {
+    opacity: 1;
+  }
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='9']) .grandezze .casella--lunghezza .casella__valore,
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1'], [data-indice='9']) .grandezze .casella--massa .casella__valore,
+  :is([data-indice='4'], [data-indice='5'], [data-indice='6'], [data-indice='7'], [data-indice='8']) .grandezze .casella--volume .casella__valore,
+  :is([data-indice='6'], [data-indice='7'], [data-indice='8']) .grandezze .casella--densita .casella__valore,
+  [data-indice='9'] .grandezze .casella__unita {
+    opacity: 1;
+  }
+  [data-indice]:not([data-indice='-1'], [data-indice='0']) .grandezze .casella--lunghezza .casella__vuota,
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1']) .grandezze .casella--massa .casella__vuota,
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1'], [data-indice='2'], [data-indice='3']) .grandezze .casella--volume .casella__vuota,
+  :is([data-indice='6'], [data-indice='7'], [data-indice='8'], [data-indice='9']) .grandezze .casella--densita .casella__vuota {
+    opacity: 0;
+  }
+
+  /* Gruppi e frecce. */
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1'], [data-indice='2']) .grandezze .gruppo--fondamentali,
+  :is([data-indice='5'], [data-indice='6'], [data-indice='7'], [data-indice='8'], [data-indice='9']) .grandezze :is(.gruppo--derivate, .freccia--lunghezza-volume),
+  :is([data-indice='7'], [data-indice='8'], [data-indice='9']) .grandezze :is(.freccia--massa-densita, .freccia--volume-densita) {
+    opacity: 1;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  [data-indice='0'] .grandezze .casella rect,
+  [data-indice='1'] .grandezze .casella--lunghezza rect,
+  [data-indice='2'] .grandezze .casella--massa rect,
+  [data-indice='3'] .grandezze :is(.casella--lunghezza, .casella--massa) rect,
+  :is([data-indice='4'], [data-indice='5']) .grandezze .casella--volume rect,
+  :is([data-indice='6'], [data-indice='7']) .grandezze .casella--densita rect {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  [data-indice='2'] .grandezze .bilancia-grande .bilancia__display,
+  [data-indice='6'] .grandezze .piccola .bilancia__display {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .grandezze .descrizione {
+    display: none;
+  }
+  [data-passaggio='grandezze'] .grandezze .descrizione[data-per='grandezze'],
+  [data-passaggio='lunghezza'] .grandezze .descrizione[data-per='lunghezza'],
+  [data-passaggio='massa'] .grandezze .descrizione[data-per='massa'],
+  [data-passaggio='fondamentali'] .grandezze .descrizione[data-per='fondamentali'],
+  [data-passaggio='volume'] .grandezze .descrizione[data-per='volume'],
+  [data-passaggio='derivate'] .grandezze .descrizione[data-per='derivate'],
+  [data-passaggio='densita'] .grandezze .descrizione[data-per='densita'],
+  [data-passaggio='densita-formula'] .grandezze .descrizione[data-per='densita-formula'],
+  [data-passaggio='materiali'] .grandezze .descrizione[data-per='materiali'],
+  [data-passaggio='riepilogo'] .grandezze .descrizione[data-per='riepilogo'] {
+    display: block;
+  }
+</style>

@@ -1,0 +1,17 @@
+titolo: Grandezze fondamentali e derivate
+sottotitolo: Lunghezza, massa, volume e densità di un cubo di alluminio
+materia: scienze
+area: fisica
+modello: passaggi
+durata_minuti: 15
+prerequisiti: []
+obiettivi:
+  - Spiegare che cos'è una grandezza fisica e che cosa vuol dire misurarla
+  - Distinguere le grandezze fondamentali (o primitive) da quelle derivate
+  - Calcolare il volume di un cubo e la densità di un materiale
+parole_chiave: [grandezza fisica, unità di misura, fondamentale, primitiva, derivata, lunghezza, massa, volume, densità]
+stato: bozza
+revisionato_da: null
+fonti:
+  - "BIPM, Il Sistema Internazionale di Unità (SI), 9ª edizione, 2019: grandezze di base e derivate"
+  - "Densità dei materiali: alluminio 2,70 g/cm³, ferro 7,87 g/cm³, legno di abete circa 0,45 g/cm³ (CRC Handbook of Chemistry and Physics)"
