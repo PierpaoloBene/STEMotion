@@ -1,0 +1,139 @@
+---
+/**
+ * Guscio comune delle animazioni delle storie (argomenti/<materia>/<slug>/storia/Animazione.astro).
+ *
+ * - Un solo <svg> 4:3 (viewBox 800 × 600) che si adatta al palco, sulla LIM e sul telefono.
+ * - Ciò che compare e scompare ha l'attributo data-passi con l'elenco dei passaggi (da 0) in cui si
+ *   vede, es. data-passi="1 2": entra con una dissolvenza e resta finché il passaggio è nell'elenco.
+ * - Le descrizioni per gli screen reader sono una per passaggio, nell'ordine di storia.yaml.
+ *
+ * Il resto (movimenti dentro una scena) lo scrive ogni storia con il suo CSS, a partire da
+ * [data-indice] del palco, sotto la propria classe (es. .storia-newton).
+ */
+interface Props {
+  /** Classe principale della storia, diversa da quelle delle altre animazioni della pagina. */
+  classe: string;
+  /** Che cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader. */
+  descrizioni: string[];
+}
+const { classe, descrizioni } = Astro.props;
+---
+
+<div class:list={['storia', classe]}>
+  <svg viewBox="0 0 800 600" aria-hidden="true" focusable="false">
+    <slot />
+  </svg>
+  <div class="solo-lettori">
+    {
+      descrizioni.map((d, i) => (
+        <p class="storia__descrizione" data-descrizione={i}>
+          Disegno: {d}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .storia {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+  }
+  .storia svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .storia svg :is(path, rect, circle, ellipse, line, polygon, polyline) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Che cosa si vede in ogni passaggio (al massimo 6) --- */
+
+  .storia [data-passi] {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  [data-indice='0'] .storia [data-passi~='0'],
+  [data-indice='1'] .storia [data-passi~='1'],
+  [data-indice='2'] .storia [data-passi~='2'],
+  [data-indice='3'] .storia [data-passi~='3'],
+  [data-indice='4'] .storia [data-passi~='4'],
+  [data-indice='5'] .storia [data-passi~='5'] {
+    opacity: 1;
+    transition: opacity 0.8s ease-in-out 0.3s;
+  }
+
+  .storia__descrizione {
+    display: none;
+  }
+  [data-indice='0'] .storia [data-descrizione='0'],
+  [data-indice='1'] .storia [data-descrizione='1'],
+  [data-indice='2'] .storia [data-descrizione='2'],
+  [data-indice='3'] .storia [data-descrizione='3'],
+  [data-indice='4'] .storia [data-descrizione='4'],
+  [data-indice='5'] .storia [data-descrizione='5'] {
+    display: block;
+  }
+
+  /* --- Stile comune dei disegni (guida di stile, §7) --- */
+
+  .storia .tratto {
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .storia .linea {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .storia .evidenziato {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Scritte: etichette (20 px a schermo) e date grandi --- */
+
+  .storia text {
+    fill: var(--testo);
+    font-weight: 700;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 6px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  .storia .etichetta text {
+    font-size: 26px;
+  }
+  .storia .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .storia .etichetta circle {
+    fill: var(--testo-2);
+  }
+  .storia .data {
+    font-size: 44px;
+  }
+  .storia .centrato {
+    text-anchor: middle;
+  }
+  .storia .fine {
+    text-anchor: end;
+  }
+  /* Sul telefono il disegno è piccolo: le scritte crescono per restare leggibili. */
+  @container (max-width: 620px) {
+    .storia .etichetta text {
+      font-size: 40px;
+    }
+    .storia .data {
+      font-size: 56px;
+    }
+  }
+</style>

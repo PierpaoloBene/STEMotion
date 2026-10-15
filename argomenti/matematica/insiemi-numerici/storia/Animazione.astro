@@ -1,0 +1,238 @@
+---
+/**
+ * Storia degli insiemi numerici: Ippaso di Metaponto e la scoperta degli irrazionali.
+ *
+ * Cinque scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Colori di ruolo della matematica (guida di stile, §3): i segmenti che si contano
+ * sono oro come i naturali, √2 e le sue cifre indaco come i reali.
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+
+const r = (v: number) => +v.toFixed(1);
+
+// Passaggio 0: corde lunghe 1, 1/2 e 2/3.
+const corde = [
+  { y: 200, l: 480, testo: '1' },
+  { y: 300, l: 240, testo: '1/2' },
+  { y: 400, l: 320, testo: '2/3' },
+];
+
+// Passaggio 2: quadrato di lato 240, diagonale dall'angolo in basso a sinistra.
+const LATO = 240;
+const DIAG = LATO * Math.SQRT2;
+const sulla = (t: number) => [r(180 + t * Math.SQRT1_2), r(380 - t * Math.SQRT1_2)];
+const tacche = (u: number) => {
+  const d: string[] = [];
+  for (let t = u; t < DIAG; t += u) {
+    const [x, y] = sulla(t);
+    d.push(`M${r(x - 9)} ${r(y - 9)}L${r(x + 9)} ${r(y + 9)}`);
+  }
+  for (let x = 180 + u; x < 180 + LATO; x += u) d.push(`M${x} 370V390`);
+  return d.join('');
+};
+const avanza = (u: number) => {
+  const t0 = Math.floor(DIAG / u) * u;
+  const [x1, y1] = sulla(t0);
+  const [x2, y2] = sulla(DIAG);
+  return `M${x1} ${y1}L${x2} ${y2}`;
+};
+
+const ippaso = { capelli: 'ricci', colore_capelli: 'neri', barba: 'corta', veste: 'tunica', colore_veste: 'rosso' } as const;
+
+const descrizioni = [
+  'Tre corde tese, lunghe 1, 1/2 e 2/3. In alto il nome Crotone.',
+  'Due segmenti lunghi 6 cm e 4 cm. Un pezzetto di 2 cm sta 3 volte nel primo e 2 volte nel secondo: il rapporto è 3/2.',
+  'Un quadrato con la diagonale. Si prova a misurare lato e diagonale con lo stesso pezzetto, poi con uno più piccolo: nella diagonale avanza sempre un pezzetto. Accanto c’è Ippaso.',
+  'Una retta dei numeri da 0 a 2 con il punto √2, poco dopo 1,4. In alto le cifre di √2: 1,41421356237 e così via, senza fine.',
+  'Una nave a vela sul mare in tempesta, sotto una nuvola scura. È la leggenda della morte di Ippaso.',
+];
+---
+
+<Storia classe="storia-ippaso" descrizioni={descrizioni}>
+  <!-- 0: le corde dei pitagorici -->
+  <g data-passi="0">
+    {
+      corde.map((c, i) => (
+        <g class={`corda corda--${i}`}>
+          <path class="tratto legno" d={`M150 ${c.y - 22}L166 ${c.y}L150 ${c.y + 22}Z`} />
+          <path class="tratto legno" d={`M${160 + c.l + 10} ${c.y - 22}L${160 + c.l - 6} ${c.y}L${160 + c.l + 10} ${c.y + 22}Z`} />
+          <line class="linea" x1="160" y1={c.y} x2={160 + c.l} y2={c.y} />
+        </g>
+      ))
+    }
+  </g>
+  {corde.map((c) => <Etichetta testo={c.testo} x={190 + c.l} y={c.y + 10} passi="0" />)}
+  <text class="data" x="40" y="90" data-passi="0">Crotone</text>
+
+  <!-- 1: una misura comune per 6 cm e 4 cm -->
+  <g data-passi="1">
+    <rect class="tratto carta" x="150" y="190" width="420" height="50"></rect>
+    <rect class="tratto carta" x="150" y="310" width="280" height="50"></rect>
+    <g class="divisioni">
+      <path class="linea" d="M290 190V240M430 190V240M290 310V360"></path>
+      {[220, 360, 500].map((x, i) => <text class="numero centrato" x={x} y="224">{i + 1}</text>)}
+      {[220, 360].map((x, i) => <text class="numero centrato" x={x} y="344">{i + 1}</text>)}
+    </g>
+    <rect class="tratto naturali" x="150" y="440" width="140" height="28"></rect>
+  </g>
+  <Etichetta testo="6 cm" x={590} y={224} passi="1" />
+  <Etichetta testo="4 cm" x={450} y={344} passi="1" />
+  <Etichetta testo="2 cm" x={310} y={464} passi="1" />
+  <Etichetta testo="Rapporto 3/2" x={400} y={570} allinea="centro" passi="1" />
+
+  <!-- 2: lato e diagonale non hanno una misura comune -->
+  <g data-passi="2">
+    <rect class="tratto carta" x="180" y="140" width={LATO} height={LATO}></rect>
+    <line class="linea" x1="180" y1="380" x2="420" y2="140"></line>
+    <g class="prova prova--1">
+      <path class="linea" d={tacche(120)}></path>
+      <path class="avanza" d={avanza(120)}></path>
+    </g>
+    <g class="prova prova--2">
+      <path class="linea" d={tacche(60)}></path>
+      <path class="avanza" d={avanza(60)}></path>
+    </g>
+    <g transform="translate(690 480) scale(0.8)">
+      <Personaggio {...ippaso} />
+    </g>
+  </g>
+  <Etichetta testo="Lato" x={300} y={440} allinea="centro" passi="2" />
+  <Etichetta testo="Diagonale" x={460} y={300} linea={[456, 290, 330, 230]} passi="2" />
+  <Etichetta testo="Avanza" x={470} y={110} linea={[466, 104, 406, 154]} passi="2" />
+
+  <!-- 3: √2 sulla retta dei numeri e le sue cifre senza fine -->
+  <g data-passi="3">
+    <line class="linea" x1="80" y1="400" x2="720" y2="400"></line>
+    {[120, 400, 680].map((x) => <line class="linea" x1={x} y1="388" x2={x} y2="412" />)}
+    <circle class="tratto reali" cx={r(120 + Math.SQRT2 * 280)} cy="400" r="10"></circle>
+    <g class="cifre">
+      <text class="cifre__testo centrato" x="400" y="220">√2 = 1,41421356237…</text>
+    </g>
+  </g>
+  <Etichetta testo="0" x={120} y={456} allinea="centro" passi="3" />
+  <Etichetta testo="1" x={400} y={456} allinea="centro" passi="3" />
+  <Etichetta testo="2" x={680} y={456} allinea="centro" passi="3" />
+  <Etichetta testo="√2" x={r(120 + Math.SQRT2 * 280)} y={360} allinea="centro" passi="3" />
+
+  <!-- 4: la leggenda del naufragio -->
+  <g data-passi="4">
+    <g transform="translate(160 0)">
+    <path class="tratto nuvola" d="M220 150C190 150 180 110 210 100C210 60 270 50 290 80C310 40 380 50 380 90C420 85 430 140 400 150Z"></path>
+    <path class="pioggia" d="M240 170L228 210M290 170L278 210M340 170L328 210M385 170L373 210"></path>
+    </g>
+    <g class="nave">
+      <path class="tratto legno" d="M-110 0H110L80 50H-80Z"></path>
+      <line class="linea" x1="0" y1="0" x2="0" y2="-170"></line>
+      <path class="tratto carta" d="M6 -160L90 -30H6Z"></path>
+    </g>
+    <path class="tratto mare" d="M0 420C60 400 100 440 160 420C220 400 260 440 320 420C380 400 420 440 480 420C540 400 580 440 640 420C700 400 740 440 800 420V600H0Z"></path>
+  </g>
+  <text class="data" x="40" y="90" data-passi="4">Leggenda</text>
+</Storia>
+
+<style is:global>
+  .storia-ippaso .legno {
+    fill: var(--legno);
+  }
+  .storia-ippaso .carta {
+    fill: var(--carta);
+  }
+  .storia-ippaso .naturali {
+    fill: var(--naturali);
+  }
+  .storia-ippaso .reali {
+    fill: var(--reali);
+  }
+  .storia-ippaso .mare {
+    fill: var(--acqua);
+  }
+  .storia-ippaso .nuvola {
+    fill: var(--capelli-grigi);
+  }
+  .storia-ippaso .pioggia {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+  .storia-ippaso .numero {
+    font-size: 24px;
+    stroke: none;
+  }
+  .storia-ippaso .avanza {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 9;
+    stroke-linecap: round;
+  }
+  .storia-ippaso .cifre__testo {
+    fill: var(--reali);
+    font-size: 56px;
+  }
+
+  /* 0: le corde compaiono una dopo l'altra. */
+  .storia-ippaso .corda {
+    opacity: 0;
+  }
+  [data-indice='0'] .storia-ippaso .corda {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out 0.4s;
+  }
+  [data-indice='0'] .storia-ippaso .corda--1 {
+    transition-delay: 1s;
+  }
+  [data-indice='0'] .storia-ippaso .corda--2 {
+    transition-delay: 1.6s;
+  }
+
+  /* 1: il pezzetto da 2 cm divide i due segmenti. */
+  .storia-ippaso .divisioni {
+    opacity: 0;
+  }
+  [data-indice='1'] .storia-ippaso .divisioni {
+    opacity: 1;
+    transition: opacity 0.6s ease-in-out 1.2s;
+  }
+
+  /* 2: prima un pezzetto, poi uno più piccolo: avanza sempre qualcosa. */
+  .storia-ippaso .prova {
+    opacity: 0;
+  }
+  [data-indice='2'] .storia-ippaso .prova--1 {
+    animation: storia-ippaso-prova 1.4s ease-in-out 0.6s backwards;
+  }
+  [data-indice='2'] .storia-ippaso .prova--2 {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out 2s;
+  }
+  @keyframes storia-ippaso-prova {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    20%,
+    80% {
+      opacity: 1;
+    }
+  }
+
+  /* 3: le cifre di √2 compaiono da sinistra a destra. */
+  .storia-ippaso .cifre {
+    clip-path: inset(0 100% 0 0);
+  }
+  [data-indice='3'] .storia-ippaso .cifre {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 2.4s ease-in-out 0.6s;
+  }
+
+  /* 4: la nave sbanda tra le onde. */
+  .storia-ippaso .nave {
+    transform: translate(500px, 392px);
+  }
+  [data-indice='4'] .storia-ippaso .nave {
+    transform: translate(500px, 404px) rotate(-12deg);
+    transition: transform 2.2s ease-in-out 0.6s;
+  }
+</style>

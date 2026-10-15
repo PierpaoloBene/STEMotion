@@ -1,0 +1,37 @@
+---
+// Etichetta di un disegno delle storie: testo (con "\n" va a capo) e, se serve, una linea
+// sottile verso l'oggetto, con un pallino sull'oggetto. Compare nei passaggi di `passi`.
+interface Props {
+  testo: string;
+  /** Inizio della riga di base del testo. */
+  x: number;
+  y: number;
+  /** Linea dal testo all'oggetto: [x1, y1, x2, y2]. */
+  linea?: [number, number, number, number];
+  /** Passaggi in cui si vede, es. "1 2". */
+  passi: string;
+  allinea?: 'inizio' | 'centro' | 'fine';
+}
+const { testo, x, y, linea, passi, allinea = 'inizio' } = Astro.props;
+const ancora = { inizio: 'start', centro: 'middle', fine: 'end' }[allinea];
+---
+
+<g class="etichetta" data-passi={passi}>
+  {
+    linea && (
+      <>
+        <line x1={linea[0]} y1={linea[1]} x2={linea[2]} y2={linea[3]} />
+        <circle cx={linea[2]} cy={linea[3]} r="4" />
+      </>
+    )
+  }
+  <text x={x} y={y} text-anchor={ancora}>
+    {
+      testo.split('\n').map((riga, i) => (
+        <tspan x={x} dy={i === 0 ? 0 : '1.15em'}>
+          {riga}
+        </tspan>
+      ))
+    }
+  </text>
+</g>

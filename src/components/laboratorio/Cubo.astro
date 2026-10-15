@@ -2,7 +2,7 @@
 // Cubo (o blocco di cubi affiancati) di un materiale, in prospettiva cavaliera:
 // la faccia davanti è vera, la profondità sale a 45° ed è accorciata.
 // Sistema di riferimento: vedi README.md in questa cartella.
-type Materiale = 'alluminio' | 'ferro' | 'rame' | 'legno' | 'roccia';
+type Materiale = 'alluminio' | 'ferro' | 'rame' | 'legno' | 'roccia' | 'oro' | 'argento';
 
 interface Props {
   /** Lato del cubo, in unità del disegno. */
@@ -78,6 +78,12 @@ const cima = r(-l - o / 2);
   }
   .cubo--roccia {
     --m: var(--roccia);
+  }
+  .cubo--oro {
+    --m: var(--oro);
+  }
+  .cubo--argento {
+    --m: var(--argento);
   }
   .cubo path {
     stroke: var(--contorno);

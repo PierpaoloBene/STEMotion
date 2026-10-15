@@ -15,6 +15,7 @@
  * Deviazioni (guida di stile, §5): un passaggio può avere dei pulsanti che aprono un box
  * (<dialog data-box id="box-<slug>">) con dentro un altro lettore, `annidato`: niente
  * schermata finale, indirizzo o progressi, e all'ultimo passaggio Avanti chiude il box.
+ * La storia dell'argomento usa lo stesso box (id "box-storia"), aperto dalla pagina.
  */
 import { testoInline } from '../lib/testo';
 
@@ -424,13 +425,13 @@ const tocchi = modello === 'passaggi';
       if (!(deviazione instanceof HTMLDialogElement)) return;
       deviazione.showModal();
       deviazione.dispatchEvent(new Event('apri'));
-      deviazione.addEventListener(
-        'close',
-        () => {
-          impostaTesto(leggi(CHIAVE_TESTO) !== 'no'); // il testo sì/no si può cambiare anche nel box
-          pulsante.focus({ preventScroll: true });
-        },
-        { once: true },
+      deviazione.addEventListener('close', () => pulsante.focus({ preventScroll: true }), { once: true });
+    }
+
+    // Il testo sì/no si può cambiare anche in un box (deviazione o storia): chiuso il box, vale anche qui.
+    if (!annidato) {
+      document.querySelectorAll('dialog[data-box]').forEach((d) =>
+        d.addEventListener('close', () => impostaTesto(leggi(CHIAVE_TESTO) !== 'no')),
       );
     }
 

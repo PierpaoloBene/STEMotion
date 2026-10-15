@@ -11,10 +11,13 @@ argomenti/
         ├── insegnante.md       # note didattiche per l'insegnante
         ├── copertina.svg       # la copertina "ai raggi X" per le card
         ├── Animazione.astro    # l'animazione interattiva
-        └── deviazioni/         # facoltativa: processi alternativi aperti in un box
-            └── tosse/
-                ├── deviazione.yaml
-                └── Animazione.astro
+        ├── deviazioni/         # facoltativa: processi alternativi aperti in un box
+        │   └── tosse/
+        │       ├── deviazione.yaml
+        │       └── Animazione.astro
+        └── storia/             # facoltativa: chi ha scoperto o studiato l'argomento
+            ├── storia.yaml
+            └── Animazione.astro
 ```
 
 ---
@@ -147,6 +150,54 @@ Se un passaggio cita una deviazione che non esiste, `npm run build` si ferma con
 
 ---
 
+## 2c. `storia/` — chi c'è dietro l'argomento (facoltativa)
+
+La storia si apre dal riquadro "Dietro la scoperta" sotto il lettore (guida di stile, §5). È una cartella con due file.
+
+`storia.yaml`: i testi del riquadro, il ritratto, i passaggi (stesso formato di `passaggi.yaml`, massimo 6) e le fonti.
+
+```yaml
+protagonista: Isaac Newton
+anni: 1642 – 1727
+richiamo: >                     # una o due frasi che collegano la storia all'argomento
+  Il peso si misura in newton (N). Ma chi era Newton, e perché un'unità di misura porta il suo nome?
+titolo: Isaac Newton e la forza di gravità
+ritratto:                       # il busto stilizzato di src/components/storie/Personaggio.astro
+  capelli: lunghi               # corti | lunghi | ricci | spettinati | calvo
+  colore_capelli: bianchi       # neri | castani | grigi | bianchi
+  barba: "no"                   # no | corta | lunga (tra virgolette "no", altrimenti YAML lo legge come falso)
+  baffi: false
+  veste: giacca                 # tunica | giacca | talare
+  colore_veste: marrone         # bianco | nero | blu | rosso | verde | marrone
+passaggi:
+  - id: newton-mela
+    titolo: La mela e la Luna
+    breve: La stessa forza fa cadere la mela e tiene la Luna vicino alla Terra.
+    spiegazione: >
+      Da anziano, Newton raccontò di aver visto cadere una mela in giardino.
+      …
+fonti:                          # obbligatorie: almeno una
+  - "R. S. Westfall, Never at Rest: A Biography of Isaac Newton, Cambridge University Press, 1980"
+```
+
+- Gli `id` dei passaggi cominciano con il nome del protagonista (`newton-…`): devono essere diversi da quelli dell'argomento e delle deviazioni.
+- I campi del ritratto si possono omettere: valgono quelli di base (capelli corti castani, giacca blu).
+- `storia` non si usa come nome di una deviazione: il box della storia ha già l'id `box-storia`.
+
+`Animazione.astro`: usa il guscio `src/components/storie/Storia.astro`, che prepara il disegno 4:3 e le descrizioni per gli screen reader. Ciò che compare in un passaggio ha l'attributo `data-passi` con l'elenco dei passaggi (da 0) in cui si vede; i movimenti dentro una scena si scrivono in CSS sotto la classe della storia (es. `.storia-newton`), come nelle altre animazioni. Il `README.md` in `src/components/storie/` spiega i componenti (`Personaggio`, `Etichetta`) e gli aiuti per disegnare.
+
+```astro
+<Storia classe="storia-newton" descrizioni={['Una casa di campagna…', '…']}>
+  <g data-passi="0 1"><!-- la casa, visibile nei passaggi 1 e 2 --></g>
+  <Etichetta testo="Woolsthorpe" x={580} y={226} allinea="centro" passi="0 1" />
+  <text class="data" x="40" y="90" data-passi="0">1642</text>
+</Storia>
+```
+
+Le note per l'insegnante sulla storia (cosa è leggenda, cosa è semplificato) restano in `insegnante.md` dell'argomento, se servono.
+
+---
+
 ## 3. `insegnante.md` — note didattiche
 
 Sezioni fisse, anche brevi:
@@ -224,7 +275,8 @@ Mostra l'oggetto da fuori e, con l'effetto raggi X, da dentro (guida di stile, �
 - [ ] `npm run build` termina senza errori (i file YAML vengono controllati automaticamente)
 - [ ] `argomento.yaml` compilato, `stato: da-revisionare`
 - [ ] Ogni passaggio ha `breve` e `spiegazione`, e l'animazione li rispecchia
-- [ ] Al massimo 12 passaggi (e al massimo 6 per ogni deviazione)
+- [ ] Al massimo 12 passaggi (e al massimo 6 per ogni deviazione e per la storia)
+- [ ] Se c'è una storia: fatti e date verificati sulle fonti di `storia.yaml`, leggende dichiarate come tali
 - [ ] `copertina.svg` con i gruppi `fuori` e `dentro`
 - [ ] Con il testo nascosto l'animazione si capisce ancora
 - [ ] Avanti/indietro/salto a un passaggio danno sempre lo stesso risultato

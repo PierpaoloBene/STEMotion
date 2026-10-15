@@ -23,6 +23,7 @@ Questa guida vale per **ogni** argomento del sito. Chi crea un nuovo argomento (
   - testi dei passaggi → terza persona, descrittivi ("La lingua spinge il bolo verso la gola.")
   - inviti all'interazione → seconda persona singolare ("Trascina il bolo…", "Secondo te…?")
 - **Niente** ironia, riferimenti a meme, emoji nei testi didattici.
+- **Storia della scienza:** date, nomi e fatti si verificano su una fonte, come il resto. Leggende e aneddoti si possono raccontare, ma il testo lo dice ("Si racconta che…", "Secondo la leggenda…") e, se si sa, spiega da dove viene il racconto.
 - **Unità di misura** del Sistema Internazionale, con lo spazio tra numero e unità (`37 °C`, `5 m/s`).
 
 ---
@@ -144,6 +145,15 @@ Ogni pagina argomento ha gli **stessi controlli nella stessa posizione**:
 - Chiuso il box, si è di nuovo nel passaggio da cui si era partiti.
 - Al massimo **3 deviazioni** per passaggio e **6 passaggi** per deviazione: è una parentesi, non un secondo argomento.
 
+**Storie: chi c'è dietro l'argomento.** Ogni argomento può raccontare chi ha scoperto o studiato quello che spiega, oppure una storia vera legata all'argomento (Archimede e la corona del re, Eratostene che misura la Terra). Lo scopo è far vedere **come** ci si è arrivati: una domanda, un'idea, un esperimento, una prova.
+
+- Sotto il lettore, prima di "Alla fine saprai", c'è il riquadro **Dietro la scoperta**: il ritratto stilizzato del protagonista, nome e anni, una frase che collega la storia all'argomento (es. "Il peso si misura in newton (N). Ma chi era Newton?"), il pulsante **Scopri la storia** e le fonti.
+- Il pulsante apre un box come quello delle deviazioni, con lo stesso lettore ridotto e le stesse regole: si apre e si chiude solo con un'azione, riparte dal primo passaggio, all'ultimo **Avanti** diventa "Torna a …".
+- Al massimo **una storia** per argomento e **6 passaggi** per storia. Si racconta il percorso, non l'intera biografia: la vita del protagonista entra solo quando serve a capire la scoperta.
+- Il racconto è "per immagini", come nei video di divulgazione: mappe, linee del tempo, esperimenti ricostruiti, la stessa idea vista da vicino. Valgono tutte le regole delle animazioni (§6) e delle illustrazioni (§7): niente effetti da cartone animato.
+- Un passaggio, un momento della storia. Le date importanti si scrivono grandi nel disegno; nel testo vanno anche i luoghi.
+- Se nella storia compare un altro scienziato importante (Galileo nella storia di Archimede), può avere un passaggio, ma la storia resta una sola.
+
 Regole:
 
 - Area toccabile minima **56 × 56 px** (le LIM sono poco precise) per tutti i comandi. Unica eccezione ammessa: le barre di avanzamento, che sono una scorciatoia. Sono alte 56 px e si dividono la larghezza. Per questo un argomento non supera **12 passaggi**.
@@ -171,6 +181,7 @@ Regole:
   È lo stile scelto per tutto il sito dopo aver provato alternative (atlante sfumato, disegno a mano, radiografia a colori, 3D): resta leggibile sulla LIM, pesa poco e funziona su ogni dispositivo. Per cambiarlo si aggiorna questa guida, non un singolo argomento.
 - **Etichette** collegate all'elemento con una linea sottile, mai sovrapposte al disegno.
 - **Coerenza:** uno stesso organo o oggetto si disegna una volta sola e si riusa (libreria di componenti condivisi in `src/components/anatomia/`). Il polmone della respirazione e quello della circolazione sono lo stesso disegno.
+- **Persone delle storie:** sempre con il componente `Personaggio` (`src/components/storie/`), un busto stilizzato uguale per tutti in cui cambiano solo capelli, barba e veste. Non è un ritratto: niente ritratti copiati da quadri o foto, niente caricature. Il nome è sempre scritto nel testo o nel riquadro.
 - **Due viste del corpo:** di profilo (testa, collo, torace: deglutizione, respirazione) e di fronte (addome: digestione, appendicite). Nella vista di fronte la persona ci guarda, quindi il suo lato destro è a sinistra nel disegno: quando conta (es. "dolore in basso a destra"), il testo lo dice.
 
 ---

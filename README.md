@@ -21,6 +21,8 @@ argomenti/<materia>/<argomento>/   un argomento = una cartella (vedi docs/STRUTT
 src/data/materie.yaml              elenco delle materie e delle loro sottomaterie (aree)
 src/components/Lettore.astro       il lettore a passaggi comune a tutti gli argomenti
 src/components/anatomia/           organi SVG condivisi (corpo di profilo e addome di fronte), da riusare negli argomenti
+src/components/laboratorio/        strumenti e oggetti di laboratorio condivisi (dinamometro, cilindro graduato, cubi…)
+src/components/storie/             guscio e personaggi delle storie "Dietro la scoperta"
 src/pages/                         landing, pagina materia, pagina argomento
 docs/                              guida di stile e struttura di un argomento
 ```
@@ -32,7 +34,8 @@ docs/                              guida di stile e struttura di un argomento
 3. Aggiungi `Animazione.astro` (finché manca, compare un segnaposto), usando gli organi di `src/components/anatomia/`
    (il loro `README.md` spiega i sistemi di riferimento).
 4. Se un passaggio può prendere un'altra strada (es. il cibo va di traverso), aggiungi una deviazione in `deviazioni/<nome>/`.
-5. `npm run build` controlla che i file siano compilati correttamente.
+5. Se vuoi raccontare chi ha scoperto l'argomento, aggiungi una storia in `storia/` (guida di stile, §5).
+6. `npm run build` controlla che i file siano compilati correttamente.
 
 Lo stile delle illustrazioni è uno solo, piatto e semplificato (guida di stile, §7): non si cambia
 argomento per argomento, ma solo aggiornando la guida.

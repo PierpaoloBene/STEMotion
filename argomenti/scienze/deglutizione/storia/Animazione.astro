@@ -1,0 +1,226 @@
+---
+/**
+ * Storia della deglutizione: Walter Cannon e i raggi X.
+ *
+ * Cinque scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Le immagini ai raggi X usano lo stile della radiografia del sito (guida di stile, §9):
+ * fondo scuro, ossa chiare, il cibo ocra.
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+const r = (v: number) => +v.toFixed(1);
+
+// 0: la mano ai raggi X. Ogni dito: angolo (gradi, 0 = in alto), base, lunghezze delle ossa.
+const dita = [
+  { a: -46, x: 346, y: 396, ossa: [48, 34, 26] }, // pollice
+  { a: -14, x: 362, y: 300, ossa: [52, 34, 26] },
+  { a: -3, x: 400, y: 292, ossa: [58, 38, 28] },
+  { a: 8, x: 436, y: 298, ossa: [54, 36, 27] },
+  { a: 20, x: 466, y: 314, ossa: [44, 28, 24] },
+];
+const ossa = dita.flatMap((d) => {
+  const rad = (d.a * Math.PI) / 180;
+  const ux = Math.sin(rad);
+  const uy = -Math.cos(rad);
+  let t = 4;
+  return d.ossa.map((l) => {
+    const p = { x1: r(d.x + ux * t), y1: r(d.y + uy * t), x2: r(d.x + ux * (t + l)), y2: r(d.y + uy * (t + l)) };
+    t += l + 8;
+    return p;
+  });
+});
+// L'anello sta sulla prima falange del quarto dito.
+const anulare = ossa[3 * 3];
+const metacarpi = dita.map((d) => ({ x1: d.x, y1: d.y, x2: r(400 + (d.x - 400) * 0.5), y2: 440 }));
+
+const cannon = { capelli: 'corti', colore_capelli: 'castani', veste: 'giacca', colore_veste: 'blu' } as const;
+
+// 3–4: esofago e stomaco ai raggi X (schema).
+const esofago = 'M386 90V420M414 90V420';
+const stomaco = 'M386 420C380 470 420 520 470 510C540 500 560 430 520 400C500 386 450 400 414 420';
+
+const descrizioni = [
+  'Una radiografia di una mano su fondo scuro: si vedono le ossa delle dita e un anello. La carne quasi non si vede. In alto la data 1895.',
+  'Walter Cannon accanto a un tubo di vetro che emette raggi X verso uno schermo. Sullo schermo il cibo quasi non si vede. In alto la data 1896.',
+  'Del cibo con una polvere di bismuto. Sullo schermo dei raggi X, il cibo con il bismuto si vede bene.',
+  'Lo schermo dei raggi X: l’esofago e lo stomaco. Il bolo scende lungo l’esofago, spinto da un anello di contrazione che lo segue. In alto la data 1898.',
+  'Un monitor di oggi mostra la stessa immagine: un liquido con il bario scende nell’esofago.',
+];
+---
+
+<Storia classe="storia-cannon" descrizioni={descrizioni}>
+  <!-- 0: la mano ai raggi X -->
+  <g data-passi="0">
+    <rect class="tratto lastra" x="220" y="70" width="360" height="460" rx="12"></rect>
+    <path class="ombra-mano" d="M300 520C290 470 270 430 292 392L248 330C236 312 258 296 274 310L330 360L338 200C338 176 368 176 372 198L380 170C384 146 418 146 420 170L432 190C440 168 470 172 466 196L478 230C490 214 514 222 508 246L480 380C470 440 470 480 480 520Z"></path>
+    {metacarpi.map((m) => <line class="osso" x1={m.x1} y1={m.y1} x2={m.x2} y2={m.y2} />)}
+    {ossa.map((o) => <line class="osso" x1={o.x1} y1={o.y1} x2={o.x2} y2={o.y2} />)}
+    <rect class="osso-pieno" x="350" y="436" width="100" height="60" rx="20"></rect>
+    <line class="anello" x1={r(anulare.x1 + 2 - 16)} y1={r(anulare.y1 - 22)} x2={r(anulare.x1 + 6 + 16)} y2={r(anulare.y1 - 18)}></line>
+  </g>
+  <Etichetta testo="Anello" x={640} y={200} linea={[636, 192, r(anulare.x1 + 26), r(anulare.y1 - 18)]} passi="0" />
+  <text class="data" x="40" y="90" data-passi="0">1895</text>
+
+  <!-- 1: Cannon, il tubo dei raggi X e lo schermo -->
+  <g data-passi="1">
+    <g transform="translate(110 480) scale(0.9)">
+      <Personaggio {...cannon} />
+    </g>
+    <ellipse class="tratto vetro" cx="330" cy="260" rx="70" ry="44"></ellipse>
+    <path class="linea" d="M260 260H230M400 260H430"></path>
+    <g class="raggi">
+      {[-50, -25, 0, 25, 50].map((dy) => <path class="raggio" d={`M400 ${260 + dy * 0.4}L560 ${260 + dy * 2.4}`} />)}
+    </g>
+    <rect class="tratto lastra" x="560" y="110" width="170" height="300" rx="10"></rect>
+    <path class="cibo-debole" d="M620 240C640 220 680 230 680 260C680 290 640 300 625 285C610 270 608 252 620 240Z"></path>
+  </g>
+  <Etichetta testo="Raggi X" x={480} y={190} allinea="centro" passi="1" />
+  <Etichetta testo="Schermo" x={645} y={460} allinea="centro" passi="1" />
+  <text class="data" x="40" y="90" data-passi="1">1896</text>
+
+  <!-- 2: il bismuto rende visibile il cibo -->
+  <g data-passi="2">
+    <path class="tratto ciotola" d="M120 300H340C340 380 290 420 230 420C170 420 120 380 120 300Z"></path>
+    <path class="tratto cibo" d="M140 300C150 270 310 270 320 300Z"></path>
+    <g class="polvere">
+      {[[200, 230], [230, 250], [260, 228], [215, 270], [250, 280], [280, 262]].map(([x, y]) => <circle class="tratto bismuto" cx={x} cy={y} r="7" />)}
+    </g>
+    <path class="linea" d={freccia(370, 330, 470, 330, 18)}></path>
+    <rect class="tratto lastra" x="500" y="150" width="220" height="330" rx="10"></rect>
+    <path class="cibo-debole cibo-acceso" d="M570 300C595 270 660 280 660 320C660 360 610 372 588 352C566 334 560 314 570 300Z"></path>
+  </g>
+  <Etichetta testo="Bismuto" x={240} y={190} allinea="centro" passi="2" />
+  <Etichetta testo="Cibo" x={230} y={480} allinea="centro" passi="2" />
+
+  <!-- 3: l'onda della peristalsi spinge il bolo -->
+  <g data-passi="3">
+    <rect class="tratto lastra" x="220" y="40" width="360" height="520" rx="12"></rect>
+    <path class="linea-raggi" d={esofago}></path>
+    <path class="linea-raggi" d={stomaco}></path>
+    <g class="bolo">
+      <ellipse class="cibo-acceso" cx="400" cy="0" rx="13" ry="22"></ellipse>
+    </g>
+    <g class="onda">
+      <path class="contrazione" d="M378 -40C390 -40 394 -30 394 -24M422 -40C410 -40 406 -30 406 -24"></path>
+    </g>
+  </g>
+  <Etichetta testo="Esofago" x={640} y={200} linea={[636, 192, 418, 192]} passi="3" />
+  <Etichetta testo="Bolo" x={640} y={408} linea={[636, 400, 418, 400]} passi="3" />
+  <text class="data" x="40" y="90" data-passi="3">1898</text>
+
+  <!-- 4: oggi, con il bario e un monitor -->
+  <g data-passi="4">
+    <rect class="tratto monitor" x="170" y="60" width="460" height="400" rx="16"></rect>
+    <rect class="lastra" x="190" y="80" width="420" height="360" rx="8"></rect>
+    <path class="tratto monitor" d="M370 460H430L450 520H350Z"></path>
+    <rect class="tratto monitor" x="300" y="520" width="200" height="16" rx="6"></rect>
+    <g transform="translate(0 30) scale(1 0.8)">
+      <path class="linea-raggi" d={esofago}></path>
+      <path class="linea-raggi" d={stomaco}></path>
+      <rect class="cibo-acceso" x="388" y="90" width="24" height="240" rx="12"></rect>
+    </g>
+  </g>
+  <Etichetta testo="Bario" x={680} y={200} linea={[676, 192, 414, 192]} passi="4" />
+</Storia>
+
+<style is:global>
+  .storia-cannon .lastra {
+    fill: var(--radiografia);
+  }
+  .storia-cannon .ombra-mano {
+    fill: var(--pelle);
+    opacity: 0.18;
+  }
+  .storia-cannon .osso {
+    stroke: var(--osso);
+    stroke-width: 13;
+    stroke-linecap: round;
+  }
+  .storia-cannon .osso-pieno {
+    fill: var(--osso);
+  }
+  .storia-cannon .anello {
+    stroke: var(--oro);
+    stroke-width: 9;
+    stroke-linecap: round;
+  }
+  .storia-cannon .vetro {
+    fill: color-mix(in srgb, var(--aria) 40%, var(--superficie));
+  }
+  .storia-cannon .raggio {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 8 8;
+  }
+  .storia-cannon .cibo {
+    fill: var(--cibo);
+  }
+  .storia-cannon .ciotola {
+    fill: var(--muro);
+  }
+  .storia-cannon .bismuto {
+    fill: var(--capelli-bianchi);
+  }
+  .storia-cannon .cibo-debole {
+    fill: var(--cibo);
+    opacity: 0.15;
+  }
+  .storia-cannon .cibo-acceso {
+    fill: var(--cibo);
+    opacity: 1;
+  }
+  .storia-cannon .linea-raggi {
+    fill: none;
+    stroke: var(--osso);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .storia-cannon .contrazione {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+  .storia-cannon .monitor {
+    fill: var(--veste-nero);
+  }
+
+  /* 2: la polvere cade nel cibo, poi il cibo si accende sullo schermo. */
+  [data-indice='2'] .storia-cannon .polvere {
+    transform: translateY(40px);
+    opacity: 0;
+    transition:
+      transform 1s ease-in-out 0.6s,
+      opacity 0.4s ease-in-out 1.4s;
+  }
+  .storia-cannon .cibo-acceso {
+    transition: opacity 0.6s ease-in-out;
+  }
+  [data-indice='2'] .storia-cannon .lastra ~ .cibo-acceso {
+    opacity: 1;
+    transition: opacity 0.6s ease-in-out 1.8s;
+  }
+  .storia-cannon .lastra ~ .cibo-debole.cibo-acceso {
+    opacity: 0.15;
+  }
+  [data-indice='2'] .storia-cannon .lastra ~ .cibo-debole.cibo-acceso {
+    opacity: 1;
+  }
+
+  /* 3: il bolo scende, l'anello di contrazione lo segue. */
+  .storia-cannon :is(.bolo, .onda) {
+    transform: translateY(110px);
+  }
+  [data-indice='3'] .storia-cannon .bolo {
+    transform: translateY(400px);
+    transition: transform 2.4s ease-in-out 0.6s;
+  }
+  [data-indice='3'] .storia-cannon .onda {
+    transform: translateY(400px);
+    transition: transform 2.4s ease-in-out 0.75s;
+  }
+</style>

@@ -1,0 +1,215 @@
+---
+/**
+ * Storia dell'appendicite: Reginald Fitz e il mistero del dolore al fianco.
+ *
+ * Cinque scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * L'addome è quello condiviso in vista frontale (src/components/anatomia): la persona ci guarda,
+ * quindi il cieco e l'appendice sono a sinistra nel disegno.
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import AddomeFronte from '../../../../src/components/anatomia/AddomeFronte.astro';
+import IntestinoCrasso from '../../../../src/components/anatomia/IntestinoCrasso.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+// L'addome (y da -20 a 660) entra nel disegno rimpicciolito: x' = 160 + 0.8x, y' = 40 + 0.8y.
+const addome = 'translate(80 40) scale(0.8)';
+const nel = (x: number, y: number) => [80 + 0.8 * x, 40 + 0.8 * y] as const;
+const [ciecoX, ciecoY] = nel(298, 520);
+const [appX, appY] = nel(318, 556);
+// Punto di McBurney: a un terzo della linea dalla spina iliaca (circa 250, 560) all'ombelico (400, 400).
+const [mcX, mcY] = nel(300, 507);
+
+const corona = 'M-40 0V-14H40V0ZM-40 -14V-46L-21 -26L0 -52L21 -26L40 -46V-14Z';
+
+const descrizioni = [
+  'Un addome visto di fronte con l’intestino crasso. La zona in basso a sinistra del disegno, cioè a destra della persona, è infiammata, con un punto di domanda.',
+  'Un’appendice ingrandita con dentro una spilla. Accanto c’è il chirurgo Amyand. In alto la data 1735.',
+  'Tante schede di malati, una dopo l’altra. Una freccia porta dall’ultima scheda all’appendice. Accanto c’è Fitz, in alto la data 1886.',
+  'L’addome con il punto di McBurney segnato: è in basso a sinistra nel disegno, cioè in basso a destra della persona. In alto la data 1889.',
+  'Una corona e due date: il 26 giugno 1902 è cancellato, l’incoronazione è spostata al 9 agosto.',
+];
+---
+
+<Storia classe="storia-fitz" descrizioni={descrizioni}>
+  <!-- 0 e 3: l'addome -->
+  <g data-passi="0 3">
+    <g transform={addome}>
+      <AddomeFronte />
+      <IntestinoCrasso />
+    </g>
+  </g>
+
+  <!-- 0: un'infiammazione senza nome -->
+  <g data-passi="0">
+    <circle class="infiammato" cx={ciecoX} cy={ciecoY + 10} r="58"></circle>
+    <text class="data centrato" x={ciecoX} y={ciecoY - 70}>?</text>
+  </g>
+  <Etichetta testo="Cieco" x={560} y={160} linea={[556, 152, ciecoX + 18, ciecoY - 10]} passi="0" />
+  <Etichetta testo="Appendice" x={560} y={540} linea={[556, 532, appX + 6, appY + 6]} passi="0" />
+
+  <!-- 1: la spilla nell'appendice di Amyand -->
+  <g data-passi="1">
+    <g transform="translate(110 480) scale(0.9)">
+      <Personaggio capelli="lunghi" colore_capelli="bianchi" veste="giacca" colore_veste="rosso" />
+    </g>
+    <g transform="translate(470 120) rotate(-20)">
+      <path class="tratto appendice" d="M-46 0C-46 140 -40 260 -36 300C-30 360 30 360 36 300C40 260 46 140 46 0Z"></path>
+      <path class="lume" d="M0 20V300"></path>
+      <g class="spilla">
+        <line class="spilla__corpo" x1="-6" y1="90" x2="14" y2="300"></line>
+        <circle class="tratto spilla__testa" cx="-6" cy="86" r="10"></circle>
+      </g>
+    </g>
+  </g>
+  <Etichetta testo="Spilla" x={640} y={330} linea={[636, 322, 548, 330]} passi="1" />
+  <text class="data" x="40" y="90" data-passi="1">1735</text>
+
+  <!-- 2: centinaia di casi -->
+  <g data-passi="2">
+    <g transform="translate(110 480) scale(0.9)">
+      <Personaggio capelli="corti" colore_capelli="castani" barba="corta" baffi veste="giacca" colore_veste="nero" />
+    </g>
+    {
+      Array.from({ length: 12 }, (_, i) => (
+        <g class="scheda" style={`--ritardo: ${(0.4 + i * 0.12).toFixed(2)}s`} transform={`translate(${260 + (i % 4) * 70} ${150 + Math.floor(i / 4) * 90})`}>
+          <rect class="tratto carta" width="56" height="72" rx="4" />
+          <path class="linea righe" d="M10 16H46M10 30H46M10 44H34" />
+        </g>
+      ))
+    }
+    <path class="linea" d={freccia(545, 300, 615, 300, 16)}></path>
+    <g transform="translate(670 260) scale(1.4)">
+      <path class="tratto appendice evidenziato" d="M-8 -30C-8 0 -7 20 -6 26C-4 36 4 36 6 26C7 20 8 0 8 -30Z"></path>
+    </g>
+  </g>
+  <Etichetta testo="Appendicite" x={670} y={360} allinea="centro" passi="2" />
+  <text class="data" x="40" y="90" data-passi="2">1886</text>
+
+  <!-- 3: il punto di McBurney -->
+  <g data-passi="3">
+    <circle class="mcburney" cx={mcX} cy={mcY} r="16"></circle>
+  </g>
+  <Etichetta testo="Punto di\nMcBurney" x={560} y={460} linea={[556, 452, mcX + 16, mcY]} passi="3" />
+  <text class="data" x="40" y="90" data-passi="3">1889</text>
+
+  <!-- 4: il re e la data spostata -->
+  <g data-passi="4">
+    <g transform="translate(400 200) scale(2)">
+      <path class="tratto oro" d={corona}></path>
+    </g>
+    <g transform="translate(150 280)">
+      <rect class="tratto carta" width="190" height="200" rx="10"></rect>
+      <rect class="tratto rosso" width="190" height="44" rx="10"></rect>
+      <text class="pagina centrato" x="95" y="130">26</text>
+      <text class="mese centrato" x="95" y="176">giugno</text>
+      <path class="cancella" d="M20 70L170 180M170 70L20 180"></path>
+    </g>
+    <path class="linea" d={freccia(370, 380, 440, 380, 18)}></path>
+    <g transform="translate(460 280)">
+      <rect class="tratto carta" width="190" height="200" rx="10"></rect>
+      <rect class="tratto rosso" width="190" height="44" rx="10"></rect>
+      <text class="pagina centrato" x="95" y="130">9</text>
+      <text class="mese centrato" x="95" y="176">agosto</text>
+    </g>
+  </g>
+  <Etichetta testo="Edoardo VII" x={400} y={80} allinea="centro" passi="4" />
+  <text class="data" x="40" y="90" data-passi="4">1902</text>
+</Storia>
+
+<style is:global>
+  .storia-fitz .infiammato {
+    fill: var(--tessuto-infiammato);
+    opacity: 0.35;
+  }
+  .storia-fitz .appendice {
+    fill: var(--colon);
+  }
+  .storia-fitz .lume {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 2;
+    stroke-dasharray: 2 10;
+    stroke-linecap: round;
+  }
+  .storia-fitz .spilla__corpo {
+    stroke: var(--ferro);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .storia-fitz .spilla__testa {
+    fill: var(--argento);
+  }
+  .storia-fitz .carta {
+    fill: var(--carta);
+  }
+  .storia-fitz .righe {
+    stroke-width: 2;
+  }
+  .storia-fitz .oro {
+    fill: var(--oro);
+  }
+  .storia-fitz .rosso {
+    fill: var(--veste-rosso);
+  }
+  .storia-fitz .pagina {
+    font-size: 72px;
+    stroke: none;
+  }
+  .storia-fitz .mese {
+    font-size: 28px;
+    stroke: none;
+  }
+  .storia-fitz .cancella {
+    fill: none;
+    stroke: var(--testo);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .storia-fitz .mcburney {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 5;
+  }
+
+  /* 0: l'infiammazione si accende piano. */
+  .storia-fitz .infiammato {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.4);
+  }
+  [data-indice='0'] .storia-fitz .infiammato {
+    transform: scale(1);
+    transition: transform 1.4s ease-in-out 0.6s;
+  }
+
+  /* 1: la spilla compare dentro l'appendice. */
+  .storia-fitz .spilla {
+    opacity: 0;
+  }
+  [data-indice='1'] .storia-fitz .spilla {
+    opacity: 1;
+    transition: opacity 0.6s ease-in-out 1.2s;
+  }
+
+  /* 2: le schede arrivano una dopo l'altra. */
+  .storia-fitz .scheda {
+    opacity: 0;
+  }
+  [data-indice='2'] .storia-fitz .scheda {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out var(--ritardo);
+  }
+
+  /* 4: la prima data viene cancellata. */
+  .storia-fitz .cancella {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    vector-effect: none;
+  }
+  [data-indice='4'] .storia-fitz .cancella {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s ease-in-out 0.8s;
+  }
+</style>

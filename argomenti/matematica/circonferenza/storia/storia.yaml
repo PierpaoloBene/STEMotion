@@ -1,0 +1,66 @@
+protagonista: Eratostene di Cirene
+anni: circa 276 – 194 a.C.
+richiamo: >
+  Con un bastone, un'ombra e quello che sai su angoli e archi, si può misurare la Terra intera.
+  Eratostene lo fece più di 2000 anni fa.
+titolo: Eratostene misura la Terra
+ritratto:
+  capelli: corti
+  colore_capelli: grigi
+  barba: corta
+  veste: tunica
+  colore_veste: verde
+passaggi:
+  - id: eratostene-biblioteca
+    titolo: Il bibliotecario di Alessandria
+    breve: Eratostene dirige la grande biblioteca di Alessandria d'Egitto.
+    spiegazione: >
+      Siamo nel III secolo a.C.
+      Eratostene è un matematico e geografo greco.
+      Dirige la **biblioteca di Alessandria**, la più grande del mondo antico.
+      Come molti studiosi greci del suo tempo, sa già che la Terra è una sfera.
+
+  - id: eratostene-pozzo
+    titolo: Il pozzo senza ombra
+    breve: A Siene, nel giorno più lungo, il Sole di mezzogiorno non fa ombra.
+    spiegazione: >
+      Eratostene sa che a **Siene**, l'attuale Assuan, succede una cosa speciale.
+      A mezzogiorno del **solstizio d'estate**, il giorno più lungo dell'anno, il Sole è esattamente sopra la testa.
+      La sua luce arriva fino al fondo dei pozzi e un bastone piantato dritto non fa ombra.
+
+  - id: eratostene-ombra
+    titolo: Ad Alessandria l'ombra c'è
+    breve: Lo stesso giorno, ad Alessandria, un bastone dritto fa una piccola ombra.
+    spiegazione: >
+      Alla stessa ora, più a nord, ad Alessandria un bastone verticale fa ombra.
+      Eratostene misura l'angolo tra il bastone e i raggi del Sole.
+      È di circa 7 gradi, cioè **1/50 dell'angolo giro**.
+
+  - id: eratostene-angolo
+    titolo: Lo stesso angolo al centro
+    breve: I raggi del Sole sono paralleli, ma il suolo è curvo.
+    spiegazione: >
+      I raggi del Sole arrivano sulla Terra praticamente paralleli.
+      Se a Siene non c'è ombra e ad Alessandria sì, è perché la Terra è curva.
+      Prolungando i due bastoni fino al centro della Terra, si forma un **angolo al centro** uguale a quello dell'ombra.
+
+  - id: eratostene-arco
+    titolo: Un arco lungo 1/50
+    breve: L'arco tra le due città è 1/50 dell'intera circonferenza.
+    spiegazione: >
+      Un angolo al centro di 1/50 di angolo giro corrisponde a un **arco** lungo 1/50 della circonferenza.
+      Tra Alessandria e Siene ci sono circa 5000 **stadi**, un'antica unità di misura della lunghezza.
+      Quindi la circonferenza della Terra misura 50 × 5000 = 250 000 stadi.
+
+  - id: eratostene-risultato
+    titolo: Quasi giusto
+    breve: Il risultato di Eratostene è vicino ai 40 000 km misurati oggi.
+    spiegazione: >
+      Non sappiamo con certezza quanto fosse lungo lo stadio usato da Eratostene: ne esistevano di diversi.
+      Con i valori più probabili si ottiene una circonferenza tra 39 000 e 46 000 km.
+      Oggi sappiamo che è di circa 40 000 km.
+      Il libro di Eratostene è andato perduto. Il suo metodo ce lo racconta Cleomede, un autore greco vissuto secoli dopo.
+fonti:
+  - "Cleomede, Il moto circolare dei corpi celesti, libro I, capitolo 7"
+  - "Strabone, Geografia, libri I e II (notizie su Eratostene e sulla biblioteca di Alessandria)"
+  - "Circonferenza terrestre: circa 40 008 km lungo un meridiano, 40 075 km all'equatore (WGS 84)"
