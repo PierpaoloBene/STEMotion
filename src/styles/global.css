@@ -64,6 +64,29 @@
   --legno: #e2bf8a;
   --roccia: #a49d90;
 
+  /* Illustrazioni: personaggi delle storie (src/components/storie) */
+  --capelli-neri: #2b2420;
+  --capelli-castani: #6e4527;
+  --capelli-grigi: #9a968e;
+  --capelli-bianchi: #e9e6df;
+  --veste-bianco: #f1ece0;
+  --veste-nero: #2e2e35;
+  --veste-blu: #34507a;
+  --veste-rosso: #8e2f3a;
+  --veste-verde: #3f6b4f;
+  --veste-marrone: #75523a;
+  --oro: #e0b437;
+  --argento: #c9ccd1;
+  --foglie: #6aa35c;
+  --tronco: #8a5a3c;
+  --mela: #c9443b;
+  --pianeta-terra: #4f86c6;
+  --luna: #d8d4ca;
+  --deserto: #ecd9a8;
+  --muro: #efe3cf;
+  --tetto: #a8553a;
+  --carta: #f6efdc;
+
   /* Forme (guida di stile, §9) */
   --raggio: 24px;
   --raggio-piccolo: 14px;

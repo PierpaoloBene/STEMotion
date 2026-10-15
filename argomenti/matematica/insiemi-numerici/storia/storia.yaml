@@ -1,0 +1,58 @@
+protagonista: Ippaso di Metaponto
+anni: V secolo a.C.
+richiamo: >
+  La diagonale di un quadrato non si può scrivere come frazione del lato.
+  Secondo la leggenda, scoprirlo costò caro a un allievo della scuola di Pitagora.
+titolo: Ippaso e il numero che non doveva esistere
+ritratto:
+  capelli: ricci
+  colore_capelli: neri
+  barba: corta
+  veste: tunica
+  colore_veste: rosso
+passaggi:
+  - id: ippaso-pitagorici
+    titolo: Tutto è numero
+    breve: Per i pitagorici tutto si descrive con numeri interi e frazioni.
+    spiegazione: >
+      Nel VI secolo a.C. **Pitagora** fonda una scuola a Crotone, in Calabria.
+      I suoi allievi, i **pitagorici**, studiano numeri, musica e stelle.
+      Scoprono che le corde che suonano bene insieme hanno lunghezze in rapporti semplici, come 1/2 e 2/3.
+      Si convincono che ogni grandezza si possa scrivere come frazione.
+
+  - id: ippaso-misura
+    titolo: Una misura comune
+    breve: Si cerca un pezzetto che misuri esattamente tutti e due i segmenti.
+    spiegazione: >
+      Per i pitagorici, dati due segmenti, c'è sempre un segmento più piccolo che li misura entrambi.
+      Ci sta un numero intero di volte in tutti e due.
+      Per esempio, 2 cm sta 3 volte in 6 cm e 2 volte in 4 cm.
+      Così il rapporto tra i due segmenti è 3/2.
+
+  - id: ippaso-diagonale
+    titolo: Il lato e la diagonale
+    breve: Con il lato e la diagonale di un quadrato, avanza sempre un pezzetto.
+    spiegazione: >
+      La tradizione racconta che **Ippaso di Metaponto** provò con il lato e la diagonale di un quadrato.
+      Qualunque pezzetto si scelga, se sta un numero intero di volte nel lato, nella diagonale avanza qualcosa.
+      Anche rimpicciolendo il pezzetto, non si arriva mai a una misura comune.
+
+  - id: ippaso-irrazionale
+    titolo: Un numero senza frazione
+    breve: Se il lato è 1, la diagonale è √2, un numero irrazionale.
+    spiegazione: >
+      Lato e diagonale di un quadrato non hanno una misura comune: si dice che sono **incommensurabili**.
+      Per questo √2 non si può scrivere come frazione.
+      Oggi lo chiamiamo numero **irrazionale**: le sue cifre decimali sono infinite e non si ripetono mai.
+
+  - id: ippaso-leggenda
+    titolo: Una scoperta pericolosa
+    breve: Secondo la leggenda, Ippaso morì in mare in un naufragio.
+    spiegazione: >
+      Per i pitagorici questa scoperta metteva in crisi le loro idee.
+      Una leggenda racconta che Ippaso la rivelò a chi non faceva parte della scuola e che morì in un naufragio.
+      Non ci sono prove che sia andata così: le notizie su Ippaso arrivano da autori vissuti secoli dopo.
+fonti:
+  - "Giamblico, Vita di Pitagora, 88 e 247 (la leggenda di Ippaso)"
+  - "K. von Fritz, The Discovery of Incommensurability by Hippasus of Metapontum, Annals of Mathematics, 46 (1945)"
+  - "C. B. Boyer, U. C. Merzbach, Storia della matematica, capitolo sui pitagorici"

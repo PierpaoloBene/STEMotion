@@ -1,0 +1,60 @@
+protagonista: Robert Brown e Albert Einstein
+anni: 1827 e 1905
+richiamo: >
+  Nei liquidi e nei gas le molecole si muovono di continuo. Ma come si fa a saperlo, se nessuno riesce a vederle?
+  Tutto comincia con dei granelli che non stanno mai fermi.
+titolo: La danza dei granelli
+ritratto:
+  capelli: spettinati
+  colore_capelli: castani
+  baffi: true
+  veste: giacca
+  colore_veste: nero
+passaggi:
+  - id: brown-granelli
+    titolo: Granelli che non stanno fermi
+    breve: Nel 1827 Robert Brown osserva al microscopio granelli sospesi in acqua.
+    spiegazione: >
+      Il botanico scozzese **Robert Brown** studia il polline delle piante.
+      Al microscopio osserva minuscoli granelli contenuti nel polline, sospesi in una goccia d'acqua.
+      I granelli tremano e si spostano a zig-zag, senza fermarsi mai.
+
+  - id: brown-vivi
+    titolo: Sono vivi?
+    breve: Anche granelli di vetro e di roccia si muovono allo stesso modo.
+    spiegazione: >
+      All'inizio Brown pensa che i granelli si muovano perché vengono da una pianta viva.
+      Poi prova con polvere di vetro e di rocce: si muovono allo stesso modo.
+      Quindi il movimento non dipende dalla vita.
+      Per quasi 80 anni nessuno riesce a spiegarlo: si chiama **moto browniano**.
+
+  - id: einstein-idea
+    titolo: L'idea di Einstein
+    breve: Nel 1905 Einstein spiega che sono le molecole d'acqua a spingere i granelli.
+    spiegazione: >
+      Il giovane **Albert Einstein** lavora in un ufficio brevetti in Svizzera.
+      Immagina il granello colpito da tutte le parti da molecole d'acqua, troppo piccole per essere viste.
+      I colpi non si bilanciano mai del tutto: il granello viene spinto un po' di qua e un po' di là.
+
+  - id: einstein-calcolo
+    titolo: Una previsione da controllare
+    breve: Einstein calcola quanto si allontana un granello in un certo tempo.
+    spiegazione: >
+      Einstein non si ferma all'idea: fa i calcoli.
+      Se le molecole esistono, un granello deve allontanarsi dal punto di partenza in un modo preciso.
+      Quanto si allontana dipende anche da quanto sono grandi le molecole.
+      È una **previsione**: si può controllare con il microscopio.
+
+  - id: perrin-prova
+    titolo: La prova
+    breve: "Nel 1908 Jean Perrin misura i movimenti: Einstein aveva ragione."
+    spiegazione: >
+      Il fisico francese **Jean Perrin** osserva al microscopio i granelli e disegna i loro percorsi, punto dopo punto.
+      Le sue misure confermano i calcoli di Einstein.
+      Da allora quasi nessuno dubita più che le molecole esistano.
+      Nel 1926 Perrin riceve il premio Nobel per la fisica.
+fonti:
+  - "R. Brown, A brief account of microscopical observations made in the months of June, July and August 1827, on the particles contained in the pollen of plants, 1828"
+  - "A. Einstein, Sul movimento di piccole particelle sospese in un liquido in quiete, Annalen der Physik, 17 (1905)"
+  - "J. Perrin, Les Atomes, 1913"
+  - "Premio Nobel per la fisica 1926 a Jean Perrin (nobelprize.org)"

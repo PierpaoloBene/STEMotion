@@ -1,0 +1,55 @@
+protagonista: Walter B. Cannon
+anni: 1871 – 1945
+richiamo: >
+  Oggi i medici possono guardare il bolo che scende nell'esofago.
+  Il primo a farlo fu uno studente di medicina, appena un anno dopo la scoperta dei raggi X.
+titolo: Walter Cannon e i raggi X
+ritratto:
+  capelli: corti
+  colore_capelli: castani
+  veste: giacca
+  colore_veste: blu
+passaggi:
+  - id: cannon-rontgen
+    titolo: Raggi che attraversano il corpo
+    breve: Nel 1895 Wilhelm Röntgen scopre i raggi X.
+    spiegazione: >
+      Il fisico tedesco **Wilhelm Röntgen** scopre dei raggi invisibili che attraversano la carne ma sono fermati dalle ossa.
+      Li chiama **raggi X**, perché non sa che cosa siano: in matematica la X indica una cosa sconosciuta.
+      Una delle prime immagini mostra le ossa della mano di sua moglie, con l'anello.
+
+  - id: cannon-studente
+    titolo: Uno studente curioso
+    breve: Nel 1896 Walter Cannon usa i raggi X per guardare dentro un animale.
+    spiegazione: >
+      **Walter Cannon** studia medicina all'università di Harvard, negli Stati Uniti.
+      Il suo professore gli propone di usare i raggi X, appena scoperti, per studiare la digestione.
+      Ma c'è un problema: il cibo lascia passare i raggi X quasi come la carne, e non si vede.
+
+  - id: cannon-bismuto
+    titolo: Il cibo diventa visibile
+    breve: Cannon mescola al cibo una polvere che ferma i raggi X.
+    spiegazione: >
+      Cannon mescola al cibo una polvere di **bismuto**, un metallo.
+      Il bismuto ferma i raggi X, come le ossa.
+      Così, nell'immagine, il bolo si vede bene e si può seguire mentre viene inghiottito.
+
+  - id: cannon-peristalsi
+    titolo: L'onda che spinge
+    breve: Sullo schermo si vede il bolo scendere, spinto dalla peristalsi.
+    spiegazione: >
+      Per la prima volta si può guardare la deglutizione in un animale vivo, senza operarlo.
+      Cannon vede il bolo scendere lungo l'esofago, spinto da un'onda di contrazione: la **peristalsi**.
+      Nel 1898 pubblica le sue osservazioni.
+
+  - id: cannon-oggi
+    titolo: Ancora oggi
+    breve: Oggi si usa il bario per vedere la deglutizione ai raggi X.
+    spiegazione: >
+      Oggi al posto del bismuto si usa il **bario**.
+      Il paziente beve un liquido denso con il bario e il medico lo guarda scendere su uno schermo.
+      Così si scoprono i problemi della deglutizione.
+fonti:
+  - "W. B. Cannon, A. Moser, The movements of the food in the oesophagus, American Journal of Physiology, 1 (1898)"
+  - "W. C. Röntgen, Über eine neue Art von Strahlen, 1895"
+  - "S. J. Benison, A. C. Barger, E. L. Wolfe, Walter B. Cannon: The Life and Times of a Young Scientist, Harvard University Press, 1987"

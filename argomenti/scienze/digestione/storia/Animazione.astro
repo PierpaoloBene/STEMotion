@@ -1,0 +1,227 @@
+---
+/**
+ * Storia della digestione: Lazzaro Spallanzani e il succo gastrico.
+ *
+ * Cinque scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Colori con significato fisso (guida di stile, §3): il cibo è ocra, i succhi digestivi
+ * sono gocce verde lime, l'acqua è blu acqua. Lo stomaco è quello condiviso (vista frontale).
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import StomacoFronte from '../../../../src/components/anatomia/StomacoFronte.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+// Goccia con la punta in alto, centrata in (0, 0).
+const goccia = 'M0 -14C6 -4 10 2 10 6A10 10 0 0 1 -10 6C-10 2 -6 -4 0 -14Z';
+// Pezzo di carne (cibo), centrato in (0, 0).
+const carne = 'M-34 -12C-20 -26 18 -24 32 -10C42 2 30 22 8 22C-14 24 -42 12 -34 -12Z';
+
+const spallanzani = { capelli: 'corti', colore_capelli: 'bianchi', veste: 'talare', colore_veste: 'nero' } as const;
+
+const descrizioni = [
+  'Uno stomaco con dentro del cibo. Accanto due ipotesi: una macina che schiaccia, oppure gocce di un liquido che scioglie.',
+  'Spallanzani accanto a un tubetto pieno di buchi con dentro un pezzo di carne. Gocce di succo entrano dai buchi e la carne si rimpicciolisce.',
+  'Un sacchetto di tela pieno di cibo, prima di essere inghiottito; dopo alcune ore il sacchetto è intero ma vuoto.',
+  'Due vasetti al caldo. Nel succo gastrico il pezzo di carne si scioglie; nell’acqua resta intero.',
+  'Lo stomaco con le gocce di succo gastrico: il cibo si scioglie in pezzetti sempre più piccoli. In alto la data 1780.',
+];
+---
+
+<Storia classe="storia-spallanzani" descrizioni={descrizioni}>
+  <!-- 0: macina o liquido? -->
+  <g data-passi="0">
+    <g transform="translate(-230 140)">
+      <StomacoFronte />
+      <path class="tratto cibo" d="M470 170C490 150 520 160 522 186C524 210 498 222 480 210C462 200 458 184 470 170Z"></path>
+    </g>
+    <text class="data centrato" x="410" y="330">?</text>
+    <g transform="translate(560 220)">
+      <circle class="tratto roccia" r="62"></circle>
+      <circle class="tratto legno" r="14"></circle>
+      <path class="linea" d="M-40 -30L-20 -12M30 -40L18 -20M42 26L22 14"></path>
+    </g>
+    {[[530, 420], [565, 440], [600, 415], [550, 470], [590, 475]].map(([x, y]) => <path class="tratto succo" d={goccia} transform={`translate(${x} ${y})`} />)}
+  </g>
+  <Etichetta testo="Macina?" x={640} y={200} passi="0" />
+  <Etichetta testo="Liquido?" x={640} y={460} passi="0" />
+
+  <!-- 1: i tubetti forati -->
+  <g data-passi="1">
+    <g transform="translate(110 480) scale(0.9)">
+      <Personaggio {...spallanzani} />
+    </g>
+    <g transform="translate(470 300)">
+      <rect class="tratto argento" x="-170" y="-55" width="340" height="110" rx="55"></rect>
+      <path class="tratto cibo carne carne--tubetto" d={carne} transform="scale(2.2)"></path>
+      {[-120, -60, 0, 60, 120].map((x) => (
+        <>
+          <circle class="tratto buco" cx={x} cy="-36" r="9" />
+          <circle class="tratto buco" cx={x} cy="36" r="9" />
+        </>
+      ))}
+      <g class="entrano">
+        {[-120, 0, 120].map((x) => <path class="tratto succo" d={goccia} transform={`translate(${x} -90)`} />)}
+        {[-60, 60].map((x) => <path class="tratto succo" d={goccia} transform={`translate(${x} 90) rotate(180)`} />)}
+      </g>
+    </g>
+  </g>
+  <Etichetta testo="Tubetto forato" x={470} y={460} allinea="centro" passi="1" />
+  <text class="data" x="40" y="90" data-passi="1">Pavia</text>
+
+  <!-- 2: il sacchetto di tela, prima e dopo -->
+  <g data-passi="2">
+    <g transform="translate(220 330)">
+      <path class="tratto tela" d="M-90 -60C-100 40 -80 110 0 110C80 110 100 40 90 -60C60 -80 -60 -80 -90 -60Z"></path>
+      <path class="tratto cibo" d="M-50 0C-40 -40 40 -40 50 0C60 50 -60 60 -50 0Z"></path>
+      <path class="linea cucitura" d="M-90 -60C-60 -80 60 -80 90 -60"></path>
+    </g>
+    <path class="linea" d={freccia(340, 330, 450, 330, 18)}></path>
+    <g transform="translate(580 330)">
+      <path class="tratto tela" d="M-90 40C-100 80 -80 110 0 110C80 110 100 80 90 40C60 20 -60 20 -90 40Z"></path>
+      <path class="linea cucitura" d="M-90 40C-60 20 60 20 90 40"></path>
+    </g>
+  </g>
+  <Etichetta testo="Prima" x={220} y={500} allinea="centro" passi="2" />
+  <Etichetta testo="Dopo alcune ore" x={580} y={500} allinea="centro" passi="2" />
+
+  <!-- 3: i due vasetti -->
+  <g data-passi="3">
+    {
+      [
+        { x: 250, liquido: 'succo-liquido', classe: 'carne--succo' },
+        { x: 550, liquido: 'acqua', classe: 'carne--acqua' },
+      ].map((v) => (
+        <g transform={`translate(${v.x} 0)`}>
+          <rect class={`tratto ${v.liquido}`} x="-90" y="250" width="180" height="200" />
+          <path class={`tratto cibo carne ${v.classe}`} d={carne} transform="translate(0 390) scale(1.6)" />
+          <path class="linea" d="M-100 200V450H100V200" />
+          <rect class="tratto legno" x="-106" y="186" width="212" height="16" rx="6" />
+        </g>
+      ))
+    }
+    <g transform="translate(400 330)">
+      <rect class="tratto carta" x="-12" y="-110" width="24" height="170" rx="12"></rect>
+      <rect class="calore" x="-5" y="-60" width="10" height="110"></rect>
+      <circle class="tratto calore" cy="70" r="22"></circle>
+    </g>
+  </g>
+  <Etichetta testo="Succo gastrico" x={250} y={510} allinea="centro" passi="3" />
+  <Etichetta testo="Acqua" x={550} y={510} allinea="centro" passi="3" />
+  <Etichetta testo="37 °C" x={400} y={185} allinea="centro" passi="3" />
+
+  <!-- 4: la digestione nello stomaco è chimica -->
+  <g data-passi="4">
+    <g transform="translate(-160 30) scale(1.4)">
+      <StomacoFronte />
+    </g>
+    <g class="sciolto">
+      <path class="tratto cibo carne carne--stomaco" d={carne} transform="translate(560 270) scale(1.3)"></path>
+      {[[520, 330], [600, 335], [560, 360], [500, 290], [620, 290]].map(([x, y]) => <circle class="tratto cibo pezzetto" cx={x} cy={y} r="7" />)}
+    </g>
+    {[[500, 200], [600, 190], [660, 260], [470, 260], [640, 330]].map(([x, y]) => <path class="tratto succo" d={goccia} transform={`translate(${x} ${y})`} />)}
+  </g>
+  <Etichetta testo="Succo gastrico" x={760} y={150} linea={[690, 162, 606, 188]} allinea="fine" passi="4" />
+  <text class="data" x="40" y="90" data-passi="4">1780</text>
+</Storia>
+
+<style is:global>
+  .storia-spallanzani .cibo {
+    fill: var(--cibo);
+  }
+  .storia-spallanzani .succo {
+    fill: var(--succhi);
+  }
+  .storia-spallanzani .succo-liquido {
+    fill: color-mix(in srgb, var(--succhi) 55%, var(--superficie));
+  }
+  .storia-spallanzani .acqua {
+    fill: color-mix(in srgb, var(--acqua) 55%, var(--superficie));
+  }
+  .storia-spallanzani .roccia {
+    fill: var(--roccia);
+  }
+  .storia-spallanzani .legno {
+    fill: var(--legno);
+  }
+  .storia-spallanzani .argento {
+    fill: var(--argento);
+  }
+  .storia-spallanzani .carta {
+    fill: var(--carta);
+  }
+  .storia-spallanzani .tela {
+    fill: var(--muro);
+  }
+  .storia-spallanzani .buco {
+    fill: var(--sfondo);
+  }
+  .storia-spallanzani .calore {
+    fill: var(--calore);
+  }
+  .storia-spallanzani .cucitura {
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+
+  /* Le carni che si sciolgono si rimpiccioliscono attorno al proprio centro. */
+  .storia-spallanzani .carne {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .storia-spallanzani .carne--tubetto {
+    transform: scale(2.2);
+  }
+  [data-indice='1'] .storia-spallanzani .carne--tubetto {
+    transform: scale(1.1);
+    transition: transform 1.6s ease-in-out 1.2s;
+  }
+  .storia-spallanzani .carne--succo,
+  .storia-spallanzani .carne--acqua {
+    transform: translate(0, 390px) scale(1.6);
+  }
+  [data-indice='3'] .storia-spallanzani .carne--succo {
+    transform: translate(0, 390px) scale(0.5);
+    transition: transform 2s ease-in-out 0.8s;
+  }
+  .storia-spallanzani .carne--stomaco {
+    transform: translate(560px, 270px) scale(1.3);
+  }
+  [data-indice='4'] .storia-spallanzani .carne--stomaco {
+    transform: translate(560px, 270px) scale(0.6);
+    transition: transform 1.8s ease-in-out 0.8s;
+  }
+  .storia-spallanzani .pezzetto {
+    opacity: 0;
+  }
+  [data-indice='4'] .storia-spallanzani .pezzetto {
+    opacity: 1;
+    transition: opacity 0.8s ease-in-out 1.6s;
+  }
+
+  /* Le gocce di succo entrano dai buchi del tubetto. */
+  .storia-spallanzani .entrano path {
+    transition: transform 0.4s ease-in-out;
+  }
+  [data-indice='1'] .storia-spallanzani .entrano {
+    transform: translateY(0);
+  }
+  [data-indice='1'] .storia-spallanzani .entrano path:nth-child(-n + 3) {
+    animation: storia-spallanzani-giu 1.2s ease-in-out 0.6s both;
+  }
+  [data-indice='1'] .storia-spallanzani .entrano path:nth-child(n + 4) {
+    animation: storia-spallanzani-su 1.2s ease-in-out 0.6s both;
+  }
+  @keyframes storia-spallanzani-giu {
+    to {
+      translate: 0 54px;
+      opacity: 0;
+    }
+  }
+  @keyframes storia-spallanzani-su {
+    to {
+      translate: 0 -54px;
+      opacity: 0;
+    }
+  }
+</style>

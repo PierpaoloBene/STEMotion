@@ -3,6 +3,7 @@ import { getCollection, getEntry, render, type CollectionEntry } from 'astro:con
 import Base from '../../layouts/Base.astro';
 import Lettore from '../../components/Lettore.astro';
 import Segnaposto from '../../components/Segnaposto.astro';
+import Personaggio from '../../components/storie/Personaggio.astro';
 import { url } from '../../lib/url';
 import { tornaA } from '../../lib/testo';
 
@@ -53,6 +54,11 @@ for (const p of passaggi.data.passaggi) {
   }
 }
 const pulsanti = Object.fromEntries(deviazioni.map((d) => [d.slug, d.pulsante]));
+
+// Storia: chi ha scoperto o studiato l'argomento. Un box sotto il lettore la apre (guida di stile, §5).
+const storia = (await getCollection('storie')).find((s) => s.id === `${argomento.id}/storia`);
+const moduliStorie = import.meta.glob<{ default: any }>('/argomenti/*/*/storia/Animazione.astro', { eager: true });
+const AnimazioneStoria = moduliStorie[`/argomenti/${argomento.id}/storia/Animazione.astro`]?.default;
 
 // Prossimo argomento per la schermata finale: prima uno che ha questo tra i prerequisiti,
 // altrimenti il successivo in ordine alfabetico nella stessa materia.
@@ -114,7 +120,52 @@ const prossimo = dopo ? { titolo: dopo.data.titolo, href: url(`${materia.id}/${s
       ))
     }
 
+    {
+      storia && (
+        <dialog class="box" id="box-storia" data-box aria-label={storia.data.titolo}>
+          <Lettore
+            id={`${argomento.id}/storia`}
+            passaggi={storia.data.passaggi}
+            titolo={storia.data.titolo}
+            modello="passaggi"
+            materia={{ titolo: materia.data.nome, href: url(`${materia.id}/`) }}
+            annidato
+            ritorno={tornaA(data.titolo)}
+          >
+            {AnimazioneStoria ? <AnimazioneStoria /> : <Segnaposto passaggi={storia.data.passaggi} />}
+          </Lettore>
+        </dialog>
+      )
+    }
+
     <p class="aiuto">Tastiera: <kbd>→</kbd> o <kbd>spazio</kbd> avanti · <kbd>←</kbd> indietro · <kbd>R</kbd> ripeti · <kbd>T</kbd> spiegazione · <kbd>F</kbd> schermo intero</p>
+
+    {
+      storia && (
+        <section class="storia-box" aria-labelledby="storia-box-titolo">
+          <svg class="storia-box__ritratto" viewBox="-95 -190 190 190" aria-hidden="true" focusable="false">
+            <Personaggio {...storia.data.ritratto} />
+          </svg>
+          <div class="storia-box__testo">
+            <p class="storia-box__etichetta">Dietro la scoperta</p>
+            <h2 id="storia-box-titolo">
+              {storia.data.protagonista} <span class="storia-box__anni">{storia.data.anni}</span>
+            </h2>
+            <p class="storia-box__richiamo">{storia.data.richiamo}</p>
+            <button type="button" class="pillola storia-box__apri" data-apri-storia aria-haspopup="dialog">
+              <span>Scopri la storia</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 5h14v14H5zM9 15l6-6M10 9h5v5" />
+              </svg>
+            </button>
+            <details class="storia-box__fonti">
+              <summary>Fonti</summary>
+              <ul>{storia.data.fonti.map((f) => <li>{f}</li>)}</ul>
+            </details>
+          </div>
+        </section>
+      )
+    }
 
     <div class="schede">
       <section class="riquadro">
@@ -157,6 +208,20 @@ const prossimo = dopo ? { titolo: dopo.data.titolo, href: url(`${materia.id}/${s
     }
   </div>
 </Base>
+
+<script>
+  // Il box della storia si apre dal riquadro "Dietro la scoperta" e riparte dal primo passaggio.
+  // Il lettore annidato ascolta l'evento "apri"; alla chiusura il focus torna al pulsante.
+  const box = document.getElementById('box-storia');
+  const pulsante = document.querySelector<HTMLButtonElement>('[data-apri-storia]');
+  if (box instanceof HTMLDialogElement && pulsante) {
+    pulsante.addEventListener('click', () => {
+      box.showModal();
+      box.dispatchEvent(new Event('apri'));
+    });
+    box.addEventListener('close', () => pulsante.focus({ preventScroll: true }));
+  }
+</script>
 
 <style>
   .fascia {
@@ -269,6 +334,78 @@ const prossimo = dopo ? { titolo: dopo.data.titolo, href: url(`${materia.id}/${s
   @media (hover: none) {
     .aiuto {
       display: none;
+    }
+  }
+
+  /* --- Riquadro della storia: chi c'è dietro l'argomento --- */
+
+  .storia-box {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    margin-top: 32px;
+    padding: 24px 28px;
+    border-radius: var(--raggio);
+    background: var(--radiografia);
+    color: #fff;
+    box-shadow: var(--ombra);
+  }
+  .storia-box__ritratto {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    background: var(--tinta);
+  }
+  .storia-box__etichetta {
+    margin: 0;
+    color: var(--aria);
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .storia-box h2 {
+    margin-top: 4px;
+    font-size: 28px;
+  }
+  .storia-box__anni {
+    font-size: 20px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  .storia-box__richiamo {
+    margin: 8px 0 0;
+    max-width: 60ch;
+  }
+  .storia-box__apri {
+    margin-top: 16px;
+    border-color: #fff;
+  }
+  .storia-box__fonti {
+    margin-top: 12px;
+    font-size: 16px;
+  }
+  .storia-box__fonti summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tocco);
+    color: var(--aria);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .storia-box__fonti ul {
+    margin: 0;
+    padding-left: 1.2em;
+  }
+  @media (max-width: 599px) {
+    .storia-box {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 20px;
+    }
+    .storia-box__ritratto {
+      width: 96px;
+      height: 96px;
     }
   }
 

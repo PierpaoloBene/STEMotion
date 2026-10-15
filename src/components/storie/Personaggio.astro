@@ -1,0 +1,131 @@
+---
+// Personaggio delle storie: un busto stilizzato, piatto, sempre con lo stesso disegno di base.
+// Non è un ritratto: capelli, barba e veste bastano a distinguere i protagonisti
+// (guida di stile, §7). Le scelte possibili sono le stesse di `ritratto` in storia.yaml.
+// Origine (0, 0): centro della base del busto. Il busto è largo 150 e alto circa 175 (y da -175 a 0).
+// Vedi README.md in questa cartella.
+interface Props {
+  capelli?: 'corti' | 'lunghi' | 'ricci' | 'spettinati' | 'calvo';
+  colore_capelli?: 'neri' | 'castani' | 'grigi' | 'bianchi';
+  barba?: 'no' | 'corta' | 'lunga';
+  baffi?: boolean;
+  veste?: 'tunica' | 'giacca' | 'talare';
+  colore_veste?: 'bianco' | 'nero' | 'blu' | 'rosso' | 'verde' | 'marrone';
+  class?: string;
+}
+const {
+  capelli = 'corti',
+  colore_capelli = 'castani',
+  barba = 'no',
+  baffi = false,
+  veste = 'giacca',
+  colore_veste = 'blu',
+  class: classe,
+} = Astro.props;
+
+const coloreCapelli = `var(--capelli-${colore_capelli})`;
+const coloreVeste = `var(--veste-${colore_veste})`;
+
+const busto = 'M-75 0C-75 -48 -52 -68 -20 -72H20C52 -68 75 -48 75 0Z';
+
+// Capelli dietro la testa (disegnati prima del viso) e davanti (dopo).
+const dietro: Record<string, string | null> = {
+  corti: null,
+  lunghi: 'M-38 -122C-46 -170 46 -170 38 -122L46 -70C32 -64 24 -76 26 -94H-26C-24 -76 -32 -64 -46 -70Z',
+  ricci: null,
+  spettinati: 'M-34 -104L-50 -114L-42 -126L-54 -140L-40 -146L-42 -162L-24 -160L-14 -174L0 -164L14 -174L24 -160L42 -162L40 -146L54 -140L42 -126L50 -114L34 -104Z',
+  calvo: null,
+};
+const davanti: Record<string, string> = {
+  corti: 'M-35 -124C-40 -160 -16 -168 0 -168C22 -168 40 -158 35 -124C30 -144 12 -148 -4 -145C-18 -144 -30 -138 -35 -124Z',
+  lunghi: 'M-36 -124C-42 -178 42 -178 36 -124C24 -148 -24 -148 -36 -124Z',
+  ricci: 'M-36 -120A10 10 0 0 1 -34 -142A11 11 0 0 1 -20 -158A11 11 0 0 1 0 -162A11 11 0 0 1 20 -158A11 11 0 0 1 34 -142A10 10 0 0 1 36 -120C28 -140 -28 -140 -36 -120Z',
+  spettinati: 'M-35 -126C-38 -178 38 -178 35 -126C20 -142 -20 -142 -35 -126Z',
+  calvo: 'M-34 -106C-40 -122 -38 -136 -30 -140L-27 -114ZM34 -106C40 -122 38 -136 30 -140L27 -114Z',
+};
+const barbe: Record<string, string | null> = {
+  no: null,
+  corta: 'M-32 -118C-32 -96 -18 -80 0 -80C18 -80 32 -96 32 -118C26 -100 14 -95 0 -95C-14 -95 -26 -100 -32 -118Z',
+  lunga: 'M-32 -118C-34 -80 -16 -54 0 -50C16 -54 34 -80 32 -118C26 -100 14 -95 0 -95C-14 -95 -26 -100 -32 -118Z',
+};
+---
+
+<g class:list={['personaggio', classe]}>
+  {dietro[capelli] && <path class="personaggio__capelli" d={dietro[capelli]!} style={`fill: ${coloreCapelli}`}></path>}
+
+  <!-- busto e veste -->
+  {
+    veste === 'tunica' && (
+      <>
+        <path class="personaggio__veste" d={busto} style="fill: var(--veste-bianco)" />
+        <path class="personaggio__fascia" d="M-46 -64C-14 -44 18 -22 44 0H72C40 -28 2 -56 -30 -70Z" style={`fill: ${coloreVeste}`} />
+      </>
+    )
+  }
+  {
+    veste === 'giacca' && (
+      <>
+        <path class="personaggio__veste" d={busto} style={`fill: ${coloreVeste}`} />
+        <path class="personaggio__camicia" d="M-20 -72L0 -26L20 -72Z" />
+        <path class="personaggio__risvolti" d="M-20 -72L-8 -34M20 -72L8 -34" />
+      </>
+    )
+  }
+  {
+    veste === 'talare' && (
+      <>
+        <path class="personaggio__veste" d={busto} style={`fill: ${coloreVeste}`} />
+        <rect class="personaggio__camicia" x="-11" y="-75" width="22" height="9" rx="2" />
+      </>
+    )
+  }
+
+  <!-- collo, orecchie e viso -->
+  <rect class="personaggio__pelle" x="-14" y="-90" width="28" height="22"></rect>
+  <circle class="personaggio__pelle" cx="-34" cy="-118" r="7"></circle>
+  <circle class="personaggio__pelle" cx="34" cy="-118" r="7"></circle>
+  <ellipse class="personaggio__pelle" cx="0" cy="-122" rx="34" ry="40"></ellipse>
+
+  {barbe[barba] && <path class="personaggio__capelli" d={barbe[barba]!} style={`fill: ${coloreCapelli}`}></path>}
+  <path class="personaggio__capelli" d={davanti[capelli]} style={`fill: ${coloreCapelli}`}></path>
+
+  <circle class="personaggio__occhio" cx="-12" cy="-124" r="3.5"></circle>
+  <circle class="personaggio__occhio" cx="12" cy="-124" r="3.5"></circle>
+  <path class="personaggio__tratto" d="M-19 -134H-6M6 -134H19"></path>
+  <path class="personaggio__tratto" d="M0 -120L-4 -108H3"></path>
+  {
+    baffi ? (
+      <path
+        class="personaggio__capelli"
+        d="M-15 -100C-9 -108 -2 -106 0 -103C2 -106 9 -108 15 -100C8 -98 2 -100 0 -101C-2 -100 -8 -98 -15 -100Z"
+        style={`fill: ${coloreCapelli}`}
+      />
+    ) : (
+      <path class="personaggio__tratto" d="M-9 -99Q0 -93 9 -99" />
+    )
+  }
+</g>
+
+<style>
+  .personaggio :is(path, rect, circle, ellipse) {
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .personaggio__pelle {
+    fill: var(--pelle);
+  }
+  .personaggio__camicia {
+    fill: var(--veste-bianco);
+  }
+  .personaggio__risvolti,
+  .personaggio__tratto {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .personaggio__occhio {
+    fill: var(--contorno);
+    stroke: none;
+  }
+</style>

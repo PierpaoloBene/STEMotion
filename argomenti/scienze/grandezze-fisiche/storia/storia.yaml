@@ -1,0 +1,71 @@
+protagonista: Archimede di Siracusa
+anni: circa 287 – 212 a.C.
+richiamo: >
+  Per misurare il volume di un oggetto dalla forma strana basta immergerlo nell'acqua.
+  Si racconta che Archimede ebbe questa idea facendo il bagno.
+titolo: Archimede e la corona del re
+ritratto:
+  capelli: ricci
+  colore_capelli: grigi
+  barba: lunga
+  veste: tunica
+  colore_veste: blu
+passaggi:
+  - id: archimede-corona
+    titolo: Il dubbio del re
+    breve: Il re Gerone sospetta che l'orafo gli abbia rubato una parte dell'oro.
+    spiegazione: >
+      Siamo a Siracusa, in Sicilia, nel III secolo a.C.
+      Il re **Gerone II** ha dato dell'oro a un orafo per fare una corona.
+      La corona ha la stessa massa dell'oro, ma il re teme che una parte sia stata sostituita con argento.
+      Chiede ad Archimede di scoprirlo senza rovinare la corona.
+
+  - id: archimede-volume
+    titolo: Stessa massa, volume diverso
+    breve: Un kilogrammo di argento occupa più spazio di un kilogrammo di oro.
+    spiegazione: >
+      L'argento ha una **densità** minore di quella dell'oro.
+      Per questo, a parità di massa, l'argento ha un volume più grande.
+      Se nella corona c'è argento, il suo volume è più grande di quello dell'oro dato all'orafo.
+      Ma come si misura il volume di una corona piena di punte?
+
+  - id: archimede-bagno
+    titolo: Eureka!
+    breve: Entrando nella vasca, Archimede vede l'acqua salire e traboccare.
+    spiegazione: >
+      Si racconta che Archimede trovò l'idea alle terme.
+      Più il suo corpo entrava nella vasca piena, più acqua usciva.
+      Un oggetto immerso sposta un volume d'acqua uguale al proprio volume.
+      Secondo il racconto, uscì correndo e gridando «**Eureka!**», cioè «Ho trovato!».
+
+  - id: archimede-prova
+    titolo: La prova
+    breve: La corona fa traboccare più acqua dell'oro con la stessa massa.
+    spiegazione: >
+      Archimede riempie un vaso d'acqua fino all'orlo.
+      Prima immerge un pezzo d'oro con la stessa massa della corona, poi la corona.
+      La corona fa uscire più acqua: ha un volume più grande.
+      Quindi non è d'oro puro: l'orafo aveva davvero imbrogliato.
+
+  - id: archimede-leggenda
+    titolo: Storia o leggenda?
+    breve: La storia la racconta Vitruvio, circa 200 anni dopo la morte di Archimede.
+    spiegazione: >
+      Archimede non ha mai scritto questa storia.
+      La racconta l'architetto romano **Vitruvio**, vissuto circa due secoli dopo.
+      Non sappiamo se sia andata davvero così.
+      Il metodo però funziona: è lo stesso che si usa con il cilindro graduato.
+
+  - id: archimede-galileo
+    titolo: Il dubbio di Galileo
+    breve: Nel 1586 il giovane Galileo propone un metodo più preciso, con una bilancia.
+    spiegazione: >
+      Molti secoli dopo, **Galileo Galilei** rifà i conti: l'acqua in più sarebbe stata pochissima, difficile da vedere.
+      Propone di appendere corona e oro ai due bracci di una bilancia, immersi nell'acqua.
+      L'acqua spinge verso l'alto di più l'oggetto con più volume: la bilancia pende dalla parte dell'oro.
+      Galileo spiega il metodo in un breve scritto, *La bilancetta*.
+fonti:
+  - "Vitruvio, De architectura, libro IX, prefazione (I secolo a.C.)"
+  - "G. Galilei, La bilancetta, 1586"
+  - "C. Rorres, The Golden Crown, Courant Institute, New York University (analisi del racconto di Vitruvio)"
+  - "Densità: oro 19,3 g/cm³, argento 10,5 g/cm³ (CRC Handbook of Chemistry and Physics)"

@@ -75,8 +75,33 @@ const deviazioni = defineCollection({
   }),
 });
 
+// Storie: chi ha scoperto o studiato l'argomento, in un box che si apre sotto il lettore.
+// L'id è il percorso della cartella, es. "scienze/peso-specifico/storia".
+// Il ritratto è una figura stilizzata (src/components/storie/Personaggio.astro), mai un ritratto copiato.
+const ritratto = z.object({
+  capelli: z.enum(['corti', 'lunghi', 'ricci', 'spettinati', 'calvo']).default('corti'),
+  colore_capelli: z.enum(['neri', 'castani', 'grigi', 'bianchi']).default('castani'),
+  barba: z.enum(['no', 'corta', 'lunga']).default('no'),
+  baffi: z.boolean().default(false),
+  veste: z.enum(['tunica', 'giacca', 'talare']).default('giacca'),
+  colore_veste: z.enum(['bianco', 'nero', 'blu', 'rosso', 'verde', 'marrone']).default('blu'),
+});
+
+const storie = defineCollection({
+  loader: glob({ base: './argomenti', pattern: '*/*/storia/storia.yaml', generateId: cartella }),
+  schema: z.object({
+    protagonista: z.string(),
+    anni: z.string(),
+    richiamo: z.string(),
+    titolo: z.string(),
+    ritratto: ritratto,
+    passaggi: z.array(passaggio).min(1).max(6, 'Al massimo 6 passaggi in una storia (guida di stile, §5).'),
+    fonti: z.array(z.string()).min(1, 'Una storia ha sempre almeno una fonte (guida di stile, §5).'),
+  }),
+});
+
 const note = defineCollection({
   loader: glob({ base: './argomenti', pattern: '*/*/insegnante.md', generateId: cartella }),
 });
 
-export const collections = { materie, argomenti, passaggi, deviazioni, note };
+export const collections = { materie, argomenti, passaggi, deviazioni, storie, note };

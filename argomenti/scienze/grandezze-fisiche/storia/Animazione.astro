@@ -1,0 +1,283 @@
+---
+/**
+ * Storia delle grandezze fisiche: Archimede e la corona del re Gerone.
+ *
+ * Sei scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Si muovono il braccio della bilancia, Archimede nella vasca, l'acqua che trabocca
+ * e gli oggetti calati nei vasi, con CSS a partire da [data-indice] del palco.
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import Cubo from '../../../../src/components/laboratorio/Cubo.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+// Corona e lingotto, con la base al centro in (0, 0).
+const corona = 'M-40 0V-14H40V0ZM-40 -14V-46L-21 -26L0 -52L21 -26L40 -46V-14Z';
+const lingotto = 'M-32 0L-22 -26H22L32 0Z';
+
+// Bilancia a due piatti: perno in (400, 200), piatti a 140 dal perno.
+const piatto = 'M-60 0H60C56 18 -56 18 -60 0Z';
+const appeso = 'M0 0L-50 0M0 0L50 0';
+
+// Linea del tempo: dal 300 a.C. all'anno 1 (x = 740).
+const anno = (a: number) => +(60 + (a + 300) * (680 / 300)).toFixed(1);
+
+const archimede = { capelli: 'ricci', colore_capelli: 'grigi', barba: 'lunga', veste: 'tunica', colore_veste: 'blu' } as const;
+
+const descrizioni = [
+  'Una bilancia a due piatti in equilibrio: a sinistra la corona, a destra l’oro dato all’orafo. Accanto c’è Archimede.',
+  'Due cubi con la stessa massa, 1 kg: quello d’oro è piccolo, quello d’argento è più grande. Sopra, la corona con un punto di domanda.',
+  'Archimede entra in una vasca piena d’acqua: l’acqua sale e trabocca dai bordi. In alto la scritta Eureka!',
+  'Due vasi pieni fino all’orlo. Nel primo si cala il pezzo d’oro, nel secondo la corona. Dal vaso della corona esce più acqua, che si raccoglie in un bicchiere.',
+  'Una linea del tempo dal 300 a.C. all’anno 1. La vita di Archimede finisce nel 212 a.C.; Vitruvio scrive la storia circa 200 anni dopo.',
+  'Galileo accanto a una bilancia: corona e oro sono appesi ai due bracci, immersi nell’acqua. La bilancia pende dalla parte dell’oro. In alto la data 1586.',
+];
+---
+
+<Storia classe="storia-archimede" descrizioni={descrizioni}>
+  <defs>
+    <clipPath id="storia-archimede-vasca">
+      <rect x="0" y="0" width="800" height="478"></rect>
+    </clipPath>
+  </defs>
+
+  <!-- 0: la bilancia in equilibrio, corona contro oro -->
+  <g data-passi="0">
+    <g transform="translate(110 480) scale(0.95)">
+      <Personaggio {...archimede} />
+    </g>
+    <path class="tratto legno" d="M350 480H450L430 460H370Z"></path>
+    <line class="linea" x1="400" y1="460" x2="400" y2="200"></line>
+    <line class="linea braccio" x1="260" y1="200" x2="540" y2="200"></line>
+    <circle class="tratto carta" cx="400" cy="200" r="8"></circle>
+    <g transform="translate(260 200)">
+      <path class="linea" d="M0 0L-50 140M0 0L50 140"></path>
+      <g transform="translate(0 140)">
+        <path class="tratto argento" d={piatto}></path>
+        <path class="tratto oro" d={corona}></path>
+      </g>
+    </g>
+    <g transform="translate(540 200)">
+      <path class="linea" d="M0 0L-50 140M0 0L50 140"></path>
+      <g transform="translate(0 140)">
+        <path class="tratto argento" d={piatto}></path>
+        <path class="tratto oro" d={lingotto}></path>
+      </g>
+    </g>
+  </g>
+  <Etichetta testo="Corona" x={260} y={400} allinea="centro" passi="0" />
+  <Etichetta testo="Oro" x={540} y={400} allinea="centro" passi="0" />
+  <text class="data" x="40" y="90" data-passi="0">Siracusa</text>
+
+  <!-- 1: stessa massa, volume diverso -->
+  <g data-passi="1">
+    <g transform="translate(400 200)">
+      <path class="tratto oro" d={corona}></path>
+    </g>
+    <text class="data centrato" x="400" y="120">?</text>
+    <g transform="translate(260 430)"><Cubo lato={70} materiale="oro" /></g>
+    <g transform="translate(540 430)"><Cubo lato={86} materiale="argento" /></g>
+  </g>
+  <Etichetta testo="Oro\n1 kg" x={260} y={490} allinea="centro" passi="1" />
+  <Etichetta testo="Argento\n1 kg" x={540} y={490} allinea="centro" passi="1" />
+
+  <!-- 2: il bagno e l'acqua che trabocca -->
+  <g data-passi="2">
+    <path class="tratto carta" d="M230 360H570V450C570 466 556 478 540 478H260C244 478 230 466 230 450Z"></path>
+    <g clip-path="url(#storia-archimede-vasca)">
+      <g class="bagnante">
+        <Personaggio {...archimede} />
+      </g>
+      <rect class="acqua livello" x="232" y="370" width="336" height="120"></rect>
+    </g>
+    <path class="linea" d="M230 360V450C230 466 244 478 260 478H540C556 478 570 466 570 450V360"></path>
+    <path class="linea" d="M262 478L252 500M538 478L548 500"></path>
+    <g class="trabocca">
+      <path class="acqua-tratto" d="M228 366C214 380 214 420 210 470"></path>
+      <path class="acqua-tratto" d="M572 366C586 380 586 420 590 470"></path>
+      <circle class="acqua" cx="206" cy="492" r="6"></circle>
+      <circle class="acqua" cx="594" cy="492" r="6"></circle>
+    </g>
+    <text class="data centrato eureka" x="400" y="140">Eureka!</text>
+  </g>
+
+  <!-- 3: la prova con i due vasi pieni -->
+  <g data-passi="3">
+    {
+      [
+        { x: 220, oggetto: lingotto, classe: 'calato--oro', bicchiere: 'bicchiere--oro' },
+        { x: 520, oggetto: corona, classe: 'calato--corona', bicchiere: 'bicchiere--corona' },
+      ].map((v) => (
+        <g>
+          <rect class="acqua" x={v.x - 66} y="282" width="132" height="146" />
+          <g class={`calato ${v.classe}`}>
+            <line class="linea" x1={v.x} y1="60" x2={v.x} y2="190" />
+            <g transform={`translate(${v.x} 240)`}>
+              <path class="tratto oro" d={v.oggetto} />
+            </g>
+          </g>
+          <path class="linea" d={`M${v.x - 70} 270V430H${v.x + 70}V270`} />
+          <path class="linea" d={`M${v.x + 70} 280H${v.x + 92}`} />
+          <path class={`acqua-tratto getto ${v.bicchiere}`} d={`M${v.x + 92} 282C${v.x + 100} 300 ${v.x + 104} 340 ${v.x + 106} 384`} />
+          <rect class={`acqua bicchiere__acqua ${v.bicchiere}`} x={v.x + 82} y="388" width="48" height="40" />
+          <path class="linea" d={`M${v.x + 80} 370V430H${v.x + 132}V370`} />
+        </g>
+      ))
+    }
+  </g>
+  <Etichetta testo="Oro" x={220} y={480} allinea="centro" passi="3" />
+  <Etichetta testo="Corona" x={520} y={480} allinea="centro" passi="3" />
+  <Etichetta testo="Acqua uscita" x={644} y={560} linea={[644, 532, 644, 436]} allinea="centro" passi="3" />
+
+  <!-- 4: la linea del tempo -->
+  <g data-passi="4">
+    <line class="linea" x1="60" y1="330" x2="740" y2="330"></line>
+    {[-300, -200, -100, 0].map((a) => <line class="linea" x1={anno(a)} y1="320" x2={anno(a)} y2="340" />)}
+    <rect class="tratto veste-blu" x={anno(-287)} y="290" width={anno(-212) - anno(-287)} height="26" rx="13"></rect>
+    <rect class="tratto veste-rosso" x={anno(-80)} y="290" width={anno(-15) - anno(-80)} height="26" rx="13"></rect>
+    <path class="linea" d={freccia(anno(-212), 430, anno(-25), 430)}></path>
+    <path class="linea" d={`M${anno(-212)} 340V430M${anno(-25)} 316V430`} stroke-dasharray="6 8"></path>
+  </g>
+  <Etichetta testo="Archimede" x={anno(-250)} y={270} allinea="centro" passi="4" />
+  <Etichetta testo="Vitruvio" x={anno(-48)} y={270} allinea="centro" passi="4" />
+  <Etichetta testo="200 a.C." x={anno(-200)} y={380} allinea="centro" passi="4" />
+  <Etichetta testo="100 a.C." x={anno(-100)} y={380} allinea="centro" passi="4" />
+  <Etichetta testo="circa 200 anni" x={anno(-118)} y={490} allinea="centro" passi="4" />
+
+  <!-- 5: la bilancetta di Galileo -->
+  <g data-passi="5">
+    <g transform="translate(100 480) scale(0.85)">
+      <Personaggio capelli="corti" colore_capelli="castani" barba="corta" veste="giacca" colore_veste="nero" />
+    </g>
+    <line class="linea" x1="400" y1="480" x2="400" y2="140"></line>
+    <path class="tratto legno" d="M350 480H450L430 460H370Z"></path>
+    {
+      [260, 540].map((x) => (
+        <>
+          <rect class="acqua" x={x - 58} y="330" width="116" height="128" />
+          <path class="linea" d={`M${x - 62} 300V460H${x + 62}V300`} />
+        </>
+      ))
+    }
+    <g class="bilancetta">
+      <line class="linea" x1="260" y1="150" x2="540" y2="150"></line>
+    </g>
+    <circle class="tratto carta" cx="400" cy="150" r="8"></circle>
+    <g class="estremo estremo--corona">
+      <line class="linea" x1="260" y1="150" x2="260" y2="350"></line>
+      <g transform="translate(260 400)"><path class="tratto oro" d={corona}></path></g>
+    </g>
+    <g class="estremo estremo--oro">
+      <line class="linea" x1="540" y1="150" x2="540" y2="374"></line>
+      <g transform="translate(540 400)"><path class="tratto oro" d={lingotto}></path></g>
+    </g>
+  </g>
+  <Etichetta testo="Corona" x={260} y={520} allinea="centro" passi="5" />
+  <Etichetta testo="Oro" x={540} y={520} allinea="centro" passi="5" />
+  <text class="data" x="40" y="90" data-passi="5">1586</text>
+</Storia>
+
+<style is:global>
+  .storia-archimede .oro {
+    fill: var(--oro);
+  }
+  .storia-archimede .argento {
+    fill: var(--argento);
+  }
+  .storia-archimede .legno {
+    fill: var(--legno);
+  }
+  .storia-archimede .carta {
+    fill: var(--carta);
+  }
+  .storia-archimede .veste-blu {
+    fill: var(--veste-blu);
+  }
+  .storia-archimede .veste-rosso {
+    fill: var(--veste-rosso);
+  }
+  .storia-archimede .acqua {
+    fill: var(--acqua);
+    opacity: 0.85;
+  }
+  .storia-archimede .acqua-tratto {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+
+  /* --- 2: Archimede entra nella vasca, l'acqua sale e trabocca --- */
+
+  .storia-archimede .bagnante {
+    transform: translate(400px, 340px);
+  }
+  [data-indice='2'] .storia-archimede .bagnante {
+    transform: translate(400px, 425px);
+    transition: transform 1.6s ease-in-out 0.6s;
+  }
+  .storia-archimede .livello {
+    transform: translateY(40px);
+  }
+  [data-indice='2'] .storia-archimede .livello {
+    transform: translateY(-8px);
+    transition: transform 1.6s ease-in-out 0.6s;
+  }
+  .storia-archimede :is(.trabocca, .eureka) {
+    opacity: 0;
+  }
+  [data-indice='2'] .storia-archimede .trabocca {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out 1.8s;
+  }
+  [data-indice='2'] .storia-archimede .eureka {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out 2.3s;
+  }
+
+  /* --- 3: oro e corona scendono nei vasi; dal vaso della corona esce più acqua --- */
+
+  [data-indice='3'] .storia-archimede .calato {
+    transform: translateY(150px);
+    transition: transform 1.4s ease-in-out 0.6s;
+  }
+  .storia-archimede .bicchiere__acqua {
+    transform-box: fill-box;
+    transform-origin: bottom;
+    transform: scaleY(0);
+  }
+  [data-indice='3'] .storia-archimede .bicchiere__acqua.bicchiere--oro {
+    transform: scaleY(0.3);
+    transition: transform 1s ease-in-out 1.6s;
+  }
+  [data-indice='3'] .storia-archimede .bicchiere__acqua.bicchiere--corona {
+    transform: scaleY(0.6);
+    transition: transform 1s ease-in-out 1.6s;
+  }
+  .storia-archimede .getto {
+    opacity: 0;
+  }
+  [data-indice='3'] .storia-archimede .getto {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out 1.5s;
+  }
+
+  /* --- 5: la bilancetta pende dalla parte dell'oro (destra) --- */
+
+  .storia-archimede .bilancetta {
+    transform-origin: 400px 150px;
+  }
+  [data-indice='5'] .storia-archimede .bilancetta {
+    transform: rotate(5deg);
+    transition: transform 1.4s ease-in-out 1s;
+  }
+  [data-indice='5'] .storia-archimede .estremo--corona {
+    transform: translateY(-12px);
+    transition: transform 1.4s ease-in-out 1s;
+  }
+  [data-indice='5'] .storia-archimede .estremo--oro {
+    transform: translateY(12px);
+    transition: transform 1.4s ease-in-out 1s;
+  }
+</style>

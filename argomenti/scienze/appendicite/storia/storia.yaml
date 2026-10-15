@@ -1,0 +1,61 @@
+protagonista: Reginald Fitz
+anni: 1843 – 1913
+richiamo: >
+  Fino a 150 anni fa i medici non sapevano che il dolore in basso a destra partiva dall'appendice.
+  Lo capì un medico di Boston, Reginald Fitz, e da allora quella malattia ha un nome: appendicite.
+titolo: Reginald Fitz e il mistero del dolore al fianco
+ritratto:
+  capelli: corti
+  colore_capelli: castani
+  barba: corta
+  baffi: true
+  veste: giacca
+  colore_veste: nero
+passaggi:
+  - id: fitz-mistero
+    titolo: Una malattia senza nome
+    breve: Nell'Ottocento molte persone muoiono per un'infiammazione nella pancia.
+    spiegazione: >
+      I medici dell'Ottocento conoscono una malattia grave nella parte bassa a destra della pancia.
+      Pensano che si infiammi il **cieco**, il primo tratto dell'intestino crasso.
+      Spesso aspettano che passi da sola, e molti malati muoiono.
+
+  - id: fitz-amyand
+    titolo: Una spilla nell'appendice
+    breve: Già nel 1735 il chirurgo Claudius Amyand aveva tolto un'appendice.
+    spiegazione: >
+      A Londra il chirurgo **Claudius Amyand** opera un bambino di 11 anni.
+      Dentro l'appendice trova una spilla che il bambino aveva inghiottito e che l'aveva bucata.
+      Toglie l'appendice e il bambino guarisce.
+      È un caso rarissimo, e per più di un secolo nessuno lo collega alla malattia misteriosa.
+
+  - id: fitz-casi
+    titolo: Il medico che contava i casi
+    breve: Nel 1886 Reginald Fitz studia centinaia di casi e trova il colpevole.
+    spiegazione: >
+      **Reginald Fitz** è un medico di Boston, negli Stati Uniti, che studia gli organi malati.
+      Raccoglie centinaia di casi e nota che quasi sempre l'infiammazione parte dall'appendice, non dal cieco.
+      Dà alla malattia il nome di **appendicite**.
+
+  - id: fitz-operare
+    titolo: Operare presto
+    breve: Fitz consiglia di togliere presto l'appendice infiammata.
+    spiegazione: >
+      Fitz capisce che aspettare è pericoloso: l'appendice può rompersi.
+      Consiglia ai chirurghi di operare presto.
+      Nel 1889 il chirurgo **Charles McBurney** descrive il punto della pancia dove il dolore è più forte.
+      Nel disegno è a sinistra, perché la persona ci guarda: per lei è a destra.
+
+  - id: fitz-re
+    titolo: Il re che rimandò l'incoronazione
+    breve: Nel 1902 il re d'Inghilterra si opera di appendicite.
+    spiegazione: >
+      Il re **Edoardo VII** deve essere incoronato il 26 giugno 1902.
+      Due giorni prima si ammala di appendicite: la cerimonia viene rimandata e il re viene operato.
+      Guarisce e viene incoronato il 9 agosto.
+      La notizia fa il giro del mondo e l'operazione diventa famosa.
+fonti:
+  - "R. H. Fitz, Perforating inflammation of the vermiform appendix, American Journal of the Medical Sciences, 92 (1886)"
+  - "C. Amyand, Of an inguinal rupture, with a pin in the appendix coeci, Philosophical Transactions, 39 (1736)"
+  - "C. McBurney, Experience with early operative interference in cases of disease of the vermiform appendix, New York Medical Journal, 50 (1889)"
+  - "Royal Collection Trust: l'incoronazione di Edoardo VII, rimandata dal 26 giugno al 9 agosto 1902"

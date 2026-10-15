@@ -1,0 +1,57 @@
+protagonista: Lazzaro Spallanzani
+anni: 1729 – 1799
+richiamo: >
+  Nello stomaco il succo gastrico comincia a digerire il cibo.
+  Lo dimostrò uno scienziato italiano, Lazzaro Spallanzani, facendo esperimenti anche su sé stesso.
+titolo: Spallanzani e il succo gastrico
+ritratto:
+  capelli: corti
+  colore_capelli: bianchi
+  veste: talare
+  colore_veste: nero
+passaggi:
+  - id: spallanzani-dubbio
+    titolo: Macinare o sciogliere?
+    breve: Nel Settecento ci si chiede se lo stomaco macini o sciolga il cibo.
+    spiegazione: >
+      Nel Settecento gli scienziati non sono d'accordo su come funziona lo stomaco.
+      Alcuni pensano che **macini** il cibo, come la macina di un mulino.
+      Altri pensano che lo **sciolga** con un liquido.
+
+  - id: spallanzani-tubetti
+    titolo: I tubetti forati
+    breve: Spallanzani fa inghiottire ad alcuni animali tubetti forati pieni di carne.
+    spiegazione: >
+      **Lazzaro Spallanzani** è un sacerdote e professore all'università di **Pavia**.
+      Mette pezzetti di carne dentro piccoli tubetti pieni di buchi e li fa inghiottire ad alcuni animali.
+      I tubetti proteggono la carne dagli schiacciamenti, ma lasciano entrare i liquidi.
+      Quando li recupera, la carne è in parte sciolta.
+
+  - id: spallanzani-sacchetti
+    titolo: L'esperimento su sé stesso
+    breve: Spallanzani inghiotte sacchetti di tela con dentro del cibo.
+    spiegazione: >
+      Poi prova su sé stesso.
+      Inghiotte piccoli sacchetti di tela con dentro pane o carne, e li recupera quando escono dal corpo.
+      I sacchetti sono interi, ma il cibo dentro è sparito.
+      Qualcosa lo ha sciolto attraverso la tela.
+
+  - id: spallanzani-vasetto
+    titolo: Digestione nel vasetto
+    breve: Il succo gastrico scioglie la carne anche fuori dallo stomaco.
+    spiegazione: >
+      Spallanzani raccoglie del **succo gastrico** e ci mette un pezzo di carne, in un vasetto tenuto al caldo.
+      Dopo alcune ore la carne è sciolta.
+      Un pezzo uguale messo nell'acqua, invece, resta intero e alla fine va a male.
+
+  - id: spallanzani-conclusione
+    titolo: Una digestione chimica
+    breve: A digerire il cibo nello stomaco è soprattutto il succo gastrico.
+    spiegazione: >
+      Nel 1780 Spallanzani pubblica i suoi risultati.
+      Lo stomaco rimescola il cibo, ma a digerirlo è soprattutto il suo succo.
+      Oggi sappiamo che il succo gastrico contiene un acido ed **enzimi**, sostanze che spezzano il cibo in parti più piccole.
+fonti:
+  - "L. Spallanzani, Dissertazioni di fisica animale e vegetabile, Modena, 1780"
+  - "R.-A. F. de Réaumur, Sur la digestion des oiseaux, Mémoires de l'Académie royale des sciences, 1752"
+  - "Museo di Storia Naturale dell'Università di Pavia, collezione Spallanzani"

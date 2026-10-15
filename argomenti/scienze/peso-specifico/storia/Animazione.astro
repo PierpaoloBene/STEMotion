@@ -1,0 +1,234 @@
+---
+/**
+ * Storia del peso specifico: Isaac Newton e la forza di gravità.
+ *
+ * Sei scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Dentro le scene si muovono il mulino, la mela, il pianeta e i dinamometri,
+ * con CSS a partire da [data-indice] del palco.
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import Dinamometro from '../../../../src/components/laboratorio/Dinamometro.astro';
+import Cubo from '../../../../src/components/laboratorio/Cubo.astro';
+import { freccia, arco } from '../../../../src/components/storie/disegno';
+
+const L = 70; // spigolo del cubo di alluminio
+const SOTTO_CUBO = 17 + L + +(L * 0.354).toFixed(1) / 2; // dal gancio alla base del cubo (README del laboratorio)
+
+const descrizioni = [
+  'Una casa di campagna con il tetto rosso. Accanto c’è il giovane Newton, con un mulino a vento in miniatura le cui pale girano. In alto la data 1642.',
+  'A sinistra l’università di Cambridge con la porta sbarrata, a destra la casa di campagna. Una freccia va dall’università alla casa. In alto la data 1665.',
+  'Una mela si stacca da un albero e cade a terra. Accanto, la Terra e la Luna: due frecce mostrano che la gravità tira la mela e la Luna verso la Terra.',
+  'La copertina di un libro, i Principia, con la data 1687. Accanto, un pianeta gira attorno al Sole.',
+  'Due dinamometri con lo stesso cubo di alluminio. Sulla Terra la molla si allunga molto e segna 26,5 newton; sulla Luna poco e segna 4,4 newton.',
+  'Un dinamometro con appesa una mela piccola segna circa 1 newton. Accanto, grande, la scritta 1 N.',
+];
+---
+
+<Storia classe="storia-newton" descrizioni={descrizioni}>
+  <!-- 0–1: la casa di campagna a Woolsthorpe -->
+  <g data-passi="0 1">
+    <line class="linea" x1="20" y1="470" x2="780" y2="470"></line>
+    <rect class="tratto muro" x="480" y="330" width="200" height="140"></rect>
+    <path class="tratto tetto" d="M462 332L580 250L698 332Z"></path>
+    <rect class="tratto legno" x="565" y="400" width="32" height="70"></rect>
+    <rect class="tratto finestra" x="505" y="360" width="38" height="34"></rect>
+    <rect class="tratto finestra" x="620" y="360" width="38" height="34"></rect>
+  </g>
+  <Etichetta testo="Woolsthorpe" x={580} y={226} allinea="centro" passi="0 1" />
+
+  <!-- 0: Newton ragazzo e il suo mulino in miniatura -->
+  <g data-passi="0">
+    <g transform="translate(170 470) scale(1.1)">
+      <Personaggio capelli="lunghi" colore_capelli="castani" veste="giacca" colore_veste="marrone" />
+    </g>
+    <line class="linea" x1="380" y1="470" x2="380" y2="384"></line>
+    <rect class="tratto legno" x="364" y="440" width="32" height="30"></rect>
+    <g transform="translate(380 380)">
+      <g class="pale">
+        <path class="tratto carta" d="M0 0L-8 -48H8ZM0 0L-8 48H8ZM0 0L-48 -8V8ZM0 0L48 -8V8Z"></path>
+        <circle class="tratto legno" r="6"></circle>
+      </g>
+    </g>
+  </g>
+  <Etichetta testo="Mulino" x={380} y={300} allinea="centro" passi="0" />
+  <text class="data" x="40" y="90" data-passi="0">1642</text>
+
+  <!-- 1: l'università chiude per la peste -->
+  <g data-passi="1">
+    <rect class="tratto muro" x="70" y="320" width="240" height="150"></rect>
+    <path class="tratto muro" d="M58 322L190 250L322 322Z"></path>
+    {[92, 132, 228, 268].map((x) => <rect class="tratto carta" x={x} y="334" width="20" height="136" />)}
+    <rect class="tratto legno" x="170" y="396" width="40" height="74"></rect>
+    <path class="linea" d="M170 396L210 470M210 396L170 470"></path>
+    <path class="linea freccia-viaggio" d={freccia(336, 410, 456, 410, 18)}></path>
+  </g>
+  <Etichetta testo="Cambridge" x={190} y={226} allinea="centro" passi="1" />
+  <text class="data" x="40" y="90" data-passi="1">1665</text>
+
+  <!-- 2: la mela e la Luna -->
+  <g data-passi="2">
+    <line class="linea" x1="20" y1="470" x2="380" y2="470"></line>
+    <rect class="tratto tronco" x="150" y="300" width="36" height="170"></rect>
+    <circle class="tratto foglie" cx="168" cy="220" r="105"></circle>
+    <g class="mela">
+      <path class="linea" d="M0 -14V-22"></path>
+      <circle class="tratto mela__frutto" r="14"></circle>
+    </g>
+    <path class="linea" d={freccia(300, 300, 300, 420)}></path>
+
+    <path class="linea orbita" d={arco(580, 330, 228, -100, -8)}></path>
+    <circle class="tratto pianeta-terra" cx="580" cy="330" r="75"></circle>
+    <circle class="tratto luna" cx="720" cy="150" r="24"></circle>
+    <path class="linea" d={freccia(702, 174, 650, 242)}></path>
+  </g>
+  <Etichetta testo="Terra" x={580} y={450} allinea="centro" passi="2" />
+  <Etichetta testo="Luna" x={720} y={108} allinea="centro" passi="2" />
+  <Etichetta testo="Forza di gravità" x={400} y={560} allinea="centro" passi="2" />
+
+  <!-- 3: i Principia e il giro dei pianeti -->
+  <g data-passi="3">
+    <rect class="tratto copertina" x="90" y="130" width="240" height="320" rx="8"></rect>
+    <rect class="linea copertina__cornice" x="110" y="150" width="200" height="280" rx="4"></rect>
+    <text class="copertina__titolo centrato" x="210" y="300">PRINCIPIA</text>
+
+    <circle class="linea orbita" cx="590" cy="300" r="150"></circle>
+    <circle class="tratto sole" cx="590" cy="300" r="40"></circle>
+    <g class="giro">
+      <circle class="tratto pianeta-terra" cx="740" cy="300" r="16"></circle>
+    </g>
+  </g>
+  <Etichetta testo="Sole" x={590} y={385} allinea="centro" passi="3" />
+  <text class="data" x="90" y="100" data-passi="3">1687</text>
+
+  <!-- 4: lo stesso cubo sulla Terra e sulla Luna -->
+  <g data-passi="4">
+    <line class="linea" x1="150" y1="50" x2="650" y2="50"></line>
+    <g transform="translate(250 50)">
+      <Dinamometro class="din din--terra">
+        <g transform={`translate(0 ${SOTTO_CUBO})`}><Cubo lato={L} materiale="alluminio" occhiello /></g>
+      </Dinamometro>
+    </g>
+    <g transform="translate(550 50)">
+      <Dinamometro class="din din--luna">
+        <g transform={`translate(0 ${SOTTO_CUBO})`}><Cubo lato={L} materiale="alluminio" occhiello /></g>
+      </Dinamometro>
+    </g>
+  </g>
+  <Etichetta testo="26,5 N" x={285} y={160} passi="4" />
+  <Etichetta testo="4,4 N" x={585} y={160} passi="4" />
+  <Etichetta testo="Sulla Terra" x={250} y={560} allinea="centro" passi="4" />
+  <Etichetta testo="Sulla Luna" x={550} y={560} allinea="centro" passi="4" />
+
+  <!-- 5: 1 newton, il peso di una mela piccola -->
+  <g data-passi="5">
+    <line class="linea" x1="160" y1="50" x2="360" y2="50"></line>
+    <g transform="translate(260 50)">
+      <Dinamometro class="din din--mela">
+        <path class="linea" d="M0 0V8"></path>
+        <circle class="tratto mela__frutto" cy="28" r="22"></circle>
+      </Dinamometro>
+    </g>
+    <text class="grande centrato" x="580" y="330">1 N</text>
+  </g>
+  <Etichetta testo="circa il peso di\nuna mela piccola" x={580} y={420} allinea="centro" passi="5" />
+</Storia>
+
+<style is:global>
+  .storia-newton .muro {
+    fill: var(--muro);
+  }
+  .storia-newton .tetto {
+    fill: var(--tetto);
+  }
+  .storia-newton .legno {
+    fill: var(--legno);
+  }
+  .storia-newton .finestra {
+    fill: var(--aria);
+  }
+  .storia-newton .carta {
+    fill: var(--carta);
+  }
+  .storia-newton .tronco {
+    fill: var(--tronco);
+  }
+  .storia-newton .foglie {
+    fill: var(--foglie);
+  }
+  .storia-newton .mela__frutto {
+    fill: var(--mela);
+  }
+  .storia-newton .pianeta-terra {
+    fill: var(--pianeta-terra);
+  }
+  .storia-newton .luna {
+    fill: var(--luna);
+  }
+  .storia-newton .sole {
+    fill: var(--oro);
+  }
+  .storia-newton .orbita {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 8 10;
+  }
+  .storia-newton .copertina {
+    fill: var(--veste-rosso);
+  }
+  .storia-newton .copertina__cornice {
+    stroke: var(--oro);
+  }
+  .storia-newton .copertina__titolo {
+    fill: var(--oro);
+    stroke: none;
+    font-size: 32px;
+    letter-spacing: 0.08em;
+  }
+  .storia-newton .grande {
+    font-size: 150px;
+  }
+
+  /* Le pale del mulino fanno un quarto di giro. */
+  .storia-newton .pale {
+    transition: transform 0.4s ease-in-out;
+  }
+  [data-indice='0'] .storia-newton .pale {
+    transform: rotate(90deg);
+    transition: transform 2s ease-in-out 0.5s;
+  }
+
+  /* La mela cade: accelera, come un oggetto che cade davvero. */
+  .storia-newton .mela {
+    transform: translate(240px, 290px);
+  }
+  [data-indice='2'] .storia-newton .mela {
+    transform: translate(240px, 456px);
+    transition: transform 0.8s ease-in 1s;
+  }
+
+  /* Il pianeta percorre un pezzo della sua orbita. */
+  .storia-newton .giro {
+    transform-origin: 590px 300px;
+  }
+  [data-indice='3'] .storia-newton .giro {
+    transform: rotate(-120deg);
+    transition: transform 2.4s ease-in-out 0.6s;
+  }
+
+  /* Dinamometri: fondo scala 40 N; la mela su un dinamometro da 10 N. */
+  [data-indice='4'] .storia-newton .din--terra {
+    --forza: 0.66;
+  }
+  [data-indice='4'] .storia-newton .din--luna {
+    --forza: 0.11;
+  }
+  [data-indice='5'] .storia-newton .din--mela {
+    --forza: 0.1;
+  }
+  [data-indice='4'] .storia-newton .din :is(.dinamometro__molla, .dinamometro__cursore),
+  [data-indice='5'] .storia-newton .din :is(.dinamometro__molla, .dinamometro__cursore) {
+    transition-delay: 0.8s;
+  }
+</style>

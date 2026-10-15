@@ -1,0 +1,64 @@
+protagonista: Isaac Newton
+anni: 1642 – 1727
+richiamo: >
+  Il peso si misura in newton (N). Ma chi era Newton, e perché un'unità di misura porta il suo nome?
+titolo: Isaac Newton e la forza di gravità
+ritratto:
+  capelli: lunghi
+  colore_capelli: bianchi
+  veste: giacca
+  colore_veste: marrone
+passaggi:
+  - id: newton-ragazzo
+    titolo: Un ragazzo di campagna
+    breve: Isaac Newton nasce nel 1642 in un villaggio dell'Inghilterra.
+    spiegazione: >
+      Nasce a Woolsthorpe, in una famiglia di contadini.
+      Da ragazzo costruisce meridiane, mulini a vento in miniatura e orologi ad acqua.
+      La madre vorrebbe che facesse il contadino, ma lui va a studiare all'università di **Cambridge**.
+
+  - id: newton-peste
+    titolo: L'università chiude
+    breve: Nel 1665 arriva la peste e Newton torna a studiare a casa.
+    spiegazione: >
+      Nel 1665 un'epidemia di **peste** colpisce Londra e l'università di Cambridge chiude.
+      Newton torna nella casa di campagna per quasi due anni.
+      Lì, da solo, ha molte delle sue idee più importanti: sulla luce, sulla matematica e sul movimento.
+
+  - id: newton-mela
+    titolo: La mela e la Luna
+    breve: La stessa forza fa cadere la mela e tiene la Luna vicino alla Terra.
+    spiegazione: >
+      Da anziano, Newton raccontò di aver visto cadere una mela in giardino.
+      Si chiese se la forza che tira giù la mela arrivasse fino alla Luna.
+      La sua risposta fu sì: è la **forza di gravità**.
+      La mela che gli cade in testa, invece, è un'aggiunta inventata dopo.
+
+  - id: newton-principia
+    titolo: Un libro che cambia la scienza
+    breve: Nel 1687 pubblica i Principia, con le leggi del moto e della gravità.
+    spiegazione: >
+      Nel libro spiega con tre regole come si muovono gli oggetti: le **leggi del moto**.
+      Spiega anche che ogni massa attira tutte le altre masse.
+      Con le stesse regole si calcolano il volo di un sasso e il giro dei pianeti attorno al Sole.
+
+  - id: newton-peso
+    titolo: Che cos'è il peso
+    breve: Il peso è la forza con cui un pianeta attira una massa.
+    spiegazione: >
+      Grazie a Newton sappiamo che il peso è una **forza**.
+      Dipende dalla massa dell'oggetto e dal pianeta su cui si trova.
+      Sulla Luna la gravità è circa 6 volte più debole: lo stesso cubo pesa meno, ma la sua massa non cambia.
+
+  - id: newton-unita
+    titolo: Un'unità con il suo nome
+    breve: Dal 1948 l'unità di misura delle forze si chiama newton (N).
+    spiegazione: >
+      In suo onore l'unità di misura delle forze si chiama **newton**, con il simbolo N.
+      Il nome dell'unità si scrive con la minuscola, il simbolo con la maiuscola.
+      Un oggetto con una massa di 100 g pesa circa 1 N: più o meno quanto una mela piccola.
+fonti:
+  - "R. S. Westfall, Never at Rest: A Biography of Isaac Newton, Cambridge University Press, 1980"
+  - "W. Stukeley, Memoirs of Sir Isaac Newton's Life, 1752 (il racconto della mela)"
+  - "I. Newton, Philosophiae Naturalis Principia Mathematica, 1687"
+  - "BIPM, 9ª Conferenza generale dei pesi e delle misure, 1948: il nome newton per l'unità di forza"

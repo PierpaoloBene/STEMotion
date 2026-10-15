@@ -1,0 +1,318 @@
+---
+/**
+ * Storia degli stati della materia: il moto browniano, da Robert Brown a Einstein e Perrin.
+ *
+ * Cinque scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * I granelli seguono percorsi a zig-zag fissi (offset-path), calcolati qui con un generatore
+ * pseudo-casuale con seme: ogni volta che si torna su un passaggio il percorso è lo stesso.
+ * Le molecole d'acqua sono blu acqua (guida di stile, §3).
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+const r = (v: number) => +v.toFixed(1);
+
+/** Cammino a zig-zag che parte da (x, y): `passi` tratti lunghi `lungo`, senza uscire dal cerchio (cx, cy, raggio). */
+function cammino(seme: number, x: number, y: number, passi: number, lungo: number, limite?: { cx: number; cy: number; r: number }) {
+  let s = seme;
+  const caso = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const punti: [number, number][] = [[x, y]];
+  for (let i = 0; i < passi; i++) {
+    let nx = x;
+    let ny = y;
+    for (let tentativi = 0; tentativi < 20; tentativi++) {
+      const a = caso() * Math.PI * 2;
+      const l = lungo * (0.5 + caso());
+      nx = x + l * Math.cos(a);
+      ny = y + l * Math.sin(a);
+      if (!limite || Math.hypot(nx - limite.cx, ny - limite.cy) < limite.r) break;
+    }
+    x = nx;
+    y = ny;
+    punti.push([r(x), r(y)]);
+  }
+  return punti;
+}
+const percorso = (p: [number, number][]) => 'M' + p.map(([x, y]) => `${x} ${y}`).join('L');
+
+// 0: una goccia al microscopio.
+const VISTA = { cx: 540, cy: 300, r: 200 };
+const granelli0 = [
+  [480, 230],
+  [600, 250],
+  [520, 360],
+  [630, 370],
+  [430, 320],
+  [560, 160],
+].map(([x, y], i) => percorso(cammino(11 + i * 7, x, y, 8, 26, { ...VISTA, r: VISTA.r - 20 })));
+
+// 1: polline e roccia, due gocce piccole.
+const POLLINE = { cx: 330, cy: 280, r: 120 };
+const ROCCIA = { cx: 610, cy: 280, r: 120 };
+const granelliIn = (v: typeof POLLINE, seme: number) =>
+  [
+    [-40, -30],
+    [40, -20],
+    [-10, 40],
+    [50, 50],
+  ].map(([dx, dy], i) => percorso(cammino(seme + i * 13, v.cx + dx, v.cy + dy, 7, 18, { ...v, r: v.r - 16 })));
+const granelliPolline = granelliIn(POLLINE, 5);
+const granelliRoccia = granelliIn(ROCCIA, 9);
+
+// 2: un granello circondato da molecole d'acqua.
+const G = { x: 480, y: 300 };
+const molecole = Array.from({ length: 30 }, (_, i) => {
+  const giro = i < 14 ? 0 : 1;
+  const n = giro ? 16 : 14;
+  const k = giro ? i - 14 : i;
+  const a = (k / n) * Math.PI * 2 + giro * 0.2;
+  const d = giro ? 150 : 88;
+  return [r(G.x + d * Math.cos(a)), r(G.y + d * Math.sin(a))];
+});
+// Le molecole del giro interno che stanno a sinistra colpiscono il granello: si spostano verso di lui.
+const colpisce = (x: number) => x < G.x - 30;
+
+// 3: il percorso di un granello e la distanza dalla partenza.
+const P = { x: 380, y: 300 };
+const lungo3 = cammino(8, P.x, P.y, 14, 85, { cx: 400, cy: 300, r: 250 });
+const [fx, fy] = lungo3[lungo3.length - 1];
+
+// 4: i percorsi disegnati da Perrin su carta a quadretti.
+const FOGLIO = { x: 160, y: 120, l: 520, h: 400 };
+const quadretti = [
+  ...Array.from({ length: FOGLIO.l / 40 - 1 }, (_, i) => `M${FOGLIO.x + (i + 1) * 40} ${FOGLIO.y}V${FOGLIO.y + FOGLIO.h}`),
+  ...Array.from({ length: FOGLIO.h / 40 - 1 }, (_, i) => `M${FOGLIO.x} ${FOGLIO.y + (i + 1) * 40}H${FOGLIO.x + FOGLIO.l}`),
+].join('');
+const DENTRO = { cx: 420, cy: 320, r: 180 };
+const perrin = [
+  cammino(21, 300, 240, 14, 34, DENTRO),
+  cammino(42, 520, 260, 14, 34, DENTRO),
+  cammino(77, 420, 420, 14, 34, DENTRO),
+];
+
+const descrizioni = [
+  'Un microscopio e, accanto, una goccia d’acqua vista ingrandita: alcuni granelli si spostano a zig-zag. In alto la data 1827.',
+  'Robert Brown accanto a due gocce: nella prima granelli di polline, nella seconda granelli di vetro e di roccia. Tutti si muovono allo stesso modo.',
+  'Un granello circondato da tante molecole d’acqua. Da sinistra arrivano più colpi che da destra e il granello si sposta un po’. Accanto c’è Einstein, in alto la data 1905.',
+  'Il percorso a zig-zag di un granello viene disegnato tratto dopo tratto. Una freccia unisce la partenza con il punto di arrivo: è la distanza percorsa.',
+  'Un foglio a quadretti con tre percorsi a zig-zag, disegnati punto per punto. In alto la data 1908, in basso il premio Nobel del 1926.',
+];
+---
+
+<Storia classe="storia-brown" descrizioni={descrizioni}>
+  <defs>
+    <clipPath id="storia-brown-vista"><circle cx={VISTA.cx} cy={VISTA.cy} r={VISTA.r}></circle></clipPath>
+  </defs>
+
+  <!-- 0: il microscopio e la goccia ingrandita -->
+  <g data-passi="0">
+    <rect class="tratto scuro" x="90" y="470" width="170" height="24" rx="6"></rect>
+    <path class="tratto scuro" d="M196 470V250C196 230 216 220 230 230L236 470Z"></path>
+    <rect class="tratto argento" x="110" y="360" width="120" height="14" rx="4"></rect>
+    <g transform="rotate(-12 150 250)">
+      <rect class="tratto argento" x="128" y="170" width="44" height="150" rx="6"></rect>
+      <rect class="tratto scuro" x="136" y="140" width="28" height="34" rx="4"></rect>
+    </g>
+    <path class="linea tratteggio" d="M180 160L380 150M180 160L400 440"></path>
+    <circle class="goccia" cx={VISTA.cx} cy={VISTA.cy} r={VISTA.r}></circle>
+    <g clip-path="url(#storia-brown-vista)">
+      {granelli0.map((d) => <circle class="tratto granello" r="10" style={`offset-path: path('${d}')`} />)}
+    </g>
+    <circle class="linea" cx={VISTA.cx} cy={VISTA.cy} r={VISTA.r}></circle>
+  </g>
+  <Etichetta testo="Microscopio" x={170} y={545} allinea="centro" passi="0" />
+  <text class="data" x="40" y="90" data-passi="0">1827</text>
+
+  <!-- 1: polline o roccia, il movimento è lo stesso -->
+  <g data-passi="1">
+    <g transform="translate(95 560) scale(0.7)">
+      <Personaggio capelli="corti" colore_capelli="grigi" veste="giacca" colore_veste="nero" />
+    </g>
+    {
+      [
+        { v: POLLINE, granelli: granelliPolline, classe: 'granello' },
+        { v: ROCCIA, granelli: granelliRoccia, classe: 'granello granello--roccia' },
+      ].map(({ v, granelli, classe }) => (
+        <>
+          <circle class="goccia" cx={v.cx} cy={v.cy} r={v.r} />
+          {granelli.map((d) => <circle class={`tratto ${classe}`} r="9" style={`offset-path: path('${d}')`} />)}
+          <circle class="linea" cx={v.cx} cy={v.cy} r={v.r} />
+        </>
+      ))
+    }
+  </g>
+  <Etichetta testo="Polline" x={POLLINE.cx} y={450} allinea="centro" passi="1" />
+  <Etichetta testo="Vetro, roccia" x={ROCCIA.cx} y={450} allinea="centro" passi="1" />
+
+  <!-- 2: le molecole d'acqua spingono il granello -->
+  <g data-passi="2">
+    <g transform="translate(110 480) scale(0.9)">
+      <Personaggio capelli="spettinati" colore_capelli="castani" baffi veste="giacca" colore_veste="nero" />
+    </g>
+    {
+      molecole.map(([x, y], i) => (
+        <circle
+          class:list={['tratto molecola', i < 14 && colpisce(x) && 'molecola--colpo']}
+          cx={x}
+          cy={y}
+          r="13"
+          style={`--dx: ${r((G.x - x) * 0.14)}px; --dy: ${r((G.y - y) * 0.14)}px`}
+        />
+      ))
+    }
+    <g class="spinto">
+      <circle class="tratto granello" cx={G.x} cy={G.y} r="60"></circle>
+      <path class="linea spinta" d={freccia(G.x - 34, G.y, G.x + 34, G.y, 14)}></path>
+    </g>
+  </g>
+  <Etichetta testo="Molecole d'acqua" x={780} y={110} linea={[700, 120, 609, 223]} allinea="fine" passi="2" />
+  <text class="data" x="40" y="90" data-passi="2">1905</text>
+
+  <!-- 3: il percorso e la distanza dalla partenza -->
+  <g data-passi="3">
+    <path class="linea percorso" d={percorso(lungo3)} pathLength="1"></path>
+    <circle class="tratto partenza" cx={P.x} cy={P.y} r="10"></circle>
+    <circle class="tratto granello arrivo" cx={fx} cy={fy} r="12"></circle>
+    <path class="linea distanza" d={freccia(P.x, P.y, fx, fy, 18)}></path>
+  </g>
+  <Etichetta testo="Partenza" x={40} y={80} linea={[120, 92, P.x - 8, P.y - 8]} passi="3" />
+
+  <!-- 4: i percorsi disegnati da Perrin -->
+  <g data-passi="4">
+    <rect class="tratto carta" x={FOGLIO.x} y={FOGLIO.y} width={FOGLIO.l} height={FOGLIO.h}></rect>
+    <path class="quadretti" d={quadretti}></path>
+    {
+      perrin.map((p, i) => (
+        <g class={`traccia traccia--${i}`}>
+          <path class="linea traccia__linea" d={percorso(p)} />
+          {p.map(([x, y]) => (
+            <circle class="traccia__punto" cx={x} cy={y} r="4" />
+          ))}
+        </g>
+      ))
+    }
+  </g>
+  <Etichetta testo="Premio Nobel 1926" x={420} y={580} allinea="centro" passi="4" />
+  <text class="data" x="40" y="90" data-passi="4">1908</text>
+</Storia>
+
+<style is:global>
+  .storia-brown .scuro {
+    fill: var(--veste-nero);
+  }
+  .storia-brown .argento {
+    fill: var(--argento);
+  }
+  .storia-brown .carta {
+    fill: var(--carta);
+  }
+  .storia-brown .tratteggio {
+    stroke-width: 2;
+    stroke-dasharray: 6 8;
+  }
+  .storia-brown .goccia {
+    fill: color-mix(in srgb, var(--acqua) 18%, var(--superficie));
+  }
+  .storia-brown .granello {
+    fill: var(--legno);
+  }
+  .storia-brown .granello--roccia {
+    fill: var(--roccia);
+  }
+  .storia-brown .molecola {
+    fill: var(--acqua);
+  }
+  .storia-brown .partenza {
+    fill: var(--superficie);
+  }
+  .storia-brown .quadretti {
+    stroke: var(--bordo);
+    stroke-width: 1.5;
+  }
+  .storia-brown .traccia__linea {
+    stroke-width: 2;
+  }
+  .storia-brown .traccia__punto {
+    fill: var(--contorno);
+  }
+
+  /* --- 0 e 1: i granelli percorrono il loro zig-zag una volta --- */
+
+  .storia-brown circle[style*='offset-path'] {
+    offset-distance: 0%;
+    offset-rotate: 0deg;
+  }
+  [data-indice='0'] .storia-brown circle[style*='offset-path'],
+  [data-indice='1'] .storia-brown circle[style*='offset-path'] {
+    offset-distance: 100%;
+    transition: offset-distance 2.5s linear 0.5s;
+  }
+
+  /* --- 2: i colpi arrivano, il granello si sposta --- */
+
+  .storia-brown .spinta {
+    opacity: 0;
+  }
+  [data-indice='2'] .storia-brown .molecola--colpo {
+    transform: translate(var(--dx), var(--dy));
+    stroke: var(--accento);
+    stroke-width: 4;
+    transition:
+      transform 0.6s ease-in-out 0.8s,
+      stroke 0.3s ease-in-out 0.8s;
+  }
+  [data-indice='2'] .storia-brown .spinta {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out 1.4s;
+  }
+  [data-indice='2'] .storia-brown .spinto {
+    transform: translate(22px, -6px);
+    transition: transform 0.8s ease-in-out 1.4s;
+  }
+
+  /* --- 3: il percorso si disegna, poi compare la distanza --- */
+
+  .storia-brown .percorso {
+    vector-effect: none;
+    stroke-width: 2.5;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  [data-indice='3'] .storia-brown .percorso {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 2.4s linear 0.4s;
+  }
+  .storia-brown .distanza {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  .storia-brown :is(.distanza, .arrivo) {
+    opacity: 0;
+  }
+  [data-indice='3'] .storia-brown .arrivo {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out 2.7s;
+  }
+  [data-indice='3'] .storia-brown .distanza {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out 2.8s;
+  }
+
+  /* --- 4: le tre tracce compaiono una dopo l'altra --- */
+
+  .storia-brown .traccia {
+    opacity: 0;
+  }
+  [data-indice='4'] .storia-brown .traccia {
+    opacity: 1;
+    transition: opacity 0.6s ease-in-out 0.6s;
+  }
+  [data-indice='4'] .storia-brown .traccia--1 {
+    transition-delay: 1.2s;
+  }
+  [data-indice='4'] .storia-brown .traccia--2 {
+    transition-delay: 1.8s;
+  }
+</style>

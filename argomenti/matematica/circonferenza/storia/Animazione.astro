@@ -1,0 +1,217 @@
+---
+/**
+ * Storia della circonferenza: Eratostene misura la Terra.
+ *
+ * Sei scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Raggio, arco e circonferenza usano i colori di ruolo della matematica (guida di stile, §3).
+ * Nel passaggio 3 l'angolo è ingrandito (24° invece di 7,2°) e il disegno lo dice;
+ * nel passaggio 4 l'arco è disegnato in scala: 1/50 della circonferenza.
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import { arco, freccia } from '../../../../src/components/storie/disegno';
+
+const r = (v: number) => +v.toFixed(1);
+const punto = (cx: number, cy: number, rr: number, g: number) => [r(cx + rr * Math.cos((g * Math.PI) / 180)), r(cy + rr * Math.sin((g * Math.PI) / 180))];
+
+// Passaggio 2: il bastone di Alessandria e il raggio che sfiora la sua cima (7,2° dalla verticale).
+const T = Math.tan((7.2 * Math.PI) / 180);
+const ombra = r(400 + 300 * T); // fine dell'ombra sul suolo, a y = 450
+const raggiAlessandria = [-140, 140].map((dx) => `M${r(400 + dx - 170 * T)} -20L${r(400 + dx + 300 * T)} 450`);
+
+// Passaggio 3: la Terra in sezione, angolo ingrandito a 24°.
+const C = { x: 400, y: 380, r: 190 };
+const siene = punto(C.x, C.y, C.r, -90);
+const siene2 = punto(C.x, C.y, C.r + 50, -90);
+const ales = punto(C.x, C.y, C.r, -114);
+const ales2 = punto(C.x, C.y, C.r + 50, -114);
+
+// Passaggio 4: 50 tacche, una ogni 7,2°.
+const D = { x: 400, y: 320, r: 200 };
+const tacche = Array.from({ length: 50 }, (_, k) => {
+  const [x1, y1] = punto(D.x, D.y, D.r - 10, -90 + k * 7.2);
+  const [x2, y2] = punto(D.x, D.y, D.r + 10, -90 + k * 7.2);
+  return `M${x1} ${y1}L${x2} ${y2}`;
+}).join('');
+
+const descrizioni = [
+  'Una mappa dell’Egitto con il Mediterraneo in alto e il Nilo. Alessandria è sulla costa, Siene molto più a sud. Accanto c’è Eratostene.',
+  'Un pozzo in sezione a Siene: i raggi del Sole scendono dritti fino all’acqua sul fondo. Un bastone verticale non fa ombra.',
+  'Ad Alessandria i raggi del Sole arrivano un po’ inclinati: un bastone verticale fa una piccola ombra. L’angolo tra bastone e raggi è di circa 7 gradi.',
+  'La Terra in sezione, non in scala. I raggi del Sole arrivano paralleli su Siene e su Alessandria. I due bastoni, prolungati, si incontrano al centro e formano lo stesso angolo di 7 gradi.',
+  'Una circonferenza divisa in 50 parti uguali. Una parte, l’arco tra Alessandria e Siene, è evidenziata e misura 5000 stadi; l’arco fa il giro di tutta la circonferenza.',
+  'La Terra: Eratostene trovò una circonferenza tra 39 000 e 46 000 km; oggi sappiamo che è di circa 40 000 km.',
+];
+---
+
+<Storia classe="storia-eratostene" descrizioni={descrizioni}>
+  <!-- 0: la mappa dell'Egitto -->
+  <g data-passi="0">
+    <rect class="tratto deserto" x="60" y="40" width="480" height="520" rx="20"></rect>
+    <path class="tratto mare" d="M60 60C60 49 69 40 80 40H520C531 40 540 49 540 60V120C450 140 380 110 300 136C220 156 140 120 60 142Z"></path>
+    <path class="nilo" d="M430 560C400 450 450 350 395 250C365 196 330 168 318 138"></path>
+    <circle class="tratto citta" cx="290" cy="158" r="10"></circle>
+    <circle class="tratto citta" cx="432" cy="500" r="10"></circle>
+    <g transform="translate(690 470) scale(0.85)">
+      <Personaggio capelli="corti" colore_capelli="grigi" barba="corta" veste="tunica" colore_veste="verde" />
+    </g>
+  </g>
+  <Etichetta testo="Alessandria" x={290} y={212} allinea="centro" passi="0" />
+  <Etichetta testo="Siene" x={455} y={508} passi="0" />
+  <Etichetta testo="Nilo" x={420} y={330} passi="0" />
+
+  <!-- 1: il pozzo di Siene -->
+  <g data-passi="1">
+    <circle class="tratto sole" cx="400" cy="70" r="36"></circle>
+    <path class="tratto deserto" d="M20 250H340V520H460V250H780V560H20Z"></path>
+    <rect class="mare" x="342" y="478" width="116" height="42"></rect>
+    <g class="raggi">
+      <path class="raggio" d="M370 120V478M400 120V478M430 120V478"></path>
+    </g>
+    <line class="linea" x1="700" y1="250" x2="700" y2="130"></line>
+  </g>
+  <Etichetta testo="Pozzo" x={240} y={330} linea={[290, 340, 342, 400]} allinea="centro" passi="1" />
+  <Etichetta testo="Bastone" x={700} y={110} allinea="centro" passi="1" />
+  <text class="data" x="40" y="90" data-passi="1">Siene</text>
+
+  <!-- 2: il bastone di Alessandria fa ombra -->
+  <g data-passi="2">
+    <path class="tratto deserto" d="M20 450H780V560H20Z"></path>
+    <g class="raggi">
+      {raggiAlessandria.map((d) => <path class="raggio" d={d} />)}
+      <path class="raggio" d={`M${r(400 - 170 * T)} -20L${ombra} 450`}></path>
+    </g>
+    <line class="linea ombra" x1="400" y1="450" x2={ombra} y2="450"></line>
+    <line class="linea" x1="400" y1="450" x2="400" y2="150"></line>
+    <path class="linea angolo" d={arco(400, 150, 110, 82.8, 90)}></path>
+  </g>
+  <Etichetta testo="circa 7°" x={440} y={300} passi="2" />
+  <Etichetta testo="Ombra" x={480} y={510} linea={[476, 500, 430, 456]} passi="2" />
+  <text class="data" x="40" y="90" data-passi="2">Alessandria</text>
+
+  <!-- 3: la Terra in sezione, i raggi paralleli e l'angolo al centro -->
+  <g data-passi="3">
+    <circle class="tratto terra" cx={C.x} cy={C.y} r={C.r}></circle>
+    <path class="arco-minore" d={arco(C.x, C.y, C.r, -114, -90)}></path>
+    <path class="raggio-geo" d={`M${C.x} ${C.y}L${siene[0]} ${siene[1]}M${C.x} ${C.y}L${ales[0]} ${ales[1]}`}></path>
+    <path class="linea" d={`M${siene[0]} ${siene[1]}L${siene2[0]} ${siene2[1]}M${ales[0]} ${ales[1]}L${ales2[0]} ${ales2[1]}`}></path>
+    <path class="linea angolo" d={arco(C.x, C.y, 54, -114, -90)}></path>
+    <circle class="tratto carta" cx={C.x} cy={C.y} r="6"></circle>
+    <g class="raggi">
+      <path class="raggio" d={`M${siene2[0]} 0V${siene2[1]}M${ales2[0]} 0V${ales2[1]}M520 0V${r(C.y - Math.sqrt(C.r ** 2 - 120 ** 2))}`}></path>
+    </g>
+  </g>
+  <Etichetta testo="Siene" x={430} y={150} passi="3" />
+  <Etichetta testo="Alessandria" x={285} y={150} allinea="fine" passi="3" />
+  <Etichetta testo="7°" x={330} y={318} passi="3" />
+  <Etichetta testo="Disegno non in scala" x={400} y={595} allinea="centro" passi="3" />
+
+  <!-- 4: 50 archi uguali fanno la circonferenza -->
+  <g data-passi="4">
+    <circle class="linea" cx={D.x} cy={D.y} r={D.r}></circle>
+    <path class="linea tacche" d={tacche}></path>
+    <path class="arco-minore" d={arco(D.x, D.y, D.r, -97.2, -90)}></path>
+    <g class="giro-arco">
+      <path class="arco-minore arco-minore--copia" d={arco(D.x, D.y, D.r, -97.2, -90)}></path>
+    </g>
+  </g>
+  <Etichetta testo="5000 stadi" x={420} y={96} passi="4" />
+  <Etichetta testo="50 × 5000 = 250 000 stadi" x={400} y={590} allinea="centro" passi="4" />
+
+  <!-- 5: il risultato -->
+  <g data-passi="5">
+    <circle class="tratto pianeta-terra" cx="400" cy="340" r="170"></circle>
+    <path class="linea giro-terra" d={arco(400, 340, 196, -80, 250)}></path>
+    <path class="linea" d={freccia(...(punto(400, 340, 196, 245) as [number, number]), ...(punto(400, 340, 196, 250) as [number, number]), 16)}></path>
+  </g>
+  <Etichetta testo="Eratostene:\n39 000 – 46 000 km" x={30} y={70} passi="5" />
+  <Etichetta testo="Oggi:\n40 000 km" x={770} y={70} allinea="fine" passi="5" />
+</Storia>
+
+<style is:global>
+  .storia-eratostene .deserto {
+    fill: var(--deserto);
+  }
+  .storia-eratostene .mare {
+    fill: var(--acqua);
+  }
+  .storia-eratostene .nilo {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 7;
+    stroke-linecap: round;
+  }
+  .storia-eratostene .citta {
+    fill: var(--contorno);
+  }
+  .storia-eratostene .sole {
+    fill: var(--oro);
+  }
+  .storia-eratostene .carta {
+    fill: var(--carta);
+  }
+  .storia-eratostene .terra {
+    fill: var(--deserto);
+  }
+  .storia-eratostene .pianeta-terra {
+    fill: var(--pianeta-terra);
+  }
+  .storia-eratostene .raggio {
+    fill: none;
+    stroke: var(--oro);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+  .storia-eratostene .ombra {
+    stroke-width: 10;
+    stroke: var(--testo-2);
+    stroke-linecap: butt;
+  }
+  .storia-eratostene .angolo {
+    stroke-width: 2.5;
+  }
+  .storia-eratostene .raggio-geo {
+    fill: none;
+    stroke: var(--geo-raggio);
+    stroke-width: 3;
+    stroke-dasharray: 10 8;
+  }
+  .storia-eratostene .arco-minore {
+    fill: none;
+    stroke: var(--geo-arco-minore);
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+  .storia-eratostene .arco-minore--copia {
+    opacity: 0.6;
+  }
+  .storia-eratostene .tacche {
+    stroke-width: 2;
+  }
+
+  /* I raggi del Sole scendono dall'alto, uno dopo l'altro. */
+  .storia-eratostene .raggi {
+    clip-path: inset(0 0 100% 0);
+  }
+  :is([data-indice='1'], [data-indice='2'], [data-indice='3']) .storia-eratostene .raggi {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1.4s ease-in-out 0.8s;
+  }
+  .storia-eratostene .ombra {
+    opacity: 0;
+  }
+  [data-indice='2'] .storia-eratostene .ombra {
+    opacity: 1;
+    transition: opacity 0.6s ease-in-out 2s;
+  }
+
+  /* Una copia dell'arco fa il giro della circonferenza: ci sta 50 volte. */
+  .storia-eratostene .giro-arco {
+    transform-origin: 400px 320px;
+  }
+  [data-indice='4'] .storia-eratostene .giro-arco {
+    transform: rotate(360deg);
+    transition: transform 2.5s ease-in-out 0.8s;
+  }
+</style>
