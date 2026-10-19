@@ -1,0 +1,188 @@
+---
+/**
+ * Storia dell'osmosi: l'esperimento di Nollet (1748) con un vaso di alcol chiuso da una
+ * vescica di maiale, e Dutrochet (1827) che dà un nome al fenomeno.
+ *
+ * Sei scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * La vescica si gonfia con una trasformazione CSS a partire da [data-indice].
+ * L'acqua è blu acqua (guida di stile, §3); l'alcol, incolore, è un azzurro pallidissimo.
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+// Il vaso: pancia rotonda e collo, bocca a y = 250.
+const V = { x: 520, bocca: 250, collo: 34, pancia: 110, centro: 410 };
+const vaso = (() => {
+  const { x, bocca, collo, pancia, centro } = V;
+  const a = Math.asin(collo / pancia);
+  const yAttacco = +(centro - pancia * Math.cos(a)).toFixed(1);
+  return `M${x - collo} ${bocca}V${yAttacco}A${pancia} ${pancia} 0 1 0 ${x + collo} ${yAttacco}V${bocca}`;
+})();
+// L'alcol riempie il vaso fino al collo.
+const alcol = (() => {
+  const { x, collo, pancia, centro } = V;
+  const a = Math.asin(collo / pancia);
+  const yAttacco = +(centro - pancia * Math.cos(a)).toFixed(1);
+  return `M${x - collo} ${V.bocca + 6}V${yAttacco}A${pancia} ${pancia} 0 1 0 ${x + collo} ${yAttacco}V${V.bocca + 6}Z`;
+})();
+
+// La vescica: una cupola sopra la bocca, legata al collo con uno spago.
+const CUPOLA = `M${V.x - V.collo - 6} ${V.bocca}A${V.collo + 6} 48 0 0 1 ${V.x + V.collo + 6} ${V.bocca}Z`;
+const VASCA = { x: 300, y: 110, l: 440, h: 440, aria: 20 };
+
+const descrizioni = [
+  'L’abate Nollet accanto a un vaso pieno di alcol. La bocca del vaso è chiusa da un pezzo di vescica, legato con uno spago. In alto la data 1748.',
+  'Il vaso chiuso è immerso in una vasca piena d’acqua.',
+  'Nella vasca la vescica sopra il vaso si è gonfiata come una cupola.',
+  'Il vaso è fuori dall’acqua. Un ago fora la vescica e uno zampillo di liquido sale in alto, più di 30 centimetri.',
+  'Il vaso nella vasca: frecce blu mostrano l’acqua che entra attraverso la vescica, mentre l’alcol resta dentro.',
+  'Henri Dutrochet accanto alla parola endosmosi e alla parola osmosi, che vuol dire spinta. In alto la data 1827.',
+];
+---
+
+<Storia classe="storia-nollet" descrizioni={descrizioni}>
+  <!-- Nollet, nelle prime quattro scene -->
+  <g data-passi="0 1 2 3 4">
+    <g transform="translate(130 560) scale(0.85)">
+      <Personaggio capelli="lunghi" colore_capelli="bianchi" veste="talare" colore_veste="nero" />
+    </g>
+  </g>
+  <text class="data" x="40" y="90" data-passi="0">1748</text>
+  <Etichetta testo="Parigi" x={40} y={140} passi="0" />
+
+  <!-- La vasca, dietro al vaso -->
+  <g data-passi="1 2 4">
+    <rect class="tratto vasca" x={VASCA.x} y={VASCA.y} width={VASCA.l} height={VASCA.h} rx="18"></rect>
+  </g>
+
+  <!-- Il vaso con l'alcol e la vescica -->
+  <g data-passi="0 1 2 3 4">
+    <path class="alcol" d={alcol}></path>
+    <g class="vescica">
+      <path class="tratto vescica__cupola" d={CUPOLA}></path>
+    </g>
+    <rect class="tratto spago" x={V.x - V.collo - 4} y={V.bocca + 4} width={2 * V.collo + 8} height="9" rx="4"></rect>
+    <path class="linea" d={vaso}></path>
+  </g>
+
+  <!-- L'acqua della vasca, davanti al vaso: lo vela -->
+  <g data-passi="1 2 4">
+    <rect class="acqua" x={VASCA.x + 1.5} y={VASCA.y + VASCA.aria} width={VASCA.l - 3} height={VASCA.h - VASCA.aria - 1.5} rx="16"></rect>
+    <line class="pelo" x1={VASCA.x + 2} y1={VASCA.y + VASCA.aria} x2={VASCA.x + VASCA.l - 2} y2={VASCA.y + VASCA.aria}></line>
+  </g>
+
+  <Etichetta testo="Alcol" x={760} y={470} linea={[700, 462, 590, 420]} allinea="fine" passi="0" />
+  <Etichetta testo="Vescica" x={760} y={150} linea={[690, 158, V.x + 30, V.bocca - 22]} allinea="fine" passi="0" />
+  <Etichetta testo="Acqua" x={780} y={80} linea={[740, 90, 690, 240]} allinea="fine" passi="1" />
+  <Etichetta testo="Gonfia" x={780} y={80} linea={[730, 90, V.x + 20, V.bocca - 30]} allinea="fine" passi="2" />
+
+  <!-- 3: l'ago e lo zampillo -->
+  <g data-passi="3">
+    <path class="linea ago" d={`M${V.x + 120} ${V.bocca - 120}L${V.x + 16} ${V.bocca - 50}`}></path>
+    <path class="zampillo" d={`M${V.x} ${V.bocca - 48}C${V.x - 6} 140 ${V.x + 6} 80 ${V.x} 30`} pathLength="1"></path>
+    <path class="linea misura" d={`M${V.x - 70} ${V.bocca - 66}V36M${V.x - 80} ${V.bocca - 66}h20M${V.x - 80} 36h20`}></path>
+  </g>
+  <Etichetta testo="più di 30 cm" x={V.x - 90} y={120} allinea="fine" passi="3" />
+  <Etichetta testo="Ago" x={V.x + 150} y={V.bocca - 128} passi="3" />
+
+  <!-- 4: l'acqua entra, l'alcol no -->
+  <g data-passi="4">
+    {
+      [-40, 0, 40].map((dx) => (
+        <path class="linea freccia-acqua" d={freccia(V.x + dx * 1.4, V.bocca - 108, V.x + dx * 0.6, V.bocca - 56, 14)} />
+      ))
+    }
+  </g>
+  <Etichetta testo="L'acqua entra" x={780} y={80} allinea="fine" passi="4" />
+
+  <!-- 5: Dutrochet e il nome -->
+  <g data-passi="5">
+    <g transform="translate(170 540) scale(1.1)">
+      <Personaggio capelli="corti" colore_capelli="grigi" veste="giacca" colore_veste="nero" />
+    </g>
+    <text class="parola" x="560" y="260">endosmosi</text>
+    <path class="linea" d={freccia(560, 300, 560, 370, 14)}></path>
+    <text class="parola parola--oggi" x="560" y="440">osmosi</text>
+  </g>
+  <Etichetta testo="dal greco «spinta»" x={560} y={500} allinea="centro" passi="5" />
+  <Etichetta testo="Henri Dutrochet" x={170} y={585} allinea="centro" passi="5" />
+  <text class="data" x="40" y="90" data-passi="5">1827</text>
+</Storia>
+
+<style is:global>
+  .storia-nollet .vasca {
+    fill: var(--superficie);
+    fill-opacity: 0.75;
+  }
+  .storia-nollet .acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.35;
+  }
+  .storia-nollet .pelo {
+    stroke: var(--acqua);
+    stroke-width: 3;
+  }
+  .storia-nollet .alcol {
+    fill: #e6f1f8;
+  }
+  .storia-nollet .vescica__cupola {
+    fill: var(--tessuto-chiaro);
+  }
+  .storia-nollet .spago {
+    fill: var(--legno);
+  }
+  .storia-nollet .ago {
+    stroke: var(--testo-2);
+  }
+  .storia-nollet .misura {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+  }
+  .storia-nollet .freccia-acqua {
+    stroke: var(--acqua);
+    stroke-width: 5;
+  }
+  .storia-nollet .parola {
+    font-size: 64px;
+    text-anchor: middle;
+  }
+  .storia-nollet .parola--oggi {
+    fill: var(--accento);
+  }
+
+  /* --- La vescica: piatta all'inizio, gonfia dal passaggio 2 (si gonfia solo lì) --- */
+
+  .storia-nollet .vescica {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transform: scaleY(0.2);
+  }
+  :is([data-indice='2'], [data-indice='3'], [data-indice='4']) .storia-nollet .vescica {
+    transform: scaleY(1);
+  }
+  [data-indice='2'] .storia-nollet .vescica {
+    transition: transform 2s ease-in-out 0.6s;
+  }
+  [data-indice='2'] .storia-nollet .vescica__cupola {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- 3: lo zampillo sale --- */
+
+  .storia-nollet .zampillo {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 8;
+    stroke-linecap: round;
+    vector-effect: none;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  [data-indice='3'] .storia-nollet .zampillo {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s ease-in-out 0.8s;
+  }
+</style>

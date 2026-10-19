@@ -1,0 +1,98 @@
+passaggi:
+  - id: due-liquidi
+    fase: recipiente
+    titolo: Acqua e acqua zuccherata
+    breve: A sinistra c'è acqua, a destra acqua con zucchero sciolto.
+    spiegazione: >
+      Un recipiente è diviso in due parti con lo stesso livello di liquido.
+      Lo zucchero sciolto nell'acqua forma una **soluzione**: un miscuglio in cui non si distinguono i componenti.
+      L'acqua, che scioglie, è il **solvente**; lo zucchero, che viene sciolto, è il **soluto**.
+
+  - id: membrana
+    fase: recipiente
+    titolo: La membrana
+    breve: In mezzo c'è una membrana con fori piccolissimi.
+    spiegazione: >
+      Le due parti sono divise da una **membrana**, un foglio sottilissimo.
+      È piena di fori, così piccoli che non si vedono nemmeno al microscopio.
+
+  - id: ingrandimento
+    fase: recipiente
+    titolo: Da vicino
+    breve: Le molecole di zucchero sono molto più grandi di quelle d'acqua.
+    spiegazione: >
+      Ingrandiamo moltissimo un pezzo di membrana.
+      A sinistra ci sono solo molecole d'acqua.
+      A destra ci sono molecole d'acqua e molecole di zucchero, molto più grandi.
+
+  - id: semipermeabile
+    fase: recipiente
+    titolo: Chi passa e chi no
+    breve: L'acqua passa dai fori, lo zucchero no.
+    spiegazione: >
+      Le molecole d'acqua sono abbastanza piccole da passare dai fori, in tutte e due le direzioni.
+      Le molecole di zucchero sono troppo grandi: urtano la membrana e restano dove sono.
+      Una membrana così si chiama **semipermeabile**: lascia passare solo alcune sostanze.
+
+  - id: osmosi
+    fase: recipiente
+    titolo: L'osmosi
+    breve: Più acqua passa verso il lato con lo zucchero.
+    spiegazione: >
+      Dal lato dell'acqua pura, vicino ai fori ci sono più molecole d'acqua.
+      Per questo ne passano di più da sinistra a destra che da destra a sinistra.
+      Il passaggio dell'acqua attraverso una membrana semipermeabile, verso il lato con più soluto, si chiama **osmosi**.
+
+  - id: livelli
+    fase: recipiente
+    titolo: I livelli cambiano
+    breve: Il livello sale dal lato dello zucchero e scende dall'altro.
+    spiegazione: >
+      A destra arriva più acqua di quanta ne esca: il livello sale.
+      A sinistra succede il contrario e il livello scende.
+      Lo zucchero resta tutto a destra, ma ora è sciolto in più acqua: la soluzione è più **diluita**.
+
+  - id: equilibrio
+    fase: recipiente
+    titolo: Quando si ferma
+    breve: Alla fine l'acqua passa nei due versi in uguale quantità.
+    spiegazione: >
+      Più il liquido a destra è alto, più il suo peso spinge l'acqua indietro attraverso la membrana.
+      A un certo punto ne passa tanta da una parte quanta dall'altra.
+      I livelli non cambiano più, ma restano diversi: c'è un **dislivello**.
+
+  - id: cellula
+    fase: cellula
+    titolo: Anche la cellula
+    breve: La membrana di una cellula funziona allo stesso modo.
+    spiegazione: >
+      Ogni cellula è avvolta da una **membrana cellulare**.
+      Dentro c'è acqua con tante sostanze sciolte, come zuccheri e sali.
+      La membrana lascia passare l'acqua e trattiene molte di queste sostanze, come una membrana semipermeabile.
+
+  - id: stessa-concentrazione
+    fase: cellula
+    titolo: Fuori come dentro
+    breve: Con la stessa concentrazione fuori e dentro, la cellula non cambia.
+    spiegazione: >
+      La **concentrazione** dice quanto soluto è sciolto in una certa quantità d'acqua.
+      Se fuori e dentro la cellula è uguale, l'acqua entra ed esce in uguale quantità.
+      La cellula resta com'è: succede, per esempio, ai globuli rossi nel sangue.
+
+  - id: acqua-pura
+    fase: cellula
+    titolo: In acqua pura
+    breve: In acqua pura l'acqua entra e la cellula si gonfia.
+    spiegazione: >
+      Fuori non c'è soluto, dentro sì.
+      Per osmosi entra più acqua di quanta ne esca, e la cellula si gonfia.
+      Una cellula animale, come un globulo rosso, può gonfiarsi fino a scoppiare.
+
+  - id: molto-zucchero
+    fase: cellula
+    titolo: In acqua molto zuccherata
+    breve: In acqua molto zuccherata l'acqua esce e la cellula si raggrinzisce.
+    spiegazione: >
+      Ora c'è più soluto fuori che dentro.
+      Per osmosi esce più acqua di quanta ne entri: la cellula si svuota e si raggrinzisce.
+      Per questo le fragole coperte di zucchero, dopo un po', perdono il loro succo.

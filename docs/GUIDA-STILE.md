@@ -75,7 +75,7 @@ Lo stesso concetto ha **sempre** lo stesso colore, in tutto il sito:
 | Aria | `#8EC9F0` (azzurro) |
 | Acqua in ogni stato (ghiaccio, liquida, vapore) e sue molecole | `#2C9AD1` (blu acqua) |
 | Calore (fornello, fiamma, piastra accesa) | `#F26B1D` (arancione) |
-| Sostanze nutritive (molecole del cibo digerito) | `#8E5BB5` (viola), pallini |
+| Sostanze nutritive (molecole del cibo digerito) e sostanze sciolte in acqua (zucchero, soluti di una cellula) | `#8E5BB5` (viola), pallini |
 | Succhi digestivi (succo gastrico, bile, succo pancreatico) | `#A3C639` (verde lime), gocce |
 | Batteri | `#5E7A2A` (verde oliva), bastoncini |
 | Elemento evidenziato nel passaggio corrente | contorno `--accento`, 4 px |

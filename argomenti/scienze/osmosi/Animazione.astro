@@ -1,0 +1,929 @@
+---
+/**
+ * L'osmosi: un recipiente diviso da una membrana semipermeabile (acqua a sinistra, acqua e
+ * zucchero a destra), una lente che ingrandisce la membrana fino alle molecole e, alla fine,
+ * tre cellule in tre liquidi diversi.
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Le molecole che attraversano la membrana seguono un
+ * percorso fisso (offset-path) che passa da un foro: offset-distance 0% o 100% a seconda del
+ * passaggio, quindi avanti e indietro danno sempre lo stesso risultato.
+ *
+ * Lo stesso disegno esiste in due disposizioni: "larga" (LIM e computer) e "stretta"
+ * (telefono in verticale). Sceglie il CSS con una container query, come in stati-della-materia.
+ */
+
+type Punto = [number, number];
+
+const arrotonda = (v: number) => +v.toFixed(1);
+
+// Generatore pseudo-casuale con seme: il disegno è identico a ogni build.
+function casuale(seme: number) {
+  let s = seme;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Distanza di un punto da una spezzata. */
+function distanzaDaLinea(p: Punto, linea: Punto[]) {
+  let min = Infinity;
+  for (let i = 0; i < linea.length - 1; i++) {
+    const [a, b] = [linea[i], linea[i + 1]];
+    const [dx, dy] = [b[0] - a[0], b[1] - a[1]];
+    const t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy || 1)));
+    min = Math.min(min, Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy));
+  }
+  return min;
+}
+
+const freccia = (x1: number, y1: number, x2: number, y2: number, punta: number) => {
+  const a = Math.atan2(y2 - y1, x2 - x1);
+  const p = (d: number) => `${arrotonda(x2 - punta * Math.cos(a + d))} ${arrotonda(y2 - punta * Math.sin(a + d))}`;
+  return `M${x1} ${y1}L${x2} ${y2}M${p(0.55)}L${x2} ${y2}L${p(-0.55)}`;
+};
+
+// ---------------------------------------------------------------------------
+// Scena 1: il recipiente diviso dalla membrana. Coordinate con l'origine al centro del fondo.
+// ---------------------------------------------------------------------------
+
+const L = 160; // mezza larghezza interna
+const H = 300; // altezza del vetro
+const LIVELLO = 170; // altezza iniziale del liquido, uguale nelle due parti
+const DISLIVELLO = 50; // di quanto sale a destra e scende a sinistra (le due parti sono larghe uguali)
+
+const VETRO = `M${-L} ${-H}V-16Q${-L} 0 ${-L + 16} 0H${L - 16}Q${L} 0 ${L} -16V${-H}`;
+
+// Lo zucchero sciolto, come simbolo: pallini sparsi nel liquido di destra. Ognuno ha due
+// altezze, prima e dopo l'osmosi: lo zucchero si distribuisce in tutto il liquido.
+const rndZucchero = casuale(3);
+const zucchero: { x: number; y0: number; y1: number }[] = [];
+while (zucchero.length < 22) {
+  const x = arrotonda(14 + rndZucchero() * (L - 28));
+  const f = 0.07 + rndZucchero() * 0.86;
+  if (zucchero.some((z) => Math.hypot(z.x - x, z.y0 + f * LIVELLO) < 22)) continue;
+  zucchero.push({ x, y0: arrotonda(-f * LIVELLO), y1: arrotonda(-f * (LIVELLO + DISLIVELLO)) });
+}
+
+// ---------------------------------------------------------------------------
+// La lente: un pezzo di membrana ingrandito. Coordinate con l'origine al centro, raggio 100.
+// ---------------------------------------------------------------------------
+
+const R_ACQUA = 4;
+const R_ZUCCHERO = 11;
+const FORI = [-66, -22, 22, 66]; // altezza dei fori: larghi 16, l'acqua (8) passa, lo zucchero (22) no
+const MEZZO_FORO = 8;
+const SPESSORE = 4; // mezzo spessore della membrana
+
+// I tratti di membrana tra un foro e l'altro.
+const bordi = [-104, ...FORI.flatMap((y) => [y - MEZZO_FORO, y + MEZZO_FORO]), 104];
+const tratti: [number, number][] = [];
+for (let i = 0; i < bordi.length; i += 2) tratti.push([bordi[i], bordi[i + 1]]);
+
+/** Percorso da (x1, y1) a (x2, y2) passando dal foro all'altezza `foro`. */
+const viaForo = (x1: number, y1: number, foro: number, x2: number, y2: number): Punto[] => [
+  [x1, y1],
+  [Math.sign(x1) * 14, foro],
+  [Math.sign(x2) * 14, foro],
+  [x2, y2],
+];
+
+// Le molecole d'acqua che attraversano la membrana. `dal` è il passaggio (indice) da cui
+// risultano già passate; `ritardo` sfasa le partenze dentro il passaggio.
+const passanti: { percorso: Punto[]; dal: 3 | 4 | 6; ritardo: number }[] = [
+  // 3 semipermeabile: una da sinistra a destra, una da destra a sinistra
+  { percorso: viaForo(-40, -82, -66, 46, -84), dal: 3, ritardo: 0.3 },
+  { percorso: viaForo(42, 38, 22, -46, 42), dal: 3, ritardo: 0.7 },
+  // 4 osmosi: tre da sinistra a destra, una sola da destra a sinistra
+  { percorso: viaForo(-46, -30, -22, 46, -30), dal: 4, ritardo: 0.3 },
+  { percorso: viaForo(-40, 84, 66, 50, 80), dal: 4, ritardo: 0.6 },
+  { percorso: viaForo(-58, 8, 22, 60, 12), dal: 4, ritardo: 1.0 },
+  { percorso: viaForo(32, -50, -66, -42, -50), dal: 4, ritardo: 0.8 },
+  // 6 equilibrio: una per parte
+  { percorso: viaForo(-52, -54, -22, 24, -46), dal: 6, ritardo: 0.3 },
+  { percorso: viaForo(66, 40, 22, -34, 6), dal: 6, ritardo: 0.3 },
+].map((p) => ({ ...p, percorso: p.percorso.map(([x, y]) => [arrotonda(x), arrotonda(y)] as Punto) }));
+const tracciato = (p: Punto[]) => 'M' + p.map(([x, y]) => `${x} ${y}`).join('L');
+
+// Lo zucchero nella lente: solo a destra. Il primo urta la membrana e torna indietro.
+const zuccheroLente: Punto[] = [
+  [44, 62],
+  [58, -64],
+  [66, -18],
+  [32, -4],
+  [76, 30],
+  [30, 88],
+  [80, 60],
+];
+const URTO: Punto = [-24, 4]; // spostamento dello zucchero che va contro la membrana
+
+// L'acqua ferma, sparsa nei due lati senza toccare le passanti e lo zucchero.
+const rndAcqua = casuale(19);
+const acquaLente: Punto[] = [];
+for (let i = 0; i < 6000 && acquaLente.length < 120; i++) {
+  const a = rndAcqua() * Math.PI * 2;
+  const r = Math.sqrt(rndAcqua()) * 100;
+  const p: Punto = [r * Math.cos(a), r * Math.sin(a)];
+  if (Math.abs(p[0]) < SPESSORE + R_ACQUA + 6) continue;
+  if (acquaLente.some((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) < 2 * R_ACQUA + 7)) continue;
+  if (zuccheroLente.some((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) < R_ZUCCHERO + R_ACQUA + 5)) continue;
+  if (Math.hypot(p[0] - zuccheroLente[0][0] - URTO[0], p[1] - zuccheroLente[0][1] - URTO[1]) < R_ZUCCHERO + R_ACQUA + 4) continue;
+  if (passanti.some((m) => distanzaDaLinea(p, m.percorso) < 2 * R_ACQUA + 5)) continue;
+  acquaLente.push([arrotonda(p[0]), arrotonda(p[1])]);
+}
+
+// ---------------------------------------------------------------------------
+// Scena 2: tre bicchieri con una cellula. Coordinate con l'origine al centro del fondo.
+// ---------------------------------------------------------------------------
+
+const B = 120; // mezza larghezza del bicchiere
+const HB = 220;
+const LIQUIDO_B = 180;
+const CELLULA: Punto = [0, -95];
+const R_CELLULA = 58;
+const BICCHIERE = `M${-B} ${-HB}V-14Q${-B} 0 ${-B + 14} 0H${B - 14}Q${B} 0 ${B} -14V${-HB}`;
+
+// Contorno raggrinzito: la membrana fa delle pieghe.
+const raggrinzita = (() => {
+  const punti: string[] = [];
+  for (let i = 0; i <= 72; i++) {
+    const a = (i / 72) * Math.PI * 2;
+    const r = R_CELLULA * (1 + 0.07 * Math.sin(9 * a));
+    punti.push(`${arrotonda(r * Math.cos(a))} ${arrotonda(r * Math.sin(a))}`);
+  }
+  return 'M' + punti.join('L') + 'Z';
+})();
+
+const NUCLEO: Punto = [-14, -10];
+const R_NUCLEO = 17;
+const R_SOLUTO = 4.5;
+// Al passaggio "cellula" la cellula è ingrandita, da sola, prima di entrare nel bicchiere.
+const INGRANDITA = 1.7;
+
+/** Pallini di soluto sparsi in una zona, mai più vicini di `distanza`. */
+function soluti(seme: number, quanti: number, dentro: (p: Punto) => boolean, distanza: number) {
+  const rnd = casuale(seme);
+  const punti: Punto[] = [];
+  for (let i = 0; i < 20000 && punti.length < quanti; i++) {
+    const p: Punto = [arrotonda(-B + 10 + rnd() * (2 * B - 20)), arrotonda(-LIQUIDO_B + 8 + rnd() * (LIQUIDO_B - 16))];
+    if (!dentro(p)) continue;
+    if (punti.every((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) >= distanza)) punti.push(p);
+  }
+  return punti;
+}
+// Dentro la cellula (coordinate della cellula): 9 pallini, lontani dal nucleo.
+const solutiCellula = soluti(
+  23,
+  9,
+  ([x, y]) => Math.hypot(x, y) < R_CELLULA - 10 && Math.hypot(x - NUCLEO[0], y - NUCLEO[1]) > R_NUCLEO + 8,
+  16,
+);
+// Fuori, nel bicchiere: lontano dalla cellula (anche quando si gonfia).
+const fuoriCellula = ([x, y]: Punto) => Math.hypot(x - CELLULA[0], y - CELLULA[1]) > R_CELLULA * 1.25 + 8;
+const fuori = {
+  pura: [] as Punto[],
+  uguale: soluti(29, 26, fuoriCellula, 18),
+  zuccherata: soluti(31, 80, fuoriCellula, 12),
+};
+
+const bicchieri = [
+  { id: 'pura', titolo: ['Acqua pura'], esito: 'si gonfia' },
+  { id: 'uguale', titolo: ['Stessa', 'concentrazione'], esito: 'non cambia' },
+  { id: 'zuccherata', titolo: ['Acqua molto', 'zuccherata'], esito: 'si raggrinzisce' },
+] as const;
+
+// Frecce dell'acqua attorno alla cellula: verso dentro (si gonfia), verso fuori (si
+// raggrinzisce), metà e metà (non cambia).
+const ANGOLI = [-135, -45, 45, 135];
+const frecciaCellula = (gradi: number, entra: boolean) => {
+  const a = (gradi * Math.PI) / 180;
+  const [c, s] = [Math.cos(a), Math.sin(a)];
+  const [vicino, lontano] = [R_CELLULA * 1.32 + 4, R_CELLULA * 1.32 + 30];
+  const [x1, y1, x2, y2] = entra ? [lontano * c, lontano * s, vicino * c, vicino * s] : [vicino * c, vicino * s, lontano * c, lontano * s];
+  return freccia(arrotonda(x1), arrotonda(y1), arrotonda(x2), arrotonda(y2), 9);
+};
+
+// ---------------------------------------------------------------------------
+// Le due disposizioni
+// ---------------------------------------------------------------------------
+
+interface Disposizione {
+  id: 'larga' | 'stretta';
+  viewBox: string;
+  /** Fondo del recipiente con la lente aperta, e spostamento quando la lente è chiusa. */
+  recipiente: Punto;
+  sr: number;
+  sposta: Punto;
+  /** Etichette del recipiente: in alto sopra le due parti (larga) o ai lati (stretta). */
+  etichette: 'sopra' | 'lati';
+  lente: Punto;
+  sl: number;
+  /** Il cono va ai punti in alto e in basso della lente (lente a fianco) o a destra e a sinistra (lente sotto). */
+  cono: 'verticale' | 'orizzontale';
+  /** Bicchieri della scena 2: fondo, scala, titolo ed esito. */
+  bicchieri: { pos: Punto; s: number; titolo: Punto; ancora: 'middle' | 'start'; esito: Punto }[];
+  /** Etichette della cellula al passaggio "cellula". */
+  membranaCellula: { testo: Punto; ancora: 'end' | 'start' };
+  solutiCellula: { testo: Punto; ancora: 'end' | 'start' };
+}
+
+const disposizioni: Disposizione[] = [
+  {
+    id: 'larga',
+    viewBox: '0 0 960 600',
+    recipiente: [220, 545],
+    sr: 1,
+    sposta: [260, 0],
+    etichette: 'sopra',
+    lente: [700, 285],
+    sl: 2.05,
+    cono: 'verticale',
+    bicchieri: [165, 480, 795].map((x) => ({
+      pos: [x, 500] as Punto,
+      s: 1.2,
+      titolo: [x, 196] as Punto,
+      ancora: 'middle' as const,
+      esito: [x, 536] as Punto,
+    })),
+    membranaCellula: { testo: [330, 190], ancora: 'end' },
+    solutiCellula: { testo: [640, 520], ancora: 'start' },
+  },
+  {
+    id: 'stretta',
+    viewBox: '0 0 560 660',
+    recipiente: [280, 318],
+    sr: 0.8,
+    sposta: [0, 175],
+    etichette: 'lati',
+    lente: [280, 465],
+    sl: 1.3,
+    cono: 'orizzontale',
+    bicchieri: [205, 425, 645].map((y) => ({
+      pos: [130, y] as Punto,
+      s: 0.82,
+      titolo: [262, y - 140] as Punto,
+      ancora: 'start' as const,
+      esito: [262, y - 50] as Punto,
+    })),
+    membranaCellula: { testo: [290, 250], ancora: 'start' },
+    solutiCellula: { testo: [290, 440], ancora: 'start' },
+  },
+];
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni: Record<string, string> = {
+  'due-liquidi': 'Un recipiente diviso in due da una parete. A sinistra acqua, a destra acqua con zucchero sciolto, disegnato a pallini viola. I due livelli sono uguali.',
+  membrana: 'La parete in mezzo al recipiente si illumina: è una membrana con fori piccolissimi.',
+  ingrandimento: 'Una lente ingrandisce la membrana: si vedono i fori. A sinistra tante molecole d’acqua piccole, a destra molecole d’acqua e molecole di zucchero molto più grandi.',
+  semipermeabile: 'Nella lente una molecola d’acqua passa da un foro verso destra, un’altra passa verso sinistra. Una molecola di zucchero urta la membrana e torna indietro.',
+  osmosi: 'Tre molecole d’acqua passano verso il lato dello zucchero e una sola torna indietro. Sotto la lente una freccia grossa verso destra e una sottile verso sinistra.',
+  livelli: 'Nel recipiente il livello a destra sale e quello a sinistra scende.',
+  equilibrio: 'Una molecola d’acqua passa in ogni direzione e le due frecce sono uguali. Nel recipiente i livelli restano diversi: è segnato il dislivello.',
+  cellula: 'Una cellula rotonda con il nucleo e, dentro, pallini viola di sostanze sciolte. Il contorno, la membrana cellulare, è evidenziato.',
+  'stessa-concentrazione': 'La cellula è in un bicchiere con tanti pallini viola fuori quanti dentro. Due frecce entrano e due escono: la cellula non cambia.',
+  'acqua-pura': 'Una seconda cellula in un bicchiere di acqua pura, senza pallini. Quattro frecce entrano e la cellula si gonfia.',
+  'molto-zucchero': 'Una terza cellula in un bicchiere con moltissimi pallini viola. Quattro frecce escono e la cellula diventa più piccola e piena di pieghe.',
+};
+---
+
+<div class="osmosi">
+  {
+    disposizioni.map((d) => (
+      <svg class={`osmosi__disegno osmosi__disegno--${d.id}`} viewBox={d.viewBox} aria-hidden="true" focusable="false">
+        <defs>
+          <clipPath id={`osmosi-interno-${d.id}`}>
+            <rect x={-L} y={-H - 10} width={2 * L} height={H + 10} rx="16" />
+          </clipPath>
+          <clipPath id={`osmosi-lente-${d.id}`}>
+            <circle r="98.5" />
+          </clipPath>
+        </defs>
+
+        {/* ------------------------- Scena 1 ------------------------- */}
+        <g class="scena scena--recipiente">
+          <g class="cono">
+            {[-1, 1].map((k) => {
+              const r = 100 * d.sl;
+              const [x2, y2] = d.cono === 'verticale' ? [d.lente[0], d.lente[1] + k * r] : [d.lente[0] + k * r, d.lente[1]];
+              return <line x1={d.recipiente[0]} y1={d.recipiente[1] - (LIVELLO / 2) * d.sr} x2={x2} y2={y2} />;
+            })}
+          </g>
+
+          <g transform={`translate(${d.recipiente[0]} ${d.recipiente[1]}) scale(${d.sr})`}>
+            <g class="recipiente" style={`--sx: ${d.sposta[0] / d.sr}px; --sy: ${d.sposta[1] / d.sr}px`}>
+              <path class="recipiente__fondo" d={VETRO + 'Z'} />
+              <g clip-path={`url(#osmosi-interno-${d.id})`}>
+                <g class="liquido liquido--sinistra">
+                  <rect x={-L} y={-LIVELLO} width={L} height={LIVELLO + DISLIVELLO + 20} />
+                  <line class="liquido__pelo" x1={-L} y1={-LIVELLO} x2="0" y2={-LIVELLO} />
+                </g>
+                <g class="liquido liquido--destra">
+                  <rect x="0" y={-LIVELLO} width={L} height={LIVELLO + DISLIVELLO + 20} />
+                  <line class="liquido__pelo" x1="0" y1={-LIVELLO} x2={L} y2={-LIVELLO} />
+                </g>
+                {zucchero.map((z) => (
+                  <circle class="zucchero-sciolto" cx={z.x} cy="0" r="4.5" style={`--y0: ${z.y0}px; --y1: ${z.y1}px`} />
+                ))}
+              </g>
+              <line class="membrana" x1="0" y1="0" x2="0" y2={-H + 6} />
+              <circle class="mirino" cy={-LIVELLO / 2} r="10" />
+              <path class="recipiente__vetro" d={VETRO} />
+
+              <g class="dislivello">
+                <line class="dislivello__riferimento" x1={-L} y1={-LIVELLO - DISLIVELLO} x2="0" y2={-LIVELLO - DISLIVELLO} />
+                <path d={`M-22 ${-LIVELLO - DISLIVELLO}h-12V${-LIVELLO + DISLIVELLO}h12`} />
+                <text x="-42" y={-LIVELLO + 8} text-anchor="end">
+                  Dislivello
+                </text>
+              </g>
+
+              {d.etichette === 'sopra' ? (
+                <g class="etichetta">
+                  <line x1={-L / 2} y1={-H - 28} x2={-L / 2} y2={-H + 30} />
+                  <line x1={L / 2} y1={-H - 28} x2={L / 2} y2={-H + 30} />
+                  <text x={-L / 2} y={-H - 38} text-anchor="middle">
+                    Acqua
+                  </text>
+                  <text x={L / 2} y={-H - 38} text-anchor="middle">
+                    Acqua e zucchero
+                  </text>
+                </g>
+              ) : (
+                <g class="etichetta">
+                  <line x1={-L - 12} y1={-LIVELLO + 50} x2={-L / 2} y2={-LIVELLO + 50} />
+                  <line x1={L + 12} y1={-LIVELLO + 50} x2={L / 2} y2={-LIVELLO + 50} />
+                  <text x={-L - 18} y={-LIVELLO + 60} text-anchor="end">
+                    Acqua
+                  </text>
+                  <text x={L + 18} y={-LIVELLO + 30} text-anchor="start">
+                    Acqua e
+                    <tspan x={L + 18} dy="1.15em">
+                      zucchero
+                    </tspan>
+                  </text>
+                </g>
+              )}
+              <g class="etichetta etichetta--membrana">
+                <line x1="-4" y1={-H + 62} x2="-14" y2={-H + 62} />
+                <text x="-18" y={-H + 70} text-anchor="end">
+                  Membrana
+                </text>
+              </g>
+            </g>
+          </g>
+
+          <g transform={`translate(${d.lente[0]} ${d.lente[1]}) scale(${d.sl})`}>
+            <g class="lente">
+              <circle class="lente__fondo" r="100" />
+              <g clip-path={`url(#osmosi-lente-${d.id})`}>
+                {tratti.map(([y1, y2]) => (
+                  <rect class="lente__membrana" x={-SPESSORE} y={y1} width={2 * SPESSORE} height={y2 - y1} rx="2" />
+                ))}
+                {acquaLente.map(([x, y]) => (
+                  <circle class="molecola molecola--acqua" cx={x} cy={y} r={R_ACQUA} />
+                ))}
+                {zuccheroLente.map(([x, y], i) => (
+                  <circle
+                    class:list={['molecola molecola--zucchero', i === 0 && 'molecola--urta']}
+                    cx={x}
+                    cy={y}
+                    r={R_ZUCCHERO}
+                    style={i === 0 ? `--ux: ${URTO[0]}px; --uy: ${URTO[1]}px` : undefined}
+                  />
+                ))}
+                {passanti.map((m) => (
+                  <circle
+                    class={`molecola molecola--acqua passante passante--${m.dal}`}
+                    r={R_ACQUA}
+                    style={`offset-path: path('${tracciato(m.percorso)}'); --ritardo: ${m.ritardo}s`}
+                  />
+                ))}
+              </g>
+              <circle class="lente__anello" r="100" />
+              <g class="frecce frecce--osmosi">
+                <path class="freccia freccia--grossa" d={freccia(-36, 121, 36, 121, 12)} />
+                <path class="freccia freccia--sottile" d={freccia(22, 141, -22, 141, 8)} />
+              </g>
+              <g class="frecce frecce--equilibrio">
+                <path class="freccia" d={freccia(-30, 121, 30, 121, 10)} />
+                <path class="freccia" d={freccia(30, 141, -30, 141, 10)} />
+              </g>
+            </g>
+          </g>
+        </g>
+
+        {/* ------------------------- Scena 2 ------------------------- */}
+        <g class="scena scena--cellule">
+          {bicchieri.map((b, i) => {
+            const p = d.bicchieri[i];
+            return (
+              <g class={`bicchiere bicchiere--${b.id}`}>
+                <g transform={`translate(${p.pos[0]} ${p.pos[1]}) scale(${p.s})`}>
+                  <g class="bagno">
+                    <path class="recipiente__fondo" d={BICCHIERE + 'Z'} />
+                    <path class="bagno__liquido" d={`M${-B} ${-LIQUIDO_B}H${B}V-14Q${B} 0 ${B - 14} 0H${-B + 14}Q${-B} 0 ${-B} -14Z`} />
+                    {fuori[b.id].map(([x, y]) => (
+                      <circle class="soluto" cx={x} cy={y} r={R_SOLUTO} />
+                    ))}
+                    <path class="recipiente__vetro" d={BICCHIERE} />
+                  </g>
+                  <g transform={`translate(${CELLULA[0]} ${CELLULA[1]})`}>
+                    <g class="frecce-cellula frecce-cellula--entra">
+                      {ANGOLI.map((a) => (
+                        <path class="freccia" d={frecciaCellula(a, true)} />
+                      ))}
+                    </g>
+                    <g class="frecce-cellula frecce-cellula--esce">
+                      {ANGOLI.map((a) => (
+                        <path class="freccia" d={frecciaCellula(a, false)} />
+                      ))}
+                    </g>
+                    <g class="frecce-cellula frecce-cellula--pari">
+                      {ANGOLI.map((a, k) => (
+                        <path class="freccia" d={frecciaCellula(a, k % 2 === 0)} />
+                      ))}
+                    </g>
+                    <g class="cellula">
+                      <circle class="cellula__corpo" r={R_CELLULA} />
+                      <path class="cellula__corpo cellula__pieghe" d={raggrinzita} />
+                      <circle class="cellula__nucleo" cx={NUCLEO[0]} cy={NUCLEO[1]} r={R_NUCLEO} />
+                      {solutiCellula.map(([x, y]) => (
+                        <circle class="soluto" cx={x} cy={y} r={R_SOLUTO} />
+                      ))}
+                      <circle class="cellula__membrana" r={R_CELLULA} />
+                      <path class="cellula__membrana cellula__pieghe" d={raggrinzita} />
+                    </g>
+                  </g>
+                </g>
+                <text class="titolo-bicchiere" x={p.titolo[0]} y={p.titolo[1]} text-anchor={p.ancora}>
+                  {b.titolo[0]}
+                  {b.titolo[1] && (
+                    <tspan x={p.titolo[0]} dy="1.15em">
+                      {b.titolo[1]}
+                    </tspan>
+                  )}
+                </text>
+                <text class="esito" x={p.esito[0]} y={p.esito[1]} text-anchor={p.ancora}>
+                  La cellula
+                  <tspan x={p.esito[0]} dy="1.15em">
+                    {b.esito}
+                  </tspan>
+                </text>
+              </g>
+            );
+          })}
+
+          {(() => {
+            const c = d.bicchieri[1];
+            const k = c.s * INGRANDITA;
+            const centro: Punto = [c.pos[0] + CELLULA[0] * c.s, c.pos[1] + CELLULA[1] * c.s];
+            const lato = d.membranaCellula.ancora === 'end' ? -1 : 1;
+            const bordo: Punto = [arrotonda(centro[0] + lato * R_CELLULA * k * 0.71), arrotonda(centro[1] - R_CELLULA * k * 0.71)];
+            // il pallino di soluto più vicino all'etichetta, in basso a destra
+            const [sx, sy] = solutiCellula.reduce((a, b) => (b[0] + b[1] > a[0] + a[1] ? b : a));
+            const soluto: Punto = [arrotonda(centro[0] + sx * k), arrotonda(centro[1] + sy * k)];
+            const m = d.membranaCellula;
+            const s = d.solutiCellula;
+            return (
+              <g class="etichetta etichetta--cellula">
+                <line x1={m.testo[0] + (m.ancora === 'end' ? 6 : -6)} y1={m.testo[1] - 8} x2={bordo[0]} y2={bordo[1]} />
+                <circle cx={bordo[0]} cy={bordo[1]} r="3.5" />
+                {d.id === 'larga' ? (
+                  <text x={m.testo[0]} y={m.testo[1]} text-anchor={m.ancora}>
+                    Membrana cellulare
+                  </text>
+                ) : (
+                  <text x={m.testo[0]} y={m.testo[1]} text-anchor={m.ancora}>
+                    Membrana
+                    <tspan x={m.testo[0]} dy="1.15em">
+                      cellulare
+                    </tspan>
+                  </text>
+                )}
+                <line x1={s.testo[0] + (s.ancora === 'end' ? 6 : -6)} y1={s.testo[1] - 8} x2={soluto[0]} y2={soluto[1]} />
+                <text x={s.testo[0]} y={s.testo[1]} text-anchor={s.ancora}>
+                  Sostanze sciolte
+                </text>
+              </g>
+            );
+          })()}
+        </g>
+      </svg>
+    ))
+  }
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .osmosi {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+  }
+  .osmosi__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .osmosi__disegno--stretta {
+    display: none;
+  }
+  /* Palco stretto o verticale (telefono): il recipiente sopra e la lente sotto. */
+  @container (aspect-ratio < 1.15) {
+    .osmosi__disegno--larga {
+      display: none;
+    }
+    .osmosi__disegno--stretta {
+      display: block;
+    }
+  }
+  .osmosi svg :is(path, rect, circle, line) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Interruttori, impostati per passaggio più sotto ---
+     --lente: 1 quando la lente è aperta
+     --osmosi: 1 quando i livelli sono cambiati */
+
+  .osmosi .scena {
+    transition: opacity 0.6s ease-in-out;
+  }
+  .osmosi .scena--cellule {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* --- Recipiente --- */
+
+  .osmosi .recipiente {
+    transform: translate(calc(var(--sx) * (1 - var(--lente, 0))), calc(var(--sy) * (1 - var(--lente, 0))));
+    transition: transform 1s ease-in-out;
+  }
+  .osmosi .recipiente__fondo {
+    fill: var(--superficie);
+    fill-opacity: 0.75;
+  }
+  .osmosi .recipiente__vetro {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .osmosi .liquido rect {
+    fill: var(--acqua);
+    fill-opacity: 0.45;
+  }
+  .osmosi .liquido__pelo {
+    stroke: var(--acqua);
+    stroke-width: 3;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .osmosi .liquido {
+    transition: transform 1.6s ease-in-out;
+  }
+  .osmosi .liquido--sinistra {
+    transform: translateY(calc(50px * var(--osmosi, 0)));
+  }
+  .osmosi .liquido--destra {
+    transform: translateY(calc(-50px * var(--osmosi, 0)));
+  }
+  /* Lo zucchero sciolto è un simbolo: in realtà non si vede. */
+  .osmosi .zucchero-sciolto {
+    fill: var(--nutrienti);
+    transform: translateY(var(--y0));
+    transition: transform 1.6s ease-in-out;
+  }
+  .osmosi .membrana {
+    stroke: var(--testo-2);
+    stroke-width: 4;
+    stroke-dasharray: 10 5;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .osmosi .mirino {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    opacity: var(--lente, 0);
+    transition: opacity 0.4s ease-in-out;
+  }
+
+  .osmosi .dislivello {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  .osmosi .dislivello path {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 4;
+    stroke-linejoin: round;
+  }
+  .osmosi .dislivello__riferimento {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+
+  /* --- Lente e cono --- */
+
+  .osmosi .cono {
+    opacity: var(--lente, 0);
+    transition: opacity 0.4s ease-in-out;
+  }
+  .osmosi .cono line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 6;
+  }
+  .osmosi .lente {
+    opacity: var(--lente, 0);
+    transform: scale(calc(0.6 + 0.4 * var(--lente, 0)));
+    transition:
+      opacity 0.6s ease-in-out,
+      transform 0.8s ease-in-out;
+  }
+  .osmosi .lente__fondo {
+    fill: var(--radiografia);
+  }
+  .osmosi .lente__anello {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .osmosi .lente__membrana {
+    fill: #d8e2f0;
+  }
+  .osmosi .molecola {
+    stroke: #d8e2f0;
+    stroke-width: 1.5;
+  }
+  .osmosi .molecola--acqua {
+    fill: var(--acqua);
+  }
+  .osmosi .molecola--zucchero {
+    fill: var(--nutrienti);
+  }
+
+  /* Le molecole che passano dai fori: ferme all'inizio del percorso o già arrivate. */
+  .osmosi .passante {
+    offset-distance: 0%;
+    offset-rotate: 0deg;
+    transition: offset-distance 1.4s ease-in-out;
+  }
+  .osmosi .frecce {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  .osmosi .freccia {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .osmosi .freccia--grossa {
+    stroke-width: 9;
+  }
+  .osmosi .freccia--sottile {
+    stroke-width: 3;
+  }
+
+  @keyframes osmosi-urta {
+    45% {
+      transform: translate(var(--ux), var(--uy));
+    }
+  }
+
+  /* --- Scena 2: le cellule --- */
+
+  .osmosi .bicchiere {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+  .osmosi .bagno,
+  .osmosi .titolo-bicchiere,
+  .osmosi .esito {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+  .osmosi .bagno__liquido {
+    fill: var(--acqua);
+    fill-opacity: 0.3;
+  }
+  .osmosi .soluto {
+    fill: var(--nutrienti);
+  }
+  .osmosi .cellula {
+    transition: transform 1.6s ease-in-out;
+  }
+  .osmosi .cellula__corpo {
+    fill: var(--tessuto-chiaro);
+  }
+  .osmosi .cellula__nucleo {
+    fill: var(--tessuto);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .osmosi .cellula__membrana {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out,
+      opacity 1s ease-in-out;
+  }
+  .osmosi .cellula__corpo {
+    transition: opacity 1s ease-in-out;
+  }
+  .osmosi .cellula__pieghe {
+    opacity: 0;
+  }
+  .osmosi .frecce-cellula {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+
+  /* --- Testi --- */
+
+  .osmosi text {
+    fill: var(--testo);
+    font-weight: 700;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  .osmosi__disegno--larga text {
+    font-size: 26px;
+  }
+  /* Il disegno stretto si rimpicciolisce di più sul telefono: testi più grandi. */
+  .osmosi__disegno--stretta text {
+    font-size: 30px;
+  }
+  /* Il recipiente stretto è rimpicciolito (scala 0,8): le sue scritte compensano. */
+  .osmosi__disegno--stretta .recipiente text {
+    font-size: 37px;
+  }
+  .osmosi .esito {
+    fill: var(--testo-2);
+    font-weight: 400;
+  }
+  .osmosi .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .osmosi .etichetta circle {
+    fill: var(--testo-2);
+  }
+  .osmosi .etichetta--membrana,
+  .osmosi .etichetta--cellula {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+
+  /* --- Stato di ogni passaggio ---
+     0 due-liquidi · 1 membrana · 2 ingrandimento · 3 semipermeabile · 4 osmosi · 5 livelli
+     6 equilibrio · 7 cellula · 8 stessa-concentrazione · 9 acqua-pura · 10 molto-zucchero */
+
+  :is([data-indice='2'], [data-indice='3'], [data-indice='4'], [data-indice='5'], [data-indice='6']) .osmosi {
+    --lente: 1;
+  }
+  :is([data-indice='5'], [data-indice='6']) .osmosi {
+    --osmosi: 1;
+  }
+  :is([data-indice='5'], [data-indice='6']) .osmosi .zucchero-sciolto {
+    transform: translateY(var(--y1));
+  }
+
+  /* La membrana compare al passaggio 1 e resta segnata finché si guarda il recipiente. */
+  :is([data-indice='1'], [data-indice='2'], [data-indice='3'], [data-indice='4'], [data-indice='5'], [data-indice='6']) .osmosi .etichetta--membrana {
+    opacity: 1;
+  }
+
+  /* Le molecole che passano: al passaggio 3 due, al 4 altre quattro, al 6 le ultime due. */
+  :is([data-indice='3'], [data-indice='4'], [data-indice='5'], [data-indice='6']) .osmosi .passante--3,
+  :is([data-indice='4'], [data-indice='5'], [data-indice='6']) .osmosi .passante--4,
+  [data-indice='6'] .osmosi .passante--6 {
+    offset-distance: 100%;
+    transition-delay: var(--ritardo);
+  }
+  [data-indice='3'] .osmosi .molecola--urta {
+    animation: osmosi-urta 1.4s ease-in-out 0.5s;
+  }
+  :is([data-indice='4'], [data-indice='5']) .osmosi .frecce--osmosi,
+  [data-indice='6'] .osmosi .frecce--equilibrio {
+    opacity: 1;
+    transition-delay: 0.6s;
+  }
+  [data-indice='6'] .osmosi .dislivello {
+    opacity: 1;
+    transition-delay: 1s;
+  }
+
+  /* Scena 2 */
+  :is([data-indice='7'], [data-indice='8'], [data-indice='9'], [data-indice='10']) .osmosi .scena--recipiente {
+    opacity: 0;
+  }
+  :is([data-indice='7'], [data-indice='8'], [data-indice='9'], [data-indice='10']) .osmosi .scena--cellule {
+    opacity: 1;
+    transition-delay: 0.3s;
+  }
+  :is([data-indice='7'], [data-indice='8'], [data-indice='9'], [data-indice='10']) .osmosi .bicchiere--uguale,
+  :is([data-indice='9'], [data-indice='10']) .osmosi .bicchiere--pura,
+  [data-indice='10'] .osmosi .bicchiere--zuccherata {
+    opacity: 1;
+  }
+  [data-indice='7'] .osmosi .bicchiere--uguale .cellula {
+    transform: scale(1.7);
+  }
+  [data-indice='7'] .osmosi .etichetta--cellula {
+    opacity: 1;
+    transition-delay: 0.6s;
+  }
+  :is([data-indice='8'], [data-indice='9'], [data-indice='10']) .osmosi .bicchiere--uguale :is(.bagno, .titolo-bicchiere),
+  :is([data-indice='9'], [data-indice='10']) .osmosi .bicchiere--pura :is(.bagno, .titolo-bicchiere),
+  [data-indice='10'] .osmosi .bicchiere--zuccherata :is(.bagno, .titolo-bicchiere) {
+    opacity: 1;
+  }
+  :is([data-indice='8'], [data-indice='9'], [data-indice='10']) .osmosi .bicchiere--uguale :is(.esito, .frecce-cellula--pari),
+  :is([data-indice='9'], [data-indice='10']) .osmosi .bicchiere--pura :is(.esito, .frecce-cellula--entra),
+  [data-indice='10'] .osmosi .bicchiere--zuccherata :is(.esito, .frecce-cellula--esce) {
+    opacity: 1;
+    transition-delay: 0.8s;
+  }
+  /* Il bicchiere di cui non si parla si attenua. */
+  [data-indice='9'] .osmosi .bicchiere--uguale,
+  [data-indice='10'] .osmosi :is(.bicchiere--uguale, .bicchiere--pura) {
+    opacity: 0.4;
+  }
+  :is([data-indice='9'], [data-indice='10']) .osmosi .bicchiere--pura .cellula {
+    transform: scale(1.25);
+  }
+  [data-indice='10'] .osmosi .bicchiere--zuccherata .cellula {
+    transform: scale(0.8);
+  }
+  [data-indice='10'] .osmosi .bicchiere--zuccherata .cellula__pieghe {
+    opacity: 1;
+  }
+  [data-indice='10'] .osmosi .bicchiere--zuccherata :is(circle.cellula__corpo, circle.cellula__membrana) {
+    opacity: 0;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  [data-indice='1'] .osmosi .membrana,
+  [data-indice='2'] .osmosi .lente__anello,
+  [data-indice='5'] .osmosi .liquido__pelo,
+  [data-indice='7'] .osmosi .cellula__membrana {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  [data-indice='3'] .osmosi .passante--3,
+  [data-indice='4'] .osmosi .passante--4,
+  [data-indice='6'] .osmosi .passante--6,
+  [data-indice='3'] .osmosi .molecola--urta {
+    stroke: var(--accento);
+    stroke-width: 3;
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .osmosi .descrizione {
+    display: none;
+  }
+  [data-passaggio='due-liquidi'] .osmosi .descrizione[data-per='due-liquidi'],
+  [data-passaggio='membrana'] .osmosi .descrizione[data-per='membrana'],
+  [data-passaggio='ingrandimento'] .osmosi .descrizione[data-per='ingrandimento'],
+  [data-passaggio='semipermeabile'] .osmosi .descrizione[data-per='semipermeabile'],
+  [data-passaggio='osmosi'] .osmosi .descrizione[data-per='osmosi'],
+  [data-passaggio='livelli'] .osmosi .descrizione[data-per='livelli'],
+  [data-passaggio='equilibrio'] .osmosi .descrizione[data-per='equilibrio'],
+  [data-passaggio='cellula'] .osmosi .descrizione[data-per='cellula'],
+  [data-passaggio='stessa-concentrazione'] .osmosi .descrizione[data-per='stessa-concentrazione'],
+  [data-passaggio='acqua-pura'] .osmosi .descrizione[data-per='acqua-pura'],
+  [data-passaggio='molto-zucchero'] .osmosi .descrizione[data-per='molto-zucchero'] {
+    display: block;
+  }
+</style>

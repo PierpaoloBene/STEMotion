@@ -1,0 +1,61 @@
+protagonista: Jean-Antoine Nollet
+anni: 1700 – 1770
+richiamo: >
+  L'acqua attraversa una membrana e fa salire un liquido. Chi se n'è accorto per primo?
+  Tutto comincia con una vescica di maiale e un vaso pieno di alcol.
+titolo: Nollet e la vescica che si gonfia
+ritratto:
+  capelli: lunghi
+  colore_capelli: bianchi
+  veste: talare
+  colore_veste: nero
+passaggi:
+  - id: nollet-vaso
+    titolo: Un vaso chiuso da una vescica
+    breve: Nel 1748, a Parigi, Nollet chiude un vaso di alcol con una vescica.
+    spiegazione: >
+      L'abate **Jean-Antoine Nollet** è un fisico francese, famoso per i suoi esperimenti.
+      Riempie un vaso di "spirito di vino", cioè alcol, e ne chiude la bocca con un pezzo di vescica di maiale.
+      La vescica è una **membrana** sottile.
+
+  - id: nollet-acqua
+    titolo: Sott'acqua
+    breve: Nollet immerge il vaso chiuso in una vasca d'acqua.
+    spiegazione: >
+      Il vaso resta sott'acqua per alcune ore.
+      Dentro c'è solo alcol, fuori solo acqua: in mezzo c'è la vescica.
+
+  - id: nollet-gonfia
+    titolo: La vescica si gonfia
+    breve: Dopo qualche ora la vescica è gonfia verso l'esterno.
+    spiegazione: >
+      La vescica, che prima era piatta, si tende e si gonfia come una cupola.
+      Nel vaso c'è più liquido di prima.
+
+  - id: nollet-zampillo
+    titolo: Lo zampillo
+    breve: Nollet punge la vescica e il liquido schizza fuori, alto più di 30 cm.
+    spiegazione: >
+      Nollet fora la vescica con un ago.
+      Il liquido esce con forza: lo zampillo supera i 30 cm di altezza.
+      Dentro il vaso il liquido era sotto **pressione**.
+
+  - id: nollet-spiegazione
+    titolo: Che cosa è successo
+    breve: L'acqua è entrata attraverso la vescica, l'alcol non è uscito.
+    spiegazione: >
+      Nollet capisce che l'acqua attraversa la vescica ed entra nel vaso.
+      L'alcol invece non riesce a uscire.
+      È la prima osservazione dell'osmosi di cui abbiamo notizia.
+
+  - id: dutrochet-nome
+    titolo: Un nome per il fenomeno
+    breve: Nel 1827 Henri Dutrochet lo studia nei viventi e gli dà un nome.
+    spiegazione: >
+      Quasi 80 anni dopo, il medico e naturalista francese **Henri Dutrochet** ripete esperimenti simili.
+      Capisce che lo stesso fenomeno avviene nelle cellule di piante e animali.
+      Lo chiama "endosmosi"; da qui viene la parola **osmosi**, dal greco "spinta".
+fonti:
+  - "J.-A. Nollet, Recherches sur les causes du bouillonnement des liquides, Mémoires de l'Académie royale des sciences (anno 1748, pubblicato nel 1752)"
+  - "H. Dutrochet, Nouvelles observations sur l'endosmose et l'exosmose, Annales de chimie et de physique, 1827"
+  - "Nollet Discovers Osmosis, EBSCO Research Starters"

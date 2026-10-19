@@ -1,0 +1,18 @@
+titolo: L'osmosi
+sottotitolo: Come l'acqua attraversa una membrana, dal recipiente alla cellula
+materia: scienze
+area: biologia
+modello: passaggi
+durata_minuti: 15
+prerequisiti: [stati-della-materia]
+obiettivi:
+  - Riconoscere in una soluzione il solvente e il soluto
+  - Spiegare che cos'è una membrana semipermeabile
+  - Descrivere l'osmosi come il passaggio dell'acqua verso il lato con più soluto
+  - Prevedere che cosa succede a una cellula in acqua pura e in acqua molto zuccherata
+parole_chiave: [osmosi, soluzione, solvente, soluto, membrana semipermeabile, concentrazione, cellula, membrana cellulare]
+stato: bozza
+revisionato_da: null
+fonti:
+  - "N. A. Campbell, J. B. Reece e altri, Biologia, capitolo sulla membrana cellulare e il trasporto (osmosi, soluzioni ipotoniche, isotoniche e ipertoniche)"
+  - "Grandezza delle molecole: acqua circa 0,3 nm, saccarosio circa 1 nm (CRC Handbook of Chemistry and Physics)"
