@@ -1,0 +1,95 @@
+---
+// I due reni visti di fronte, già aperti (in sezione), con gli ureteri che scendono verso la vescica.
+// La persona ci guarda: il rene destro è a sinistra nel disegno, un po' più in basso (sopra c'è il fegato).
+// Ogni rene è disegnato attorno al suo centro, con l'ilo (dove entrano i vasi ed esce l'uretere) verso la colonna.
+// Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
+
+// Rene con l'ilo verso sinistra, centro in (0, 0): alto 120, largo 76.
+const FORMA =
+  'M-6 -60C22 -62 40 -36 40 0C40 36 22 62 -6 60C-26 58 -34 40 -30 24C-27 14 -18 10 -18 0C-18 -10 -27 -14 -30 -24C-34 -40 -26 -58 -6 -60Z';
+// Piramidi: la parte più scura, dove ci sono i tubicini che portano l'urina verso il centro.
+const PIRAMIDI = ['M2 -50L24 -38L-2 -22Z', 'M30 -28L36 -6L8 -10Z', 'M36 6L30 28L8 10Z', 'M24 38L2 50L-2 22Z'];
+// Bacinetto: la cavità che raccoglie l'urina; esce dall'ilo e continua nell'uretere.
+const BACINETTO =
+  'M-36 -7C-22 -7 -14 -24 -4 -26C4 -27 6 -18 0 -15C-4 -12 4 -6 10 -5V5C4 6 -4 12 0 15C6 18 4 27 -4 26C-14 24 -22 7 -36 7Z';
+
+const URETERI = {
+  dx: 'M354 272C344 310 344 370 350 420C356 480 366 540 382 602',
+  sx: 'M446 254C456 300 456 370 450 420C444 480 434 540 418 602',
+};
+const reni = [
+  { lato: 'dx', trasforma: 'translate(318 270) scale(-1 1)' },
+  { lato: 'sx', trasforma: 'translate(482 252)' },
+];
+---
+
+<g class="reni">
+  {
+    Object.entries(URETERI).map(([lato, d]) => (
+      <g class:list={['uretere', `uretere--${lato}`]}>
+        <path class="uretere__bordo" d={d} />
+        <path class="uretere__parete" d={d} />
+        <!-- urina che scende: tratteggio da far scorrere con stroke-dashoffset -->
+        <path class="uretere__urina" d={d} pathLength="100" />
+      </g>
+    ))
+  }
+  {
+    reni.map((r) => (
+      <g class:list={['rene', `rene--${r.lato}`]} transform={r.trasforma}>
+        <path class="rene__forma" d={FORMA} />
+        {PIRAMIDI.map((p) => (
+          <path class="rene__piramide" d={p} />
+        ))}
+        <path class="rene__bacinetto" d={BACINETTO} />
+        <path class="rene__urina" d={BACINETTO} />
+      </g>
+    ))
+  }
+</g>
+
+<style>
+  .uretere path {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .uretere__bordo {
+    stroke: var(--contorno);
+    stroke-width: 11;
+  }
+  .uretere__parete {
+    stroke: var(--tessuto);
+    stroke-width: 7;
+  }
+  .uretere__urina {
+    stroke: var(--urina);
+    stroke-width: 4;
+    stroke-dasharray: 3 5;
+    opacity: 0;
+  }
+  .rene__forma {
+    fill: var(--rene);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .rene__piramide {
+    fill: var(--rene-midollare);
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+  .rene__bacinetto,
+  .rene__urina {
+    stroke: var(--contorno);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+  .rene__bacinetto {
+    fill: var(--tessuto-chiaro);
+  }
+  .rene__urina {
+    fill: var(--urina);
+    opacity: 0;
+  }
+</style>

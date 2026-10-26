@@ -1,0 +1,70 @@
+---
+// Grandi vasi dell'addome visti di fronte: aorta e vena cava, i vasi dei reni e quelli delle gambe.
+// La persona ci guarda: l'aorta, a sinistra della persona, è a destra nel disegno; la vena cava a sinistra.
+// Le vene renali passano davanti all'aorta, l'arteria renale destra passa dietro la vena cava.
+// Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
+const ARTERIE = {
+  aorta: 'M414 -20V418',
+  // arterie renali: dall'aorta all'ilo dei due reni
+  renaleDx: 'M414 250C390 252 360 258 338 263',
+  renaleSx: 'M414 236C430 236 440 240 462 244',
+  // arterie iliache, verso le gambe
+  iliache: 'M344 640C346 560 380 470 414 418C448 470 466 560 462 640',
+};
+const VENE = {
+  cava: 'M386 -20V432',
+  renaleDx: 'M338 277C356 277 372 277 386 277',
+  renaleSx: 'M462 258C440 262 410 264 386 266',
+  iliache: 'M330 640C334 560 356 480 386 432C416 480 444 560 448 640',
+};
+---
+
+<g class="vasi-addome">
+  <!-- l'arteria renale destra passa dietro la vena cava: va disegnata per prima -->
+  <path class="vaso__bordo arteria-renale arteria-renale--dx" d={ARTERIE.renaleDx}></path>
+  <path class="arteria arteria-renale" d={ARTERIE.renaleDx}></path>
+  <path class="vaso__bordo vaso--grande" d={VENE.cava}></path>
+  <path class="vaso__bordo" d={VENE.iliache}></path>
+  <path class="vena vaso--grande" d={VENE.cava}></path>
+  <path class="vena" d={VENE.iliache}></path>
+  <path class="vaso__bordo vaso--grande" d={ARTERIE.aorta}></path>
+  <path class="vaso__bordo" d={ARTERIE.iliache}></path>
+  <path class="arteria vaso--grande" d={ARTERIE.aorta}></path>
+  <path class="arteria" d={ARTERIE.iliache}></path>
+  <path class="vaso__bordo arteria-renale arteria-renale--sx" d={ARTERIE.renaleSx}></path>
+  <path class="arteria arteria-renale" d={ARTERIE.renaleSx}></path>
+  <!-- vene renali: davanti all'aorta -->
+  <path class="vaso__bordo vena-renale" d={VENE.renaleDx}></path>
+  <path class="vaso__bordo vena-renale" d={VENE.renaleSx}></path>
+  <path class="vena vena-renale" d={VENE.renaleDx}></path>
+  <path class="vena vena-renale" d={VENE.renaleSx}></path>
+</g>
+
+<style>
+  .vasi-addome path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vaso__bordo {
+    stroke: var(--contorno);
+    stroke-width: 11;
+  }
+  .vaso__bordo.vaso--grande {
+    stroke-width: 19;
+  }
+  .arteria,
+  .vena {
+    stroke-width: 6;
+  }
+  .arteria.vaso--grande,
+  .vena.vaso--grande {
+    stroke-width: 14;
+  }
+  .arteria {
+    stroke: var(--arterioso);
+  }
+  .vena {
+    stroke: var(--venoso);
+  }
+</style>

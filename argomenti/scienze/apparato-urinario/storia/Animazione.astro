@@ -1,0 +1,283 @@
+---
+/**
+ * Storia dell'apparato urinario: Bellini scopre i tubicini del rene (1662), Malpighi vede i
+ * glomeruli iniettando un liquido nero nelle arterie (1666), Bowman trova la capsula che
+ * collega glomerulo e tubicino (1842).
+ *
+ * Sei scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Il liquido nero che riempie le arterie scorre con stroke-dashoffset a partire da [data-indice].
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+
+// Rene in sezione (lo stesso disegno di src/components/anatomia/Reni.astro), ilo a sinistra.
+const FORMA =
+  'M-6 -60C22 -62 40 -36 40 0C40 36 22 62 -6 60C-26 58 -34 40 -30 24C-27 14 -18 10 -18 0C-18 -10 -27 -14 -30 -24C-34 -40 -26 -58 -6 -60Z';
+const PIRAMIDI = ['M2 -50L24 -38L-2 -22Z', 'M30 -28L36 -6L8 -10Z', 'M36 6L30 28L8 10Z', 'M24 38L2 50L-2 22Z'];
+const BACINETTO =
+  'M-36 -7C-22 -7 -14 -24 -4 -26C4 -27 6 -18 0 -15C-4 -12 4 -6 10 -5V5C4 6 -4 12 0 15C6 18 4 27 -4 26C-14 24 -22 7 -36 7Z';
+// Tubicini nelle piramidi: dalla base verso la punta.
+const TUBICINI =
+  'M8 -47L0 -24M16 -43L1 -23M22 -39L1 -22M32 -24L9 -9M34 -15L8 -8M35 -8L8 -8M35 8L8 8M34 15L8 9M32 24L9 10M22 39L1 22M16 43L1 23M8 47L0 24';
+// Rene grande delle scene 0 e 2: centro (540, 320), ingrandito 2,4 volte.
+const RENE = 'translate(540 320) scale(2.4)';
+// Arterie del rene (nel riferimento del rene): entrano dall'ilo e si ramificano.
+const ARTERIE =
+  'M-80 0H-6M-6 0C4 -8 6 -24 12 -40M-6 0C8 -4 20 -10 28 -22M-6 0C8 4 20 10 28 22M-6 0C4 8 6 24 12 40M12 -40L22 -46M12 -40L8 -50M28 -22L32 -26M28 22L32 26M12 40L22 46M12 40L8 50';
+
+// Un gomitolo di capillari visto da vicino: un nodo di anse attorno a (0, 0).
+const GOMITOLO = 'M-4 -18C14 -22 20 -6 10 2C0 10 -16 4 -12 -8C-8 -20 18 -16 18 4C18 20 -4 22 -14 12C-22 4 -14 -14 -4 -18Z';
+// Il ramo con le "mele": vaso principale e rametti con un glomerulo in fondo (scena 3).
+const mele = [
+  { x: 419, y: 240, gx: 400, gy: 186 },
+  { x: 466, y: 252, gx: 460, gy: 318 },
+  { x: 551, y: 255, gx: 556, gy: 196 },
+  { x: 585, y: 265, gx: 604, gy: 332 },
+  { x: 635, y: 283, gx: 668, gy: 236 },
+];
+
+const descrizioni = [
+  'Lorenzo Bellini, giovane, accanto a un rene tagliato a metà e molto ingrandito. Nelle parti più scure del rene si vedono tante righe sottili: i tubicini. In alto la data 1662 e la città, Pisa.',
+  'Marcello Malpighi accanto a un microscopio antico: un tubo su un sostegno, con una lente sopra un vetrino. In alto la data 1666 e la città, Bologna.',
+  'Il rene ingrandito. Una siringa spinge un liquido nero nell’arteria del rene, e il nero si allarga in tutti i rami delle arterie.',
+  'Dentro un cerchio, come al microscopio: un vaso nero con tanti rametti. In fondo a ogni rametto pende un gomitolo scuro, come una mela su un ramo.',
+  'Malpighi guarda un gomitolo scuro a sinistra e un tubicino a destra. In mezzo c’è un grande punto di domanda.',
+  'William Bowman. Accanto, un gomitolo di capillari dentro una coppa; la coppa continua in un tubicino. In alto la data 1842 e la città, Londra.',
+];
+---
+
+<Storia classe="storia-malpighi" descrizioni={descrizioni}>
+  <!-- 0: Bellini e i tubicini -->
+  <g data-passi="0">
+    <g transform="translate(140 560) scale(0.85)">
+      <Personaggio capelli="lunghi" colore_capelli="neri" veste="giacca" colore_veste="marrone" />
+    </g>
+  </g>
+  <text class="data" x="40" y="90" data-passi="0">1662</text>
+  <Etichetta testo="Pisa" x={40} y={140} passi="0" />
+  <Etichetta testo="Lorenzo Bellini" x={140} y={590} allinea="centro" passi="0" />
+
+  <!-- Il rene grande: nella scena 0 con i tubicini, nella 2 con le arterie -->
+  <g data-passi="0 2">
+    <g transform={RENE}>
+      <path class="tratto rene" d={FORMA}></path>
+      {PIRAMIDI.map((p) => <path class="tratto piramide" d={p} />)}
+      <path class="tratto bacinetto" d={BACINETTO}></path>
+    </g>
+  </g>
+  <g data-passi="0">
+    <g transform={RENE}>
+      <path class="linea tubicini" d={TUBICINI}></path>
+    </g>
+  </g>
+  <Etichetta testo="Tubicini" x={760} y={150} linea={[700, 160, 600, 226]} allinea="fine" passi="0" />
+
+  <!-- 1: Malpighi e il microscopio -->
+  <g data-passi="1 4">
+    <g transform="translate(140 560) scale(0.85)">
+      <Personaggio capelli="lunghi" colore_capelli="castani" veste="giacca" colore_veste="nero" />
+    </g>
+  </g>
+  <Etichetta testo="Marcello Malpighi" x={140} y={590} allinea="centro" passi="1 4" />
+  <text class="data" x="40" y="90" data-passi="1">1666</text>
+  <Etichetta testo="Bologna" x={40} y={140} passi="1" />
+  <g data-passi="1">
+    <rect class="tratto ottone" x="440" y="470" width="200" height="26" rx="10"></rect>
+    <rect class="tratto ottone" x="574" y="250" width="22" height="226" rx="6"></rect>
+    <rect class="tratto vetro" x="450" y="372" width="140" height="14" rx="4"></rect>
+    <path class="tratto rene" d="M500 372C500 360 516 356 524 362C532 356 548 360 546 372Z"></path>
+    <g transform="rotate(-12 520 260)">
+      <rect class="tratto legno" x="500" y="150" width="40" height="190" rx="8"></rect>
+      <rect class="tratto ottone" x="508" y="336" width="24" height="24" rx="4"></rect>
+      <rect class="tratto ottone" x="496" y="130" width="48" height="24" rx="8"></rect>
+    </g>
+    <path class="linea" d="M584 300H540"></path>
+  </g>
+  <Etichetta testo="Microscopio" x={760} y={200} linea={[700, 192, 582, 240]} allinea="fine" passi="1" />
+
+  <!-- 2: il liquido nero nelle arterie -->
+  <g data-passi="2">
+    <g transform={RENE}>
+      <path class="arterie" d={ARTERIE}></path>
+      <path class="liquido" d={ARTERIE} pathLength="1"></path>
+    </g>
+    <rect class="tratto vetro" x="180" y="300" width="120" height="40" rx="6"></rect>
+    <rect class="liquido-siringa" x="230" y="306" width="68" height="28" rx="3"></rect>
+    <path class="linea" d="M300 320H348M180 320H140M140 296V344"></path>
+  </g>
+  <Etichetta testo="Liquido nero" x={240} y={270} allinea="centro" passi="2" />
+  <Etichetta testo="Arterie del rene" x={760} y={520} linea={[680, 506, 600, 432]} allinea="fine" passi="2" />
+
+  <!-- 3: i gomitoli appesi come mele -->
+  <g data-passi="3">
+    <circle class="tratto lente" cx="540" cy="290" r="230"></circle>
+    <path class="vaso-nero" d="M330 230C400 220 440 260 500 252S600 280 700 300"></path>
+    {
+      mele.map((m) => (
+        <>
+          <path class="vaso-nero vaso-nero--sottile" d={`M${m.x} ${m.y}L${m.gx} ${m.gy}`} />
+          <g transform={`translate(${m.gx} ${m.gy})`}>
+            <circle class="tratto glomerulo-nero" r="22" />
+            <path class="linea gomitolo-chiaro" d={GOMITOLO} />
+          </g>
+        </>
+      ))
+    }
+  </g>
+  <Etichetta testo="Glomeruli" x={780} y={100} linea={[730, 110, 676, 216]} allinea="fine" passi="3" />
+  <Etichetta testo="«come mele» appese a un ramo" x={540} y={575} allinea="centro" passi="3" />
+
+  <!-- 4: il pezzo mancante -->
+  <g data-passi="4">
+    <path class="vaso-nero vaso-nero--sottile" d="M300 230L380 300"></path>
+    <g transform="translate(380 300)">
+      <circle class="tratto glomerulo-nero" r="34"></circle>
+      <path class="linea gomitolo-chiaro" d={GOMITOLO} transform="scale(1.5)"></path>
+    </g>
+    <path class="tubicino" d="M640 300C680 300 700 340 700 400V520"></path>
+    <path class="tubicino-lume" d="M640 300C680 300 700 340 700 400V520"></path>
+    <text class="domanda" x="520" y="330">?</text>
+  </g>
+  <Etichetta testo="Gomitolo" x={380} y={400} allinea="centro" passi="4" />
+  <Etichetta testo="Tubicino" x={690} y={260} allinea="centro" passi="4" />
+
+  <!-- 5: Bowman e la capsula -->
+  <g data-passi="5">
+    <g transform="translate(140 560) scale(0.85)">
+      <Personaggio capelli="corti" colore_capelli="castani" veste="giacca" colore_veste="blu" />
+    </g>
+    <path class="tubicino" d="M500 330C560 360 600 320 650 340S720 380 740 420V540"></path>
+    <path class="capsula" d="M434 234.5A80 80 0 1 1 434 365.5"></path>
+    <path class="tubicino-lume" d="M500 330C560 360 600 320 650 340S720 380 740 420V540"></path>
+    <circle class="capsula-interno" cx="480" cy="300" r="70"></circle>
+    <path class="glomerulo-rosso-bordo" d="M300 300H440M440 300C440 260 480 250 500 270C520 290 500 320 480 310C460 300 470 260 510 262C540 264 540 320 510 330C480 340 450 330 456 300"></path>
+    <path class="glomerulo-rosso" d="M300 300H440M440 300C440 260 480 250 500 270C520 290 500 320 480 310C460 300 470 260 510 262C540 264 540 320 510 330C480 340 450 330 456 300"></path>
+  </g>
+  <text class="data" x="40" y="90" data-passi="5">1842</text>
+  <Etichetta testo="Londra" x={40} y={140} passi="5" />
+  <Etichetta testo="William Bowman" x={140} y={590} allinea="centro" passi="5" />
+  <Etichetta testo="Capsula" x={480} y={180} linea={[480, 188, 480, 214]} allinea="centro" passi="5" />
+  <Etichetta testo="Glomerulo" x={360} y={420} linea={[400, 400, 470, 320]} allinea="centro" passi="5" />
+  <Etichetta testo="Tubicino" x={760} y={300} linea={[720, 310, 680, 352]} allinea="fine" passi="5" />
+</Storia>
+
+<style is:global>
+  .storia-malpighi .rene {
+    fill: var(--rene);
+  }
+  .storia-malpighi .piramide {
+    fill: var(--rene-midollare);
+    stroke-width: 2;
+  }
+  .storia-malpighi .bacinetto {
+    fill: var(--tessuto-chiaro);
+    stroke-width: 2;
+  }
+  .storia-malpighi .tubicini {
+    stroke: var(--tessuto-chiaro);
+    stroke-width: 2;
+  }
+  [data-indice='0'] .storia-malpighi .tubicini {
+    stroke: var(--accento);
+    stroke-width: 3;
+  }
+  .storia-malpighi .ottone {
+    fill: var(--oro);
+  }
+  .storia-malpighi .legno {
+    fill: var(--legno);
+  }
+  .storia-malpighi .vetro {
+    fill: var(--superficie);
+  }
+  .storia-malpighi .lente {
+    fill: var(--tessuto-chiaro);
+  }
+
+  /* --- 2: le arterie si riempiono di liquido nero --- */
+
+  .storia-malpighi :is(.arterie, .liquido, .vaso-nero, .tubicino, .tubicino-lume, .capsula, .glomerulo-rosso, .glomerulo-rosso-bordo) {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .storia-malpighi .arterie {
+    stroke: var(--arterioso);
+    stroke-width: 8;
+  }
+  .storia-malpighi .liquido {
+    stroke: var(--veste-nero);
+    stroke-width: 3.8; /* dentro il rene ingrandito 2,4 volte: circa 9 */
+    vector-effect: none;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  [data-indice='2'] .storia-malpighi .liquido {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 2s ease-in-out 0.6s;
+  }
+  .storia-malpighi .liquido-siringa {
+    fill: var(--veste-nero);
+  }
+
+  /* --- 3 e 4: i gomitoli neri --- */
+
+  .storia-malpighi .vaso-nero {
+    stroke: var(--veste-nero);
+    stroke-width: 12;
+  }
+  .storia-malpighi .vaso-nero--sottile {
+    stroke-width: 6;
+  }
+  .storia-malpighi .glomerulo-nero {
+    fill: var(--veste-nero);
+  }
+  .storia-malpighi .gomitolo-chiaro {
+    stroke: var(--capelli-grigi);
+    stroke-width: 2;
+  }
+  [data-indice='3'] .storia-malpighi .glomerulo-nero {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  .storia-malpighi .domanda {
+    font-size: 120px;
+    text-anchor: middle;
+    fill: var(--accento);
+  }
+
+  /* --- 4 e 5: tubicino, capsula e glomerulo --- */
+
+  .storia-malpighi .tubicino {
+    stroke: var(--contorno);
+    stroke-width: 34;
+    vector-effect: none;
+  }
+  .storia-malpighi .tubicino-lume {
+    stroke: var(--tessuto-chiaro);
+    stroke-width: 26;
+    vector-effect: none;
+  }
+  .storia-malpighi .capsula {
+    stroke: var(--tessuto);
+    stroke-width: 20;
+    vector-effect: none;
+  }
+  [data-indice='5'] .storia-malpighi .capsula {
+    stroke: var(--accento);
+  }
+  .storia-malpighi .capsula-interno {
+    fill: var(--tessuto-chiaro);
+  }
+  .storia-malpighi .glomerulo-rosso-bordo {
+    stroke: var(--contorno);
+    stroke-width: 14;
+    vector-effect: none;
+  }
+  .storia-malpighi .glomerulo-rosso {
+    stroke: var(--arterioso);
+    stroke-width: 9;
+    vector-effect: none;
+  }
+</style>

@@ -34,6 +34,8 @@ Gli organi della digestione hanno un secondo sistema di riferimento, il busto **
   si usa con `viewBox="0 0 800 640"`;
 - riferimenti utili: ombelico `(400, 400)`, piloro `(386, 250)`, sbocco di bile e succo pancreatico
   nel duodeno `(343, 300)`, cieco `(298, 520)`, attacco dell'appendice `(310, 538)`.
+- apparato urinario: rene destro (a sinistra nel disegno) con centro `(318, 270)`, rene sinistro `(482, 252)`,
+  aorta a `x = 414`, vena cava a `x = 386`, collo della vescica `(400, 622)`, fine dell'uretra `(400, 666)`.
 
 | Componente | Classi animabili | Note |
 |---|---|---|
@@ -45,8 +47,13 @@ Gli organi della digestione hanno un secondo sistema di riferimento, il busto **
 | `IntestinoCrasso` | `.appendice`, `.appendice__corpo`, `.appendice__parete` | slot `appendice`: asse lungo y, attacco in `(0, 0)`, punta a `y = 56` |
 | `AppendiceInterno` | `.tappo`, `.batteri--1/2/3`, `.vasi`, `.pus`, `.crepa` | va nello slot `appendice`; tutto parte nascosto |
 | `Villi` | — | riquadro al microscopio da `(60, 30)` a `(740, 610)` |
+| `VasiAddome` | `.arteria-renale`, `.vena-renale` (con `.vaso__bordo` per il contorno) | aorta, vena cava, vasi dei reni e delle gambe |
+| `Reni` | `.rene__urina`, `.uretere__urina` | reni in sezione con il bacinetto e gli ureteri; l'urina parte nascosta (`opacity: 0`), negli ureteri è un tratteggio da far scorrere con `stroke-dashoffset` (`pathLength="100"`) |
+| `Vescica` | `.vescica`, `.vescica__urina`, `.sfintere__sx`, `.sfintere__dx`, `.uretra__urina` | `.vescica` si gonfia con `scale` attorno al collo (vuota `0.62`, piena `1`); `.vescica__urina` sale con `translateY` (`92px` vuota, `0` piena); `translateX(∓5px)` apre lo sfintere |
+| `Nefrone` | `.nefrone__urina` | schema al microscopio da `(60, 30)` a `(740, 610)`: glomerulo `(222, 160)`, tubulo fino al dotto a `x = 680`, capillari rossi a `y = 330` e blu a `y = 430` |
 
 Ordine consigliato: `AddomeFronte`, `Pancreas`, `Fegato`, `IntestinoTenue`, `StomacoFronte`, `IntestinoCrasso`.
+Per l'apparato urinario: `AddomeFronte`, `VasiAddome`, `Reni`, `Vescica` (gli organi della digestione, che stanno davanti, si lasciano fuori).
 
 ## Vista di profilo
 

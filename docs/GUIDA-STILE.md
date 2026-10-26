@@ -78,6 +78,8 @@ Lo stesso concetto ha **sempre** lo stesso colore, in tutto il sito:
 | Sostanze nutritive (molecole del cibo digerito) e sostanze sciolte in acqua (zucchero, soluti di una cellula) | `#8E5BB5` (viola), pallini |
 | Succhi digestivi (succo gastrico, bile, succo pancreatico) | `#A3C639` (verde lime), gocce |
 | Batteri | `#5E7A2A` (verde oliva), bastoncini |
+| Sostanze di rifiuto del sangue (urea) | `#D9A40E` (giallo), quadratini |
+| Urina | `#F2D55B` (giallo chiaro) |
 | Elemento evidenziato nel passaggio corrente | contorno `--accento`, 4 px |
 
 In matematica i colori indicano il **ruolo** di un elemento. Le tinte sono poche e si ripetono tra aree diverse (gli insiemi numerici non compaiono mai nello stesso disegno della circonferenza), ma dentro un disegno ogni tinta ha un solo significato.

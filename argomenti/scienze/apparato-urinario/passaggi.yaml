@@ -1,0 +1,103 @@
+passaggi:
+  - id: panoramica
+    fase: panoramica
+    titolo: Gli organi dell'apparato urinario
+    breve: Reni, ureteri, vescica e uretra formano l'apparato urinario.
+    spiegazione: >
+      L'**apparato urinario** toglie dal sangue le sostanze di rifiuto e le porta fuori dal corpo.
+      È formato da due **reni**, due **ureteri**, la **vescica** e l'**uretra**.
+      Il prodotto di questo lavoro è l'**urina**.
+
+  - id: reni
+    fase: reni
+    titolo: I reni
+    breve: I reni sono due organi a forma di fagiolo, sotto le costole.
+    spiegazione: >
+      I **reni** stanno nella parte posteriore dell'addome, ai due lati della colonna vertebrale.
+      Ognuno è lungo circa 11 cm, più o meno come un pugno.
+      Il rene destro, a sinistra nel disegno, è un po' più in basso: sopra c'è il fegato.
+
+  - id: sangue
+    fase: reni
+    titolo: Il sangue arriva ai reni
+    breve: L'arteria renale porta ai reni il sangue con i rifiuti.
+    spiegazione: >
+      Le cellule, mentre lavorano, producono **sostanze di rifiuto**, come l'**urea**.
+      Il sangue le raccoglie e arriva a ogni rene attraverso l'**arteria renale**, un ramo dell'**aorta**.
+      Ogni minuto passa dai reni più di un litro di sangue.
+
+  - id: nefroni
+    fase: nefrone
+    titolo: I nefroni
+    breve: In ogni rene c'è circa un milione di filtri, i nefroni.
+    spiegazione: >
+      Dentro il rene ci sono circa un milione di **nefroni**, troppo piccoli per vederli a occhio nudo.
+      Ogni nefrone comincia con un gomitolo di capillari, il **glomerulo**,
+      avvolto da una piccola coppa, la **capsula**.
+      Dalla capsula parte un tubicino lungo e ripiegato, il **tubulo**.
+
+  - id: filtrazione
+    fase: nefrone
+    titolo: La filtrazione
+    breve: Nel glomerulo acqua, urea e zuccheri escono dal sangue.
+    spiegazione: >
+      Nel glomerulo il sangue scorre sotto pressione.
+      Acqua, urea, zuccheri e sali escono dai capillari ed entrano nella capsula: è la **filtrazione**.
+      I globuli rossi e le proteine sono troppo grandi e restano nel sangue.
+      Il liquido filtrato si chiama **preurina**: in un giorno se ne formano circa 180 litri.
+
+  - id: riassorbimento
+    fase: nefrone
+    titolo: Il riassorbimento
+    breve: Il tubulo riporta nel sangue l'acqua e gli zuccheri.
+    spiegazione: >
+      La preurina scorre nel tubulo, circondato dai capillari.
+      Le pareti del tubulo recuperano quasi tutta l'acqua, tutti gli zuccheri e gran parte dei sali,
+      che tornano nel sangue: è il **riassorbimento**.
+      L'urea invece resta quasi tutta nel tubulo.
+
+  - id: urina
+    fase: nefrone
+    titolo: Si forma l'urina
+    breve: Acqua e rifiuti rimasti formano l'urina.
+    spiegazione: >
+      Quello che resta nel tubulo è l'**urina**: acqua con l'urea e altre sostanze di rifiuto.
+      I tubuli di tanti nefroni la versano in tubi più grandi, che la portano al **bacinetto**,
+      la cavità al centro del rene.
+      Dei 180 litri filtrati ogni giorno, diventa urina solo un litro e mezzo circa.
+
+  - id: vena-renale
+    fase: reni
+    titolo: Il sangue esce dal rene
+    breve: La vena renale riporta in circolo il sangue filtrato.
+    spiegazione: >
+      Il sangue che esce dal rene ha meno urea di quello che è entrato.
+      Torna verso il cuore attraverso la **vena renale** e la **vena cava**.
+      Tutto il sangue passa dai reni molte volte al giorno, e a ogni giro viene ripulito un po'.
+
+  - id: ureteri
+    fase: vie urinarie
+    titolo: Gli ureteri
+    breve: Gli ureteri portano l'urina dai reni alla vescica.
+    spiegazione: >
+      Da ogni bacinetto parte un **uretere**, un tubo sottile lungo circa 25 cm.
+      Le sue pareti di muscolo si contraggono a onde, come l'esofago,
+      e spingono l'urina verso il basso, poche gocce alla volta.
+
+  - id: vescica
+    fase: vie urinarie
+    titolo: La vescica si riempie
+    breve: La vescica raccoglie l'urina e si allarga.
+    spiegazione: >
+      La **vescica** è un sacco di muscolo elastico: si allarga man mano che si riempie.
+      In un adulto può contenere circa mezzo litro di urina.
+      Quando la parete si tende, i nervi avvisano il cervello: sentiamo lo **stimolo** di urinare.
+
+  - id: minzione
+    fase: vie urinarie
+    titolo: La minzione
+    breve: Lo sfintere si apre e l'urina esce dall'uretra.
+    spiegazione: >
+      Un anello di muscolo, lo **sfintere**, tiene chiusa la vescica, e possiamo comandarlo noi.
+      Quando decidiamo di urinare, lo sfintere si rilassa e la parete della vescica si contrae.
+      L'urina esce attraverso l'**uretra**: è la **minzione**.

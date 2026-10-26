@@ -27,6 +27,8 @@
   --nutrienti: #8e5bb5; /* sostanze nutritive e sostanze sciolte in acqua */
   --succhi: #a3c639; /* succhi digestivi: gastrico, bile, pancreatico */
   --batteri: #5e7a2a;
+  --rifiuti: #d9a40e; /* sostanze di rifiuto del sangue (urea) */
+  --urina: #f2d55b;
 
   /* Matematica: insiemi numerici */
   --naturali: #b88400;
@@ -55,6 +57,8 @@
   --feci: #8a5a2b;
   --tessuto-infiammato: #e0533f;
   --pus: #e8cf6a;
+  --rene: #c46a5a;
+  --rene-midollare: #9e4b45;
 
   /* Illustrazioni: materiali degli oggetti di laboratorio (src/components/laboratorio).
      Il colore aiuta a riconoscerli, ma c'è sempre anche il nome scritto. */
