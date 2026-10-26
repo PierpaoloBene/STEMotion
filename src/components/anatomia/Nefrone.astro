@@ -1,0 +1,154 @@
+---
+// Un nefrone visto al microscopio, in forma di schema: glomerulo dentro la capsula, tubulo,
+// dotto che raccoglie l'urina e capillari attorno al tubulo.
+// Ha un suo sistema di riferimento: riempie un riquadro da (60, 30) a (740, 610), come Villi.
+// - il sangue entra a sinistra (arteriola, y = 146) e forma il glomerulo, centro (222, 160);
+// - la capsula lo avvolge (raggio 70) e continua nel tubulo, che va a destra fino al dotto (x = 680);
+// - dal glomerulo i capillari scendono e corrono sotto il tubulo (rossi a y = 330),
+//   poi tornano indietro blu (y = 430) verso la vena renale;
+// - il dotto scende verso il bacinetto; .nefrone__urina lo colora di giallo (parte nascosto).
+const ARTERIOLA = 'M60 146H150';
+const GLOMERULO =
+  'M150 146C170 146 176 112 204 110C232 108 246 130 236 146C226 162 196 150 200 132C204 116 262 116 270 150C278 184 250 206 222 206C194 206 186 182 210 176C232 170 248 192 230 200C212 208 184 190 172 180C164 174 158 176 150 176';
+const CAPILLARE_ROSSO = 'M150 176C110 178 100 220 110 260C120 300 160 330 220 330H590';
+const CAPILLARE_BLU = 'M590 330C630 330 640 360 640 380C640 410 620 430 590 430H92';
+const CAPSULA = 'M158.6 130.4A70 70 0 1 1 158.6 189.6';
+const TUBULO = 'M262 186C300 205 330 232 370 222S430 192 470 202S540 232 580 222S640 210 680 212';
+const DOTTO = 'M680 32V608';
+// Globuli rossi: restano nel sangue (glomerulo e capillari).
+const globuli = [
+  [113, 262],
+  [128, 300],
+  [176, 330],
+  [262, 330],
+  [204, 110],
+  [270, 152],
+];
+---
+
+<g class="nefrone">
+  <rect class="nefrone__fondo" x="60" y="30" width="680" height="580" rx="24"></rect>
+
+  <!-- capillari: rossi all'andata, blu al ritorno -->
+  <path class="nefrone__bordo nefrone__capillare-bordo" d={CAPILLARE_BLU}></path>
+  <path class="nefrone__vena" d={CAPILLARE_BLU}></path>
+  <path class="nefrone__freccia" d="M108 418L92 430L108 442"></path>
+  <path class="nefrone__bordo nefrone__capillare-bordo" d={CAPILLARE_ROSSO}></path>
+  <path class="nefrone__arteria" d={CAPILLARE_ROSSO}></path>
+
+  <!-- dotto e tubulo: prima i bordi, poi le pareti, poi l'interno, così si uniscono senza cuciture -->
+  <path class="nefrone__bordo nefrone__dotto-bordo" d={DOTTO}></path>
+  <path class="nefrone__bordo nefrone__tubulo-bordo" d={TUBULO}></path>
+  <path class="nefrone__capsula-bordo" d={CAPSULA}></path>
+  <path class="nefrone__parete nefrone__dotto-parete" d={DOTTO}></path>
+  <path class="nefrone__parete nefrone__tubulo-parete" d={TUBULO}></path>
+  <path class="nefrone__capsula-parete" d={CAPSULA}></path>
+  <path class="nefrone__lume nefrone__dotto-lume" d={DOTTO}></path>
+  <path class="nefrone__lume nefrone__tubulo-lume" d={TUBULO}></path>
+  <path class="nefrone__urina" d={DOTTO}></path>
+  <circle class="nefrone__capsula-interno" cx="222" cy="160" r="62"></circle>
+
+  <!-- glomerulo: il gomitolo di capillari -->
+  <path class="nefrone__bordo nefrone__arteriola-bordo" d={ARTERIOLA}></path>
+  <path class="nefrone__arteria" d={ARTERIOLA}></path>
+  <path class="nefrone__glomerulo-bordo" d={GLOMERULO}></path>
+  <path class="nefrone__glomerulo" d={GLOMERULO}></path>
+  {globuli.map(([x, y]) => <ellipse class="nefrone__globulo" cx={x} cy={y} rx="6" ry="4" />)}
+
+  <rect class="nefrone__cornice" x="60" y="30" width="680" height="580" rx="24"></rect>
+</g>
+
+<style>
+  .nefrone path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .nefrone__fondo {
+    fill: var(--tessuto-chiaro);
+  }
+  .nefrone__bordo {
+    stroke: var(--contorno);
+  }
+  .nefrone__capillare-bordo {
+    stroke-width: 18;
+  }
+  .nefrone__arteriola-bordo {
+    stroke-width: 18;
+  }
+  .nefrone__arteria,
+  .nefrone__vena {
+    stroke-width: 13;
+  }
+  .nefrone__arteria {
+    stroke: var(--arterioso);
+  }
+  .nefrone__vena,
+  .nefrone__freccia {
+    stroke: var(--venoso);
+  }
+  .nefrone__freccia {
+    stroke-width: 5;
+  }
+  .nefrone__dotto-bordo {
+    stroke-width: 50;
+  }
+  .nefrone :is(.nefrone__dotto-bordo, .nefrone__dotto-parete, .nefrone__dotto-lume, .nefrone__urina) {
+    stroke-linecap: butt;
+  }
+  .nefrone__tubulo-bordo {
+    stroke-width: 40;
+  }
+  .nefrone__capsula-bordo {
+    stroke: var(--contorno);
+    stroke-width: 22;
+  }
+  .nefrone__parete,
+  .nefrone__capsula-parete {
+    stroke: var(--tessuto);
+  }
+  .nefrone__dotto-parete {
+    stroke-width: 44;
+  }
+  .nefrone__tubulo-parete {
+    stroke-width: 34;
+  }
+  .nefrone__capsula-parete {
+    stroke-width: 16;
+  }
+  .nefrone__lume {
+    stroke: var(--superficie);
+  }
+  .nefrone__dotto-lume,
+  .nefrone__urina {
+    stroke-width: 24;
+  }
+  .nefrone__tubulo-lume {
+    stroke-width: 16;
+  }
+  .nefrone__urina {
+    stroke: var(--urina);
+    opacity: 0;
+  }
+  .nefrone__capsula-interno {
+    fill: var(--superficie);
+  }
+  .nefrone__glomerulo-bordo {
+    stroke: var(--contorno);
+    stroke-width: 13;
+  }
+  .nefrone__glomerulo {
+    stroke: var(--arterioso);
+    stroke-width: 9;
+  }
+  .nefrone__globulo {
+    fill: var(--arterioso);
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+  }
+  .nefrone__cornice {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 3;
+  }
+</style>

@@ -1,0 +1,66 @@
+protagonista: Marcello Malpighi
+anni: 1628 – 1694
+richiamo: >
+  Nei reni ci sono milioni di glomeruli. Per molto tempo si sono chiamati «corpuscoli di Malpighi».
+  Chi era Malpighi, e come li ha trovati?
+titolo: Malpighi e i gomitoli del rene
+ritratto:
+  capelli: lunghi
+  colore_capelli: castani
+  veste: giacca
+  colore_veste: nero
+passaggi:
+  - id: malpighi-bellini
+    titolo: Il rene è fatto di tubicini
+    breve: Nel 1662, a Pisa, Lorenzo Bellini scopre i tubicini del rene.
+    spiegazione: >
+      A quel tempo molti pensano che l'interno del rene sia una carne compatta.
+      **Lorenzo Bellini**, uno studente di medicina di nemmeno vent'anni, taglia e osserva con attenzione dei reni.
+      Scopre che sono pieni di tubicini sottilissimi, che portano l'urina verso il centro del rene.
+
+  - id: malpighi-microscopio
+    titolo: Il microscopio
+    breve: Nel 1666 Marcello Malpighi descrive il rene visto al microscopio.
+    spiegazione: >
+      **Marcello Malpighi** è un medico e professore italiano.
+      È tra i primi a usare il microscopio per studiare gli organi del corpo:
+      qualche anno prima, nei polmoni di una rana, ha scoperto i **capillari**.
+      Nel 1666 pubblica a Bologna un libro sugli organi interni, con un capitolo sui reni.
+
+  - id: malpighi-liquido
+    titolo: Un liquido nero
+    breve: Malpighi spinge un liquido nero nelle arterie del rene.
+    spiegazione: >
+      Per vedere dove va il sangue, Malpighi riempie le arterie del rene con un liquido scuro.
+      Il liquido segue la strada del sangue e colora i vasi, anche i più piccoli.
+      Così al microscopio si vedono bene.
+
+  - id: malpighi-mele
+    titolo: Come mele su un ramo
+    breve: Compaiono tanti gomitoli scuri, appesi ai vasi come mele.
+    spiegazione: >
+      Malpighi vede tanti piccoli corpi scuri attaccati ai vasi sanguigni.
+      Scrive che pendono dai vasi «come mele» da un ramo.
+      Sono i gomitoli di capillari che oggi chiamiamo **glomeruli**.
+
+  - id: malpighi-ghiandole
+    titolo: Un pezzo mancante
+    breve: Malpighi non riesce a vedere come i gomitoli si collegano ai tubicini.
+    spiegazione: >
+      Malpighi pensa che i gomitoli siano piccole **ghiandole** che producono l'urina dal sangue.
+      Ma con i microscopi del suo tempo non riesce a vedere
+      come sono collegati ai tubicini scoperti da Bellini.
+
+  - id: malpighi-bowman
+    titolo: Il collegamento
+    breve: Nel 1842, a Londra, William Bowman trova la coppa che li unisce.
+    spiegazione: >
+      Quasi due secoli dopo, il medico inglese **William Bowman** osserva i reni con microscopi migliori.
+      Scopre che ogni glomerulo sta dentro una piccola coppa, che continua nel tubicino:
+      oggi si chiama **capsula di Bowman**.
+      Poco dopo il tedesco Carl Ludwig propone l'idea di oggi: nel glomerulo il sangue viene filtrato.
+fonti:
+  - "M. Malpighi, De viscerum structura exercitatio anatomica, Bologna 1666 (capitolo De renibus: i glomeruli «velut poma appenduntur»)"
+  - "L. Bellini, Exercitatio anatomica de structura et usu renum, 1662 (voce «Lorenzo Bellini», Encyclopaedia Britannica)"
+  - "W. Bowman, On the Structure and Use of the Malpighian Bodies of the Kidney, Philosophical Transactions of the Royal Society, 1842"
+  - "Marcello Malpighi (1628–1694), Hektoen International, 2017"

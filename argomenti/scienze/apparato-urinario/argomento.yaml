@@ -1,0 +1,17 @@
+titolo: L'apparato urinario
+sottotitolo: Come i reni puliscono il sangue e producono l'urina
+materia: scienze
+area: anatomia
+modello: passaggi
+durata_minuti: 15
+prerequisiti: [osmosi]
+obiettivi:
+  - Riconoscere gli organi dell'apparato urinario e dire a che cosa servono
+  - Spiegare come il nefrone filtra il sangue e recupera le sostanze utili
+  - Descrivere il percorso dell'urina dai reni fino all'esterno
+parole_chiave: [rene, nefrone, glomerulo, tubulo, filtrazione, riassorbimento, urea, urina, uretere, vescica, sfintere, uretra]
+stato: bozza
+revisionato_da: null
+fonti:
+  - "G. J. Tortora, B. Derrickson, Principi di anatomia e fisiologia, capitolo sull'apparato urinario (struttura del rene, nefrone, filtrazione glomerulare, riassorbimento, vescica e minzione)"
+  - "N. A. Campbell, J. B. Reece e altri, Biologia, capitolo sull'osmoregolazione e l'escrezione (nefrone dei mammiferi)"

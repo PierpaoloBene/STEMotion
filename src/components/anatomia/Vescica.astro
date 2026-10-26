@@ -1,0 +1,83 @@
+---
+// Vescica vista di fronte, con lo sfintere e l'uretra. Il collo della vescica è in (400, 622).
+// .vescica si gonfia con uno scale attorno al collo (vuota circa 0.62, piena 1);
+// .vescica__urina sale e scende con translateY (0 = piena fino in cima, 92 = vuota);
+// .sfintere__sx e .sfintere__dx si aprono con translateX(∓5px).
+// Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
+
+// Vescica piena, con il collo in (0, 0): larga 128, alta 92.
+const forma = (s: number) => {
+  const p = (x: number, y: number) => `${+(x * s).toFixed(1)} ${+(-46 + (y + 46) * s).toFixed(1)}`;
+  return `M${p(0, 0)}C${p(-30, 0)} ${p(-62, -12)} ${p(-64, -44)}C${p(-66, -76)} ${p(-36, -92)} ${p(0, -92)}C${p(36, -92)} ${p(66, -76)} ${p(64, -44)}C${p(62, -12)} ${p(30, 0)} ${p(0, 0)}Z`;
+};
+const PARETE = forma(1);
+const LUME = forma(0.84);
+const URETRA = 'M0 2V44';
+---
+
+<g class="vescica-organo" transform="translate(400 622)">
+  <path class="uretra__bordo" d={URETRA}></path>
+  <path class="uretra__parete" d={URETRA}></path>
+  <path class="uretra__urina" d={URETRA} pathLength="100"></path>
+  <g class="vescica">
+    <path class="vescica__parete" d={PARETE}></path>
+    <path class="vescica__lume" d={LUME}></path>
+    <clipPath id="vescica-lume">
+      <path d={LUME}></path>
+    </clipPath>
+    <g clip-path="url(#vescica-lume)">
+      <rect class="vescica__urina" x="-70" y="-92" width="140" height="96"></rect>
+    </g>
+  </g>
+  <!-- sfintere: anello di muscolo attorno all'uscita, visto di fronte come due cuscinetti -->
+  <g class="sfintere">
+    <rect class="sfintere__sx" x="-15" y="-4" width="13" height="14" rx="5"></rect>
+    <rect class="sfintere__dx" x="2" y="-4" width="13" height="14" rx="5"></rect>
+  </g>
+</g>
+
+<style>
+  .uretra__bordo,
+  .uretra__parete,
+  .uretra__urina {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .uretra__bordo {
+    stroke: var(--contorno);
+    stroke-width: 12;
+  }
+  .uretra__parete {
+    stroke: var(--tessuto);
+    stroke-width: 8;
+  }
+  .uretra__urina {
+    stroke: var(--urina);
+    stroke-width: 4;
+    stroke-dasharray: 6 8;
+    opacity: 0;
+  }
+  .vescica {
+    transform: scale(0.62);
+  }
+  .vescica__parete {
+    fill: var(--tessuto);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .vescica__lume {
+    fill: var(--tessuto-chiaro);
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+  }
+  .vescica__urina {
+    fill: var(--urina);
+    transform: translateY(62px);
+  }
+  .sfintere rect {
+    fill: var(--muscolo);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+</style>

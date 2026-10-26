@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- una persona vista di fronte, con un bicchiere d'acqua in mano -->
+    <path fill="#F4D3B5" d="M92 178C70 200 62 270 60 330C58 350 64 364 75 364C86 364 90 350 90 332C92 284 98 244 106 222Z" />
+    <path fill="#F4D3B5" d="M308 178C330 200 338 270 340 330C342 350 336 364 325 364C314 364 310 350 310 332C308 284 302 244 294 222Z" />
+    <path fill="#F4D3B5" d="M184 118H216V152H184Z" />
+    <path fill="#F4D3B5" d="M92 176C112 156 160 150 184 148H216C240 150 288 156 308 176L314 250C310 296 300 326 298 352C312 392 320 440 324 500H76C80 440 88 392 102 352C100 326 90 296 86 250Z" />
+    <path fill="none" d="M150 214C168 226 186 226 196 216M204 216C214 226 232 226 250 214" />
+    <path fill="none" d="M194 352C197 345 203 345 206 352C203 359 197 359 194 352Z" />
+    <!-- testa -->
+    <circle cx="200" cy="78" r="46" fill="#F4D3B5" />
+    <path fill="#5A3E2B" d="M156 70C156 40 176 28 200 28C226 28 246 42 246 70C232 56 214 52 200 52C184 52 168 58 156 70Z" />
+    <circle cx="184" cy="82" r="4" fill="#1D1D1F" stroke="none" />
+    <circle cx="216" cy="82" r="4" fill="#1D1D1F" stroke="none" />
+    <path fill="none" d="M188 102C196 108 204 108 212 102" />
+    <!-- pantaloncini -->
+    <path fill="#3E5A8C" d="M92 420C150 432 250 432 308 420L322 500H78Z" />
+    <!-- bicchiere d'acqua -->
+    <path fill="#EAF4FA" d="M302 312H350L344 380H308Z" />
+    <path fill="#2C9AD1" stroke-width="2" d="M305 334H347L344 377H308Z" />
+  </g>
+  <g class="dentro">
+    <rect width="400" height="500" fill="#16233F" />
+    <g fill="#1F3257" stroke="#3E5A8C" stroke-width="3" stroke-linejoin="round">
+      <path d="M92 178C70 200 62 270 60 330C58 350 64 364 75 364C86 364 90 350 90 332C92 284 98 244 106 222Z" />
+      <path d="M308 178C330 200 338 270 340 330C342 350 336 364 325 364C314 364 310 350 310 332C308 284 302 244 294 222Z" />
+      <path d="M184 118H216V152H184Z" />
+      <path d="M92 176C112 156 160 150 184 148H216C240 150 288 156 308 176L314 250C310 296 300 326 298 352C312 392 320 440 324 500H76C80 440 88 392 102 352C100 326 90 296 86 250Z" />
+      <circle cx="200" cy="78" r="46" />
+      <path d="M302 312H350L344 380H308Z" />
+    </g>
+    <!-- l'acqua nel bicchiere -->
+    <path fill="#2C9AD1" d="M305 334H347L344 377H308Z" />
+    <!-- ureteri dai reni alla vescica, con l'urina -->
+    <g fill="none" stroke-linecap="round">
+      <path stroke="#EBA5A5" stroke-width="8" d="M176 308C170 350 176 400 192 438M224 300C230 350 224 400 208 438" />
+      <path stroke="#F2D55B" stroke-width="3" stroke-dasharray="4 6" d="M176 308C170 350 176 400 192 438M224 300C230 350 224 400 208 438" />
+    </g>
+    <!-- reni, in sezione -->
+    <g stroke="#F8DCDC" stroke-width="2.5" stroke-linejoin="round">
+      <g transform="translate(160 306) scale(-0.6 0.6)">
+        <path fill="#C46A5A" d="M-6 -60C22 -62 40 -36 40 0C40 36 22 62 -6 60C-26 58 -34 40 -30 24C-27 14 -18 10 -18 0C-18 -10 -27 -14 -30 -24C-34 -40 -26 -58 -6 -60Z" />
+        <path fill="#F2D55B" d="M-36 -7C-22 -7 -14 -24 -4 -26C4 -27 6 -18 0 -15C-4 -12 4 -6 10 -5V5C4 6 -4 12 0 15C6 18 4 27 -4 26C-14 24 -22 7 -36 7Z" />
+      </g>
+      <g transform="translate(240 296) scale(0.6)">
+        <path fill="#C46A5A" d="M-6 -60C22 -62 40 -36 40 0C40 36 22 62 -6 60C-26 58 -34 40 -30 24C-27 14 -18 10 -18 0C-18 -10 -27 -14 -30 -24C-34 -40 -26 -58 -6 -60Z" />
+        <path fill="#F2D55B" d="M-36 -7C-22 -7 -14 -24 -4 -26C4 -27 6 -18 0 -15C-4 -12 4 -6 10 -5V5C4 6 -4 12 0 15C6 18 4 27 -4 26C-14 24 -22 7 -36 7Z" />
+      </g>
+    </g>
+    <!-- vescica con l'urina e l'uretra -->
+    <path fill="none" stroke="#EBA5A5" stroke-width="7" stroke-linecap="round" d="M200 470V496" />
+    <path fill="#EBA5A5" stroke="#F8DCDC" stroke-width="2.5" d="M200 472C180 472 158 464 157 442C156 420 176 410 200 410C224 410 244 420 243 442C242 464 220 472 200 472Z" />
+    <path fill="#F2D55B" d="M168 440H232C232 456 218 464 200 464C182 464 168 456 168 440Z" />
+  </g>
+</svg>
