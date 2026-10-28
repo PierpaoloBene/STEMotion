@@ -1,0 +1,20 @@
+titolo: Il rene
+sottotitolo: Com'è fatto dentro l'organo che pulisce il sangue
+materia: scienze
+area: anatomia
+modello: passaggi
+durata_minuti: 15
+prerequisiti: [apparato-urinario]
+obiettivi:
+  - Descrivere la forma del rene e riconoscere l'ilo, con i vasi e l'uretere
+  - Riconoscere in un rene tagliato a metà capsula, corticale, piramidi, calici e bacinetto
+  - Dire in quale parte del rene si trovano glomeruli, tubuli e dotti collettori
+  - Spiegare come si forma un calcolo renale e come si può prevenire
+parole_chiave: [rene, ilo, capsula renale, corticale, midollare, piramide, papilla, calice, bacinetto, seno renale, nefrone, ansa di Henle, dotto collettore, calcolo, colica renale]
+stato: bozza
+revisionato_da: null
+fonti:
+  - "G. J. Tortora, B. Derrickson, Principi di anatomia e fisiologia, capitolo sull'apparato urinario (anatomia esterna e interna del rene, vascolarizzazione, nefrone)"
+  - "F. H. Netter, Atlante di anatomia umana, tavole sul rene (sezione frontale, vasi renali)"
+  - "European Association of Urology (EAU), Guidelines on Urolithiasis, capitoli su fattori di rischio, colica renale, espulsione spontanea e prevenzione"
+  - "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK), Kidney Stones: definizione, cause, sintomi, trattamento e prevenzione"

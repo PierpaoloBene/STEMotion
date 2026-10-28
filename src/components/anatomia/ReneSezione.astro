@@ -1,0 +1,235 @@
+---
+// Un rene ingrandito e tagliato a metà, visto di fronte: è il rene sinistro, con l'ilo verso sinistra
+// (la stessa forma di Reni.astro, molto più grande e con tutti i dettagli dell'interno).
+// Sistema di riferimento: si usa con viewBox="0 0 800 640"; il rene ha centro in (400, 320) ed è alto
+// circa 530. Dentro il gruppo `.rene-sezione__interno` si disegna in "unità del rene" (vedi rene-sezione.ts):
+// centro (0, 0), alto 120, come in Reni.astro. Gli spessori dei contorni restano fissi con lo zoom.
+//
+// Dall'esterno all'interno: capsula, corticale, piramidi della midollare, seno con il grasso,
+// calici minori e maggiori, bacinetto; dall'ilo escono l'uretere (in basso) ed entrano i vasi.
+import {
+  CENTRO,
+  SCALA,
+  FORMA,
+  PIRAMIDI,
+  piramide,
+  striature,
+  punto,
+  CALICI_MINORI,
+  CALICI_MAGGIORI,
+  BACINETTO,
+  URETERE,
+  SENO,
+  ARTERIA,
+  VENA,
+  ARTERIE_INTERNE,
+  GLOMERULI,
+} from './rene-sezione';
+
+const calici = [...CALICI_MINORI, ...CALICI_MAGGIORI];
+---
+
+<g class="rene-sezione">
+  <g class="rene-sezione__interno" transform={`translate(${CENTRO[0]} ${CENTRO[1]}) scale(${SCALA})`}>
+    <!-- vasi che entrano dall'ilo: il rene li copre, così sembrano entrare -->
+    <path class="rene-sezione__vaso-bordo" d={VENA}></path>
+    <path class="rene-sezione__vena" d={VENA}></path>
+    <path class="rene-sezione__vaso-bordo" d={ARTERIA}></path>
+    <path class="rene-sezione__arteria" d={ARTERIA}></path>
+
+    <!-- capsula, corticale con i glomeruli -->
+    <path class="rene-sezione__capsula" d={FORMA}></path>
+    <path class="rene-sezione__corticale" d={FORMA} transform="translate(3 0) scale(0.965) translate(-3 0)"></path>
+    <g class="rene-sezione__glomeruli">
+      {GLOMERULI.map(([x, y]) => <circle cx={x} cy={y} r="0.85" />)}
+    </g>
+
+    <!-- tutto ciò che sta dentro la corticale: si può attenuare in blocco -->
+    <g class="rene-sezione__midollare">
+      <!-- seno renale: la cavità con il grasso -->
+      <path class="rene-sezione__seno" d={SENO}></path>
+
+      <!-- calici, bacinetto e uretere: prima i bordi, poi l'interno, così si uniscono senza cuciture -->
+      {calici.map((d) => <path class="rene-sezione__calice-bordo" d={d} />)}
+      <path class="rene-sezione__uretere-bordo" d={URETERE}></path>
+      <path class="rene-sezione__bacinetto" d={BACINETTO}></path>
+      {calici.map((d) => <path class="rene-sezione__calice-lume" d={d} />)}
+      <path class="rene-sezione__uretere-lume" d={URETERE}></path>
+
+      <!-- urina: parte nascosta; nell'uretere è un tratteggio da far scorrere con stroke-dashoffset -->
+      <g class="rene-sezione__calici-urina">
+        {calici.map((d) => <path d={d} />)}
+      </g>
+      <path class="rene-sezione__bacinetto-urina" d={BACINETTO}></path>
+      <path class="rene-sezione__uretere-urina" d={URETERE} pathLength="100"></path>
+
+      <!-- piramidi della midollare: la punta (papilla) entra nel calice minore -->
+      {
+        PIRAMIDI.map((t) => (
+          <g class="rene-sezione__piramide">
+            <path class="rene-sezione__piramide-forma" d={piramide(t)} />
+            {striature(t).map((d) => (
+              <path class="rene-sezione__striatura" d={d} />
+            ))}
+          </g>
+        ))
+      }
+
+      <!-- gocce di urina che escono dalle papille (partono nascoste) -->
+      <g class="rene-sezione__gocce">
+        {PIRAMIDI.map((t) => {
+          const [x, y] = punto(11.6, 25, t);
+          return <circle cx={x} cy={y} r="1.3" />;
+        })}
+      </g>
+    </g>
+
+    <slot name="interno" />
+
+    <!-- l'arteria renale si ramifica tra le piramidi fino alla corticale (parte nascosta) -->
+    <g class="rene-sezione__arterie">
+      {ARTERIE_INTERNE.map((d) => <path class="rene-sezione__ramo-bordo" d={d} />)}
+      {ARTERIE_INTERNE.map((d) => <path class="rene-sezione__ramo" d={d} />)}
+    </g>
+
+    <!-- il rene visto da fuori, intero: copre la sezione (parte nascosto) -->
+    <g class="rene-sezione__fuori">
+      <path class="rene-sezione__superficie" d={FORMA}></path>
+    </g>
+  </g>
+</g>
+
+<style>
+  .rene-sezione path,
+  .rene-sezione circle {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* I contorni restano dello stesso spessore sullo schermo, qualunque sia lo zoom. */
+  .rene-sezione :is(.rene-sezione__capsula, .rene-sezione__corticale, .rene-sezione__seno, .rene-sezione__bacinetto, .rene-sezione__bacinetto-urina, .rene-sezione__piramide-forma, .rene-sezione__striatura, .rene-sezione__superficie, .rene-sezione__gocce circle, .rene-sezione__glomeruli circle) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .rene-sezione__vaso-bordo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 5.6;
+  }
+  .rene-sezione__arteria,
+  .rene-sezione__vena {
+    fill: none;
+    stroke-width: 4.2;
+  }
+  .rene-sezione__arteria {
+    stroke: var(--arterioso);
+  }
+  .rene-sezione__vena {
+    stroke: var(--venoso);
+  }
+
+  .rene-sezione__capsula {
+    fill: var(--tessuto-chiaro);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .rene-sezione__corticale {
+    fill: var(--rene);
+    stroke: none;
+  }
+  .rene-sezione__seno {
+    fill: var(--grasso);
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+  }
+  .rene-sezione__glomeruli circle {
+    fill: var(--arterioso);
+    stroke: var(--contorno);
+    stroke-width: 1;
+    opacity: 0;
+  }
+
+  .rene-sezione :is(.rene-sezione__calice-bordo, .rene-sezione__calice-lume, .rene-sezione__calici-urina path, .rene-sezione__uretere-bordo, .rene-sezione__uretere-lume, .rene-sezione__uretere-urina) {
+    fill: none;
+  }
+  .rene-sezione__calice-bordo {
+    stroke: var(--contorno);
+    stroke-width: 5.4;
+  }
+  .rene-sezione__calice-lume {
+    stroke: var(--tessuto-chiaro);
+    stroke-width: 4;
+  }
+  .rene-sezione__calici-urina path {
+    stroke: var(--urina);
+    stroke-width: 4;
+  }
+  .rene-sezione__calici-urina {
+    opacity: 0;
+  }
+  .rene-sezione__bacinetto {
+    fill: var(--tessuto-chiaro);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .rene-sezione__bacinetto-urina {
+    fill: var(--urina);
+    stroke: none;
+    opacity: 0;
+  }
+  .rene-sezione__uretere-bordo {
+    stroke: var(--contorno);
+    stroke-width: 4.4;
+  }
+  .rene-sezione__uretere-lume {
+    stroke: var(--tessuto-chiaro);
+    stroke-width: 3;
+  }
+  .rene-sezione__uretere-urina {
+    stroke: var(--urina);
+    stroke-width: 2.2;
+    stroke-dasharray: 2 3;
+    opacity: 0;
+  }
+
+  .rene-sezione__piramide-forma {
+    fill: var(--rene-midollare);
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+  }
+  .rene-sezione__striatura {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 1;
+    opacity: 0.35;
+  }
+  .rene-sezione__gocce circle {
+    fill: var(--urina);
+    stroke: var(--contorno);
+    stroke-width: 1;
+    opacity: 0;
+  }
+
+  .rene-sezione__arterie {
+    opacity: 0;
+  }
+  .rene-sezione__arterie path {
+    fill: none;
+  }
+  .rene-sezione__ramo-bordo {
+    stroke: var(--contorno);
+    stroke-width: 2.2;
+  }
+  .rene-sezione__ramo {
+    stroke: var(--arterioso);
+    stroke-width: 1.3;
+  }
+
+  .rene-sezione__fuori {
+    opacity: 0;
+  }
+  .rene-sezione__superficie {
+    fill: var(--rene);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+</style>

@@ -5,8 +5,8 @@
 // Sistema di riferimento "vista frontale": vedi README.md in questa cartella.
 
 // Rene con l'ilo verso sinistra, centro in (0, 0): alto 120, largo 76.
-const FORMA =
-  'M-6 -60C22 -62 40 -36 40 0C40 36 22 62 -6 60C-26 58 -34 40 -30 24C-27 14 -18 10 -18 0C-18 -10 -27 -14 -30 -24C-34 -40 -26 -58 -6 -60Z';
+// È la stessa forma del rene ingrandito di ReneSezione.astro.
+import { FORMA } from './rene-sezione';
 // Piramidi: la parte più scura, dove ci sono i tubicini che portano l'urina verso il centro.
 const PIRAMIDI = ['M2 -50L24 -38L-2 -22Z', 'M30 -28L36 -6L8 -10Z', 'M36 6L30 28L8 10Z', 'M24 38L2 50L-2 22Z'];
 // Bacinetto: la cavità che raccoglie l'urina; esce dall'ilo e continua nell'uretere.

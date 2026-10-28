@@ -1,0 +1,92 @@
+passaggi:
+  - id: forma
+    fase: da fuori
+    titolo: Un fagiolo grande come un pugno
+    breve: Il rene ha la forma di un fagiolo, lungo circa 11 cm.
+    spiegazione: >
+      Ogni **rene** è lungo circa 11 cm, largo 6 cm e spesso 3 cm.
+      Pesa circa 150 g.
+      Il lato esterno è curvo; il lato verso la colonna vertebrale ha una rientranza.
+
+  - id: ilo
+    fase: da fuori
+    titolo: L'ilo
+    breve: Dall'ilo entrano ed escono i vasi e l'uretere.
+    spiegazione: >
+      La rientranza del rene si chiama **ilo**.
+      Da qui entra l'**arteria renale**, che porta il sangue da pulire,
+      ed esce la **vena renale**, con il sangue già filtrato.
+      Dall'ilo esce anche l'**uretere**, il tubo che porta l'urina alla vescica.
+
+  - id: sezione
+    fase: dentro
+    titolo: Il rene tagliato a metà
+    breve: Tagliato a metà, il rene mostra zone di colore diverso.
+    spiegazione: >
+      Per vedere com'è fatto dentro, immaginiamo di tagliare il rene a metà nel senso della lunghezza.
+      Si vedono uno strato esterno più chiaro, delle zone scure a forma di triangolo e, al centro, una cavità.
+      Ogni zona ha un compito diverso.
+
+  - id: capsula
+    fase: dentro
+    titolo: La capsula
+    breve: Una capsula sottile e resistente avvolge il rene.
+    spiegazione: >
+      All'esterno il rene è rivestito dalla **capsula renale**, una pellicola sottile ma resistente.
+      Protegge il rene e ne mantiene la forma.
+
+  - id: corticale
+    fase: dentro
+    titolo: La corticale
+    breve: La corticale è lo strato esterno, dove ci sono i glomeruli.
+    spiegazione: >
+      Sotto la capsula c'è la **corticale**, spessa circa 1 cm.
+      Qui si trovano i **glomeruli**, i gomitoli di capillari dove il sangue viene filtrato.
+      Sono larghi circa 0,2 mm: nel disegno sono molto ingranditi.
+
+  - id: piramidi
+    fase: dentro
+    titolo: La midollare e le piramidi
+    breve: La midollare è divisa in piramidi, piene di tubicini.
+    spiegazione: >
+      Più all'interno c'è la **midollare**, formata da 8–18 **piramidi renali**.
+      Hanno la base verso l'esterno e la punta verso il centro del rene.
+      Le righe che si vedono sono migliaia di tubicini: i tubuli dei nefroni e i dotti che raccolgono l'urina.
+
+  - id: calici
+    fase: le vie dell'urina
+    titolo: Papille e calici
+    breve: Dalla punta delle piramidi l'urina passa nei calici.
+    spiegazione: >
+      La punta di ogni piramide si chiama **papilla**.
+      Da qui l'urina gocciola in un piccolo imbuto, il **calice minore**.
+      I calici minori si uniscono in due o tre **calici maggiori**.
+
+  - id: bacinetto
+    fase: le vie dell'urina
+    titolo: Il bacinetto
+    breve: I calici versano l'urina nel bacinetto, che continua nell'uretere.
+    spiegazione: >
+      I calici maggiori sboccano nel **bacinetto**, chiamato anche pelvi renale: una cavità a forma di imbuto.
+      Il bacinetto si restringe, esce dall'ilo e diventa l'**uretere**.
+      Attorno a calici e bacinetto c'è del grasso, che riempie la cavità centrale del rene, il **seno renale**.
+    deviazioni: [calcoli]
+
+  - id: vasi
+    fase: dentro
+    titolo: I vasi del rene
+    breve: L'arteria renale si ramifica fino alla corticale.
+    spiegazione: >
+      Entrata dall'ilo, l'arteria renale si divide in rami sempre più sottili.
+      I rami passano tra le piramidi, girano ad arco attorno alla loro base e salgono nella corticale.
+      Lì i rami più piccoli portano il sangue ai glomeruli.
+
+  - id: nefrone
+    fase: dentro
+    titolo: Dove sta il nefrone
+    breve: Ogni nefrone va dalla corticale alla midollare e ritorno.
+    spiegazione: >
+      Il **nefrone** comincia nella corticale, con il glomerulo.
+      Il suo tubulo scende nella midollare, fa una curva a U, l'**ansa di Henle**, e risale nella corticale.
+      Poi sbocca in un **dotto collettore**, che attraversa la piramide e porta l'urina fino alla papilla.
+      In ogni rene ci sono circa un milione di nefroni.

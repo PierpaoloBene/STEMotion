@@ -29,6 +29,7 @@
   --batteri: #5e7a2a;
   --rifiuti: #d9a40e; /* sostanze di rifiuto del sangue (urea) */
   --urina: #f2d55b;
+  --calcolo: #8c7b6b; /* cristalli e calcoli: sali che non sono più sciolti */
 
   /* Matematica: insiemi numerici */
   --naturali: #b88400;
@@ -59,6 +60,7 @@
   --pus: #e8cf6a;
   --rene: #c46a5a;
   --rene-midollare: #9e4b45;
+  --grasso: #f5e9c8;
 
   /* Illustrazioni: materiali degli oggetti di laboratorio (src/components/laboratorio).
      Il colore aiuta a riconoscerli, ma c'è sempre anche il nome scritto. */

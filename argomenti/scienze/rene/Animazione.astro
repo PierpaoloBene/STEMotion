@@ -1,0 +1,484 @@
+---
+/**
+ * Il rene: com'è fatto, da fuori e tagliato a metà.
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-passaggio] e [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Il rene è il componente condiviso ReneSezione
+ * (src/components/anatomia): passaggi 1–2 da fuori, poi aperto in sezione.
+ *
+ * Inquadrature: il rene al centro (1–9); nel passaggio 10 il rene si sposta a sinistra
+ * e a destra si apre la "lente" su un nefrone, presa dal polo superiore del rene.
+ */
+import ReneSezione from '../../../src/components/anatomia/ReneSezione.astro';
+import { schermo } from '../../../src/components/anatomia/rene-sezione';
+
+interface Etichetta {
+  testo: string;
+  /** Inizio della riga di base del testo. */
+  x: number;
+  y: number;
+  /** Punto indicato, in coordinate dello schermo; il pallino va lì. */
+  verso: [number, number];
+  passaggio: string;
+}
+
+const larghezzaTesto = (t: string) => t.length * 24 * 0.56;
+// La linea parte dal lato del testo più vicino al punto indicato.
+const linea = (e: Etichetta): [number, number, number, number] => {
+  const destra = e.verso[0] > e.x;
+  return [destra ? e.x + larghezzaTesto(e.testo) + 8 : e.x - 8, e.y - 8, e.verso[0], e.verso[1]];
+};
+
+// Etichette sul rene (in "unità del rene" convertite in coordinate dello schermo).
+const etichetteRene: Etichetta[] = [
+  { testo: 'Ilo', x: 196, y: 162, verso: schermo([-18, 0]), passaggio: 'ilo' },
+  { testo: 'Arteria renale', x: 30, y: 230, verso: schermo([-50, -15]), passaggio: 'ilo' },
+  { testo: 'Vena renale', x: 30, y: 344, verso: schermo([-50, -5]), passaggio: 'ilo' },
+  { testo: 'Uretere', x: 70, y: 512, verso: schermo([-33, 36]), passaggio: 'ilo' },
+  { testo: 'Capsula', x: 600, y: 112, verso: schermo([27.5, -44.2]), passaggio: 'capsula' },
+  { testo: 'Corticale', x: 600, y: 236, verso: schermo([34.6, -18.5]), passaggio: 'corticale' },
+  { testo: 'Glomeruli', x: 600, y: 420, verso: schermo([33.4, 21.4]), passaggio: 'corticale' },
+  { testo: 'Piramide', x: 600, y: 400, verso: schermo([23.8, 12.6]), passaggio: 'piramidi' },
+  { testo: 'Midollare', x: 600, y: 520, verso: schermo([15.5, 32]), passaggio: 'piramidi' },
+  { testo: 'Papilla', x: 600, y: 290, verso: schermo([16, -7.9]), passaggio: 'calici' },
+  { testo: 'Calice minore', x: 590, y: 380, verso: schermo([12, 5.2]), passaggio: 'calici' },
+  { testo: 'Calice maggiore', x: 470, y: 618, verso: schermo([-2, 8]), passaggio: 'calici' },
+  { testo: 'Bacinetto', x: 30, y: 420, verso: schermo([-6, 6]), passaggio: 'bacinetto' },
+  { testo: 'Uretere', x: 70, y: 512, verso: schermo([-33, 36]), passaggio: 'bacinetto' },
+  { testo: 'Seno renale', x: 470, y: 618, verso: schermo([-6, -14]), passaggio: 'bacinetto' },
+  { testo: 'Arteria renale', x: 30, y: 230, verso: schermo([-50, -15]), passaggio: 'vasi' },
+  { testo: 'Glomeruli', x: 600, y: 236, verso: schermo([33.8, -20.2]), passaggio: 'vasi' },
+];
+
+// Lente sul nefrone: riquadro da (440, 40) a (780, 600).
+const L = { x: 440, y: 40, w: 340, h: 560 };
+const etichetteLente: Etichetta[] = [
+  { testo: 'Corticale', x: 454, y: 226, verso: [520, 196], passaggio: 'nefrone' },
+  { testo: 'Midollare', x: 454, y: 318, verso: [536, 300], passaggio: 'nefrone' },
+  { testo: 'Glomerulo', x: 592, y: 80, verso: [540, 112], passaggio: 'nefrone' },
+  { testo: 'Ansa di Henle', x: 454, y: 520, verso: [614, 452], passaggio: 'nefrone' },
+  { testo: 'Dotto collettore', x: 454, y: 578, verso: [655, 518], passaggio: 'nefrone' },
+];
+
+// Il nefrone nella lente: glomerulo nella corticale, ansa che scende nella piramide, dotto collettore.
+const GLOMERULO = 'M520 116C512 104 530 96 538 106C546 116 530 126 524 118C518 110 536 98 548 108C558 118 548 136 534 136C520 136 512 126 520 116';
+const ARTERIOLA = 'M444 76C470 84 494 98 514 110';
+const TUBULO =
+  'M556 130C572 128 572 104 588 106C604 108 600 134 600 152V430C600 456 628 456 628 430V226C628 200 650 186 668 190C690 194 700 170 728 160';
+const DOTTO = 'M728 120V260C728 400 650 500 632 584';
+// La piramide nella lente: base in alto, papilla in basso.
+const PIRAMIDE = 'M476 248Q610 228 760 248L652 588Q630 604 610 588Z';
+const righePiramide = [520, 570, 620, 670, 720].map((x) => `M${x} ${244 + Math.abs(x - 618) * 0.02}L${620 + (x - 618) * 0.12} 580`);
+
+// Dove si apre la lente: il riquadro sul polo superiore del rene (dopo lo spostamento della camera).
+const SPOSTA = -150;
+const [mx1, my1] = schermo([-7, -60]);
+const [mx2, my2] = schermo([11, -19]);
+const origineLente: [number, number] = [(mx1 + mx2) / 2 + SPOSTA, (my1 + my2) / 2];
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni: Record<string, string> = {
+  forma: 'Un rene visto da fuori, grande, a forma di fagiolo, color rosso scuro. Una linea accanto ne indica la lunghezza: circa 11 cm.',
+  ilo: 'Sul lato sinistro del rene c’è una rientranza, l’ilo. Lì entrano un vaso rosso, l’arteria renale, e uno blu, la vena renale. In basso esce un tubo sottile, l’uretere.',
+  sezione: 'La metà davanti del rene si toglie: si vede l’interno, con uno strato esterno chiaro, otto zone scure a triangolo e una cavità al centro.',
+  capsula: 'Il contorno del rene è evidenziato: è la capsula, una pellicola sottile che avvolge tutto il rene.',
+  corticale: 'Lo strato sotto la capsula resta in evidenza, il resto si attenua: è la corticale. Compaiono tanti puntini rossi, i glomeruli.',
+  piramidi: 'Le otto zone scure a triangolo sono evidenziate: sono le piramidi della midollare, con righe che scendono verso la punta.',
+  calici: 'Dalla punta di ogni piramide escono gocce gialle di urina, che riempiono i calici, piccoli tubi a imbuto che si uniscono a tre a tre.',
+  bacinetto: 'L’urina gialla passa dai calici nel bacinetto, la cavità a imbuto al centro, e scende nell’uretere. Attorno c’è il grasso, color crema.',
+  vasi: 'Dall’arteria renale partono rami rossi che passano tra le piramidi, girano ad arco attorno alla loro base e salgono verso i glomeruli.',
+  nefrone: 'Il rene si sposta a sinistra. Da un riquadro sul polo superiore si apre una lente ingrandita: in alto la corticale con il glomerulo, sotto la piramide. Il tubulo del nefrone scende nella piramide, fa una curva a U e risale; poi sbocca nel dotto collettore, che scende fino alla punta della piramide.',
+};
+---
+
+<div class="anatomia-rene">
+  <svg viewBox="0 0 800 640" aria-hidden="true" focusable="false">
+    <g class="camera">
+      <ReneSezione>
+        <rect
+          slot="interno"
+          class="riquadro-lente"
+          x="-7"
+          y="-60"
+          width="18"
+          height="41"
+          rx="2"
+        />
+      </ReneSezione>
+
+      <!-- la misura del rene -->
+      <g class="misura">
+        <path d="M608 56V584M596 56H620M596 584H620"></path>
+        <rect x="586" y="300" width="80" height="34" rx="17"></rect>
+        <text x="595" y="326">11 cm</text>
+      </g>
+
+      {
+        etichetteRene.map((e) => {
+          const [x1, y1, x2, y2] = linea(e);
+          return (
+            <g class="etichetta" data-per={e.passaggio}>
+              <line x1={x1} y1={y1} x2={x2} y2={y2} />
+              <circle cx={x2} cy={y2} r="3.5" />
+              <rect x={e.x - 7} y={e.y - 23} width={larghezzaTesto(e.testo) + 14} height="31" rx="15.5" />
+              <text x={e.x} y={e.y}>
+                {e.testo}
+              </text>
+            </g>
+          );
+        })
+      }
+    </g>
+
+    <!-- la lente sul nefrone: si apre dal riquadro sul polo superiore del rene -->
+    <g transform={`translate(${origineLente[0]} ${origineLente[1]})`}>
+      <g class="lente">
+        <g transform={`translate(${-origineLente[0]} ${-origineLente[1]})`}>
+          <defs>
+            <clipPath id="rene-lente">
+              <rect x={L.x} y={L.y} width={L.w} height={L.h} rx="24"></rect>
+            </clipPath>
+          </defs>
+          <g clip-path="url(#rene-lente)">
+            <rect class="lente__corticale" x={L.x} y={L.y} width={L.w} height={L.h}></rect>
+            <rect class="lente__capsula" x={L.x} y={L.y} width={L.w} height="14"></rect>
+            <path class="lente__piramide" d={PIRAMIDE}></path>
+            {righePiramide.map((d) => <path class="lente__riga" d={d} />)}
+
+            <path class="lente__arteriola-bordo" d={ARTERIOLA}></path>
+            <path class="lente__arteriola" d={ARTERIOLA}></path>
+            <path class="lente__dotto-bordo" d={DOTTO}></path>
+            <path class="lente__tubo-bordo" d={TUBULO}></path>
+            <path class="lente__dotto-parete" d={DOTTO}></path>
+            <path class="lente__tubo-parete" d={TUBULO}></path>
+            <path class="lente__dotto-lume" d={DOTTO}></path>
+            <path class="lente__tubo-lume" d={TUBULO}></path>
+            <circle class="lente__capsula-glomerulo" cx="532" cy="118" r="28"></circle>
+            <path class="lente__glomerulo-bordo" d={GLOMERULO}></path>
+            <path class="lente__glomerulo" d={GLOMERULO}></path>
+          </g>
+          <rect class="lente__cornice" x={L.x} y={L.y} width={L.w} height={L.h} rx="24"></rect>
+
+          {
+            etichetteLente.map((e) => {
+              const [x1, y1, x2, y2] = linea(e);
+              return (
+                <g class="etichetta" data-per={e.passaggio}>
+                  <line x1={x1} y1={y1} x2={x2} y2={y2} />
+                  <circle cx={x2} cy={y2} r="3.5" />
+                  <rect x={e.x - 7} y={e.y - 23} width={larghezzaTesto(e.testo) + 14} height="31" rx="15.5" />
+                  <text x={e.x} y={e.y}>
+                    {e.testo}
+                  </text>
+                </g>
+              );
+            })
+          }
+        </g>
+      </g>
+    </g>
+  </svg>
+
+  <div class="solo-lettori">
+    {
+      Object.entries(descrizioni).map(([id, testo]) => (
+        <p class="descrizione" data-per={id}>
+          Disegno: {testo}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .anatomia-rene {
+    position: absolute;
+    inset: 0;
+  }
+  .anatomia-rene svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* --- Inquadratura: nel passaggio "nefrone" il rene si sposta a sinistra per fare posto alla lente --- */
+
+  .anatomia-rene .camera {
+    transform: translate(0, 0);
+    transition: transform 1.2s ease-in-out;
+  }
+  [data-passaggio='nefrone'] .anatomia-rene .camera {
+    transform: translate(-150px, 0); /* SPOSTA */
+  }
+
+  /* --- Da fuori (passaggi 1–2), poi la metà davanti si toglie --- */
+
+  .anatomia-rene .rene-sezione__fuori {
+    transform: translate(-14px, -10px);
+    transition:
+      opacity 1.2s ease-in-out,
+      transform 1.2s ease-in-out;
+  }
+  :is([data-passaggio='forma'], [data-passaggio='ilo']) .anatomia-rene .rene-sezione__fuori {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  .anatomia-rene .misura {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  [data-passaggio='forma'] .anatomia-rene .misura {
+    opacity: 1;
+    transition-delay: 0.4s;
+  }
+  .anatomia-rene .misura path {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 2;
+  }
+  .anatomia-rene .misura rect {
+    fill: var(--superficie);
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .anatomia-rene .misura text {
+    fill: var(--testo);
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  /* --- Glomeruli: dal passaggio "corticale" in poi --- */
+
+  .anatomia-rene .rene-sezione__glomeruli circle {
+    transition: opacity 0.8s ease-in-out;
+  }
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1'], [data-indice='2'], [data-indice='3']) .anatomia-rene .rene-sezione__glomeruli circle {
+    opacity: 1;
+  }
+  [data-passaggio='corticale'] .anatomia-rene .rene-sezione__glomeruli circle {
+    transition-delay: 0.4s;
+  }
+
+  /* --- Urina: gocce dalle papille e calici (dal passaggio "calici"), bacinetto e uretere (da "bacinetto") --- */
+
+  .anatomia-rene :is(.rene-sezione__gocce circle, .rene-sezione__calici-urina, .rene-sezione__bacinetto-urina) {
+    transition: opacity 0.8s ease-in-out;
+  }
+  [data-passaggio='calici'] .anatomia-rene .rene-sezione__gocce circle {
+    opacity: 1;
+    transition-delay: 0.2s;
+  }
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1'], [data-indice='2'], [data-indice='3'], [data-indice='4'], [data-indice='5']) .anatomia-rene .rene-sezione__calici-urina {
+    opacity: 1;
+  }
+  [data-passaggio='calici'] .anatomia-rene .rene-sezione__calici-urina {
+    transition-delay: 0.8s;
+  }
+  [data-indice]:not([data-indice='-1'], [data-indice='0'], [data-indice='1'], [data-indice='2'], [data-indice='3'], [data-indice='4'], [data-indice='5'], [data-indice='6']) .anatomia-rene .rene-sezione__bacinetto-urina {
+    opacity: 1;
+  }
+  [data-passaggio='bacinetto'] .anatomia-rene .rene-sezione__bacinetto-urina {
+    transition-delay: 0.3s;
+  }
+  .anatomia-rene .rene-sezione__uretere-urina {
+    stroke-dashoffset: 0;
+    transition:
+      opacity 0.3s ease-in-out,
+      stroke-dashoffset 2.2s ease-in-out;
+  }
+  [data-passaggio='bacinetto'] .anatomia-rene .rene-sezione__uretere-urina {
+    opacity: 1;
+    stroke-dashoffset: -30;
+    transition-delay: 0.9s;
+  }
+
+  /* --- Vasi: i rami dell'arteria renale --- */
+
+  .anatomia-rene .rene-sezione__arterie {
+    transition: opacity 1s ease-in-out;
+  }
+  [data-passaggio='vasi'] .anatomia-rene .rene-sezione__arterie {
+    opacity: 1;
+    transition-delay: 0.2s;
+  }
+
+  /* --- Lente sul nefrone --- */
+
+  .anatomia-rene .riquadro-lente {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 4;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  [data-passaggio='nefrone'] .anatomia-rene .riquadro-lente {
+    opacity: 1;
+    transition-delay: 1s;
+  }
+  .anatomia-rene .lente {
+    transform: scale(0.1);
+    opacity: 0;
+    transition:
+      transform 0.8s ease-in-out,
+      opacity 0.5s ease-in-out;
+  }
+  [data-passaggio='nefrone'] .anatomia-rene .lente {
+    transform: scale(1);
+    opacity: 1;
+    transition-delay: 1.3s;
+  }
+  .anatomia-rene .lente path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .anatomia-rene .lente__corticale {
+    fill: var(--rene);
+  }
+  .anatomia-rene .lente__capsula {
+    fill: var(--tessuto-chiaro);
+  }
+  .anatomia-rene .lente path.lente__piramide {
+    fill: var(--rene-midollare);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .anatomia-rene .lente__riga {
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+    opacity: 0.3;
+  }
+  .anatomia-rene .lente__arteriola-bordo {
+    stroke: var(--contorno);
+    stroke-width: 14;
+  }
+  .anatomia-rene .lente__arteriola {
+    stroke: var(--arterioso);
+    stroke-width: 9;
+  }
+  .anatomia-rene :is(.lente__tubo-bordo, .lente__dotto-bordo) {
+    stroke: var(--contorno);
+  }
+  .anatomia-rene :is(.lente__tubo-parete, .lente__dotto-parete) {
+    stroke: var(--tessuto);
+  }
+  .anatomia-rene :is(.lente__tubo-lume, .lente__dotto-lume) {
+    stroke: var(--superficie);
+  }
+  .anatomia-rene .lente__tubo-bordo {
+    stroke-width: 18;
+  }
+  .anatomia-rene .lente__tubo-parete {
+    stroke-width: 13;
+  }
+  .anatomia-rene .lente__tubo-lume {
+    stroke-width: 5;
+  }
+  .anatomia-rene .lente__dotto-bordo {
+    stroke-width: 26;
+  }
+  .anatomia-rene .lente__dotto-parete {
+    stroke-width: 21;
+  }
+  .anatomia-rene .lente__dotto-lume {
+    stroke-width: 10;
+  }
+  .anatomia-rene .lente__capsula-glomerulo {
+    fill: var(--superficie);
+    stroke: var(--contorno);
+    stroke-width: 8;
+  }
+  .anatomia-rene .lente__glomerulo-bordo {
+    stroke: var(--contorno);
+    stroke-width: 11;
+  }
+  .anatomia-rene .lente__glomerulo {
+    stroke: var(--arterioso);
+    stroke-width: 7;
+  }
+  .anatomia-rene .lente__cornice {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  /* La corticale non ha un contorno suo: si attenua tutto ciò che sta più all'interno. */
+  .anatomia-rene .rene-sezione__midollare {
+    transition: opacity 0.6s ease-in-out;
+  }
+  [data-passaggio='corticale'] .anatomia-rene .rene-sezione__midollare {
+    opacity: 0.3;
+  }
+
+  .anatomia-rene :is(.rene-sezione__capsula, .rene-sezione__piramide-forma, .rene-sezione__calice-bordo, .rene-sezione__bacinetto, .rene-sezione__uretere-bordo) {
+    transition: stroke 0.4s ease-in-out;
+  }
+  [data-passaggio='capsula'] .anatomia-rene .rene-sezione__capsula,
+  [data-passaggio='piramidi'] .anatomia-rene .rene-sezione__piramide-forma,
+  [data-passaggio='bacinetto'] .anatomia-rene .rene-sezione__bacinetto {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  [data-passaggio='calici'] .anatomia-rene .rene-sezione__calice-bordo,
+  [data-passaggio='bacinetto'] .anatomia-rene .rene-sezione__uretere-bordo {
+    stroke: var(--accento);
+  }
+
+  /* --- Etichette: compaiono quando il disegno si è fermato --- */
+
+  .anatomia-rene .etichetta {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+  .anatomia-rene .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .anatomia-rene .etichetta circle {
+    fill: var(--testo-2);
+  }
+  .anatomia-rene .etichetta rect {
+    fill: var(--superficie);
+    opacity: 0.92;
+  }
+  .anatomia-rene .etichetta text {
+    fill: var(--testo);
+    font-size: 24px;
+    font-weight: 700;
+  }
+  [data-passaggio='ilo'] .anatomia-rene .etichetta[data-per='ilo'],
+  [data-passaggio='capsula'] .anatomia-rene .etichetta[data-per='capsula'],
+  [data-passaggio='corticale'] .anatomia-rene .etichetta[data-per='corticale'],
+  [data-passaggio='piramidi'] .anatomia-rene .etichetta[data-per='piramidi'],
+  [data-passaggio='calici'] .anatomia-rene .etichetta[data-per='calici'],
+  [data-passaggio='bacinetto'] .anatomia-rene .etichetta[data-per='bacinetto'],
+  [data-passaggio='vasi'] .anatomia-rene .etichetta[data-per='vasi'] {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out 1s;
+  }
+  [data-passaggio='nefrone'] .anatomia-rene .etichetta[data-per='nefrone'] {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out 2.1s;
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .anatomia-rene .descrizione {
+    display: none;
+  }
+  [data-passaggio='forma'] .anatomia-rene .descrizione[data-per='forma'],
+  [data-passaggio='ilo'] .anatomia-rene .descrizione[data-per='ilo'],
+  [data-passaggio='sezione'] .anatomia-rene .descrizione[data-per='sezione'],
+  [data-passaggio='capsula'] .anatomia-rene .descrizione[data-per='capsula'],
+  [data-passaggio='corticale'] .anatomia-rene .descrizione[data-per='corticale'],
+  [data-passaggio='piramidi'] .anatomia-rene .descrizione[data-per='piramidi'],
+  [data-passaggio='calici'] .anatomia-rene .descrizione[data-per='calici'],
+  [data-passaggio='bacinetto'] .anatomia-rene .descrizione[data-per='bacinetto'],
+  [data-passaggio='vasi'] .anatomia-rene .descrizione[data-per='vasi'],
+  [data-passaggio='nefrone'] .anatomia-rene .descrizione[data-per='nefrone'] {
+    display: block;
+  }
+</style>
