@@ -1,0 +1,52 @@
+pulsante: Calcoli renali
+titolo: I calcoli renali
+passaggi:
+  - id: calcoli-sali
+    titolo: Sali sciolti nell'urina
+    breve: Nell'urina ci sono sali sciolti, per esempio sali di calcio.
+    spiegazione: >
+      Oltre all'urea, l'urina porta fuori molti **sali minerali** sciolti nell'acqua.
+      Di solito restano sciolti, come lo zucchero nel tè, ed escono con l'urina.
+
+  - id: calcoli-cause
+    titolo: Troppi sali, poca acqua
+    breve: Con poca acqua, i sali nell'urina diventano troppi.
+    spiegazione: >
+      Se si beve poco, o si suda molto senza bere, l'urina ha poca acqua: è **concentrata**.
+      Alcune abitudini aumentano i sali nell'urina: mangiare molto salato, molta carne, bere spesso bibite zuccherate.
+      Contano anche la **familiarità**, cioè se in famiglia qualcuno ha avuto i calcoli, e alcune malattie.
+
+  - id: calcoli-cristalli
+    titolo: I cristalli
+    breve: I sali in più si uniscono e formano piccoli cristalli.
+    spiegazione: >
+      In un liquido si può sciogliere solo una certa quantità di sale: quella in più torna solida.
+      Succede anche con lo zucchero: se nel tè ce n'è troppo, una parte resta sul fondo della tazza.
+      Nell'urina i sali in più si attaccano tra loro e formano minuscoli **cristalli**.
+
+  - id: calcoli-calcolo
+    titolo: Il calcolo
+    breve: Il cristallo cresce, strato su strato, e diventa un calcolo.
+    spiegazione: >
+      Se un cristallo resta nel rene, per esempio in un calice, altri sali ci si attaccano sopra.
+      In mesi o anni cresce come un sassolino: è un **calcolo renale**.
+      Può essere piccolo come un granello di sabbia o grande qualche centimetro.
+      Finché resta fermo nel rene, spesso non dà nessun fastidio.
+
+  - id: calcoli-colica
+    titolo: La colica renale
+    breve: Se il calcolo scende nell'uretere, provoca un dolore fortissimo.
+    spiegazione: >
+      A volte il calcolo si stacca e scivola nell'uretere, che è largo pochi millimetri.
+      L'urina fa fatica a passare e le pareti dell'uretere si contraggono per spingere il calcolo.
+      È la **colica renale**: un dolore fortissimo al fianco, che può scendere verso l'inguine.
+      Bisogna andare dal medico.
+
+  - id: calcoli-uscita
+    titolo: L'uscita del calcolo
+    breve: I calcoli piccoli spesso scendono ed escono da soli con l'urina.
+    spiegazione: >
+      Molti calcoli di pochi millimetri arrivano fino alla vescica ed escono con l'urina.
+      Quelli più grandi il medico li rompe in pezzetti, per esempio con onde d'urto, oppure li toglie.
+      Per prevenirli la regola più importante è bere acqua durante tutta la giornata:
+      l'urina resta diluita e i sali restano sciolti.

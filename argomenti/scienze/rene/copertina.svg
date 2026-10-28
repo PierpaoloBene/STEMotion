@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <g class="fuori" stroke="#1D1D1F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- il rene da fuori, con i vasi e l'uretere che escono dall'ilo -->
+    <path fill="none" stroke-width="14" d="M40 214H150M40 250H154" />
+    <path fill="none" stroke="#D7263D" stroke-width="9" d="M40 214H150" />
+    <path fill="none" stroke="#3A5BA0" stroke-width="9" d="M40 250H154" />
+    <path fill="none" stroke-width="13" d="M176 276C150 284 140 300 132 330C124 370 118 420 116 500" />
+    <path fill="none" stroke="#EBA5A5" stroke-width="8" d="M176 276C150 284 140 300 132 330C124 370 118 420 116 500" />
+    <path fill="#C46A5A" d="M200 58C262 54 300 140 300 240C300 340 262 424 200 422C158 420 140 380 148 344C154 318 172 300 172 240C172 180 154 162 148 136C140 100 158 60 200 58Z" />
+  </g>
+  <g class="dentro">
+    <rect width="400" height="500" fill="#16233F" />
+    <g stroke="#3E5A8C" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" fill="none">
+      <path stroke-width="9" d="M40 214H150M40 250H154" />
+    </g>
+    <!-- il rene in sezione: corticale, piramidi, calici e bacinetto pieni di urina, uretere -->
+    <path fill="#C46A5A" stroke="#F8DCDC" stroke-width="3" stroke-linejoin="round" d="M200 58C262 54 300 140 300 240C300 340 262 424 200 422C158 420 140 380 148 344C154 318 172 300 172 240C172 180 154 162 148 136C140 100 158 60 200 58Z" />
+    <path fill="#F5E9C8" d="M164 172C190 150 222 170 236 200C248 226 248 254 236 280C222 310 190 330 164 308C176 288 184 268 184 240C184 212 176 192 164 172Z" />
+    <g fill="#9E4B45" stroke="#F8DCDC" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M176 96L214 82L206 158Z" />
+      <path d="M232 92L266 118L232 176Z" />
+      <path d="M276 164L288 214L240 210Z" />
+      <path d="M288 266L276 316L240 270Z" />
+      <path d="M266 362L232 388L232 304Z" />
+      <path d="M214 398L176 384L206 322Z" />
+    </g>
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="#F2D55B" stroke-width="10" d="M206 160L204 196M232 178L214 206M240 212L216 228H190M240 268L216 252H190M232 302L214 274M206 320L204 284" />
+      <path stroke="#F2D55B" stroke-width="26" d="M206 212L182 252" />
+      <path stroke="#F2D55B" stroke-width="10" d="M176 276C150 284 140 300 132 330C124 370 118 420 116 500" />
+    </g>
+    <!-- glomeruli nella corticale -->
+    <g fill="#D7263D">
+      <circle cx="244" cy="86" r="3" /><circle cx="270" cy="104" r="3" /><circle cx="286" cy="138" r="3" />
+      <circle cx="292" cy="240" r="3" /><circle cx="286" cy="342" r="3" /><circle cx="270" cy="376" r="3" />
+      <circle cx="244" cy="396" r="3" /><circle cx="190" cy="74" r="3" /><circle cx="294" cy="188" r="3" />
+      <circle cx="294" cy="292" r="3" /><circle cx="190" cy="406" r="3" />
+    </g>
+    <!-- un calcolo nel calice in basso -->
+    <path fill="#8C7B6B" stroke="#F8DCDC" stroke-width="2" stroke-linejoin="round" d="M196 300L203 292L213 294L218 302L214 311L204 314L196 310Z" />
+  </g>
+</svg>
