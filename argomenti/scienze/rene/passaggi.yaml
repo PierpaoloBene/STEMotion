@@ -54,7 +54,7 @@ passaggi:
       Le righe che si vedono sono migliaia di tubicini: i tubuli dei nefroni e i dotti che raccolgono l'urina.
 
   - id: calici
-    fase: le vie dell'urina
+    fase: vie urinarie
     titolo: Papille e calici
     breve: Dalla punta delle piramidi l'urina passa nei calici.
     spiegazione: >
@@ -63,7 +63,7 @@ passaggi:
       I calici minori si uniscono in due o tre **calici maggiori**.
 
   - id: bacinetto
-    fase: le vie dell'urina
+    fase: vie urinarie
     titolo: Il bacinetto
     breve: I calici versano l'urina nel bacinetto, che continua nell'uretere.
     spiegazione: >
