@@ -1,0 +1,571 @@
+---
+/**
+ * I vasi comunicanti: quattro recipienti di forma diversa uniti da un tubo con un rubinetto.
+ * L'acqua passa dal recipiente largo agli altri e si ferma allo stesso livello; poi due esempi
+ * (l'annaffiatoio e l'acquedotto).
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Ciò che compare e scompare ha l'attributo data-passi
+ * con l'elenco dei passaggi (da 0) in cui si vede, come nelle storie.
+ *
+ * Un solo disegno 4:3 (800 × 600): sul telefono le scritte crescono (container query).
+ */
+import { freccia } from '../../../src/components/storie/disegno';
+
+type Punto = [number, number];
+const r = (v: number) => +v.toFixed(1);
+
+// ---------------------------------------------------------------------------
+// Scena 1: i quattro recipienti. Il tubo in basso li unisce; y cresce verso il basso.
+// ---------------------------------------------------------------------------
+
+const BOCCA = 150; // bordo in alto dei recipienti
+const FONDO = 470; // dove i recipienti incontrano il tubo
+const TUBO = { x1: 70, x2: 660, y: FONDO, h: 30 };
+const RUBINETTO = 245; // x del rubinetto, tra il recipiente largo e quello stretto
+
+const recipienti: { id: string; nome: string; interno: Punto[] }[] = [
+  { id: 'largo', nome: 'Largo', interno: [[80, FONDO], [200, FONDO], [200, BOCCA], [80, BOCCA]] },
+  { id: 'stretto', nome: 'Stretto', interno: [[290, FONDO], [316, FONDO], [316, BOCCA], [290, BOCCA]] },
+  { id: 'imbuto', nome: 'A imbuto', interno: [[455, FONDO], [485, FONDO], [530, BOCCA], [410, BOCCA]] },
+  { id: 'inclinato', nome: 'Inclinato', interno: [[610, FONDO], [640, FONDO], [720, BOCCA], [690, BOCCA]] },
+];
+
+/** Area della parte di un poligono che sta sotto la quota y (y più grandi). */
+function areaSotto(poligono: Punto[], y: number) {
+  const dentro = (p: Punto) => p[1] >= y;
+  const tagliato: Punto[] = [];
+  for (let i = 0; i < poligono.length; i++) {
+    const a = poligono[i];
+    const b = poligono[(i + 1) % poligono.length];
+    if (dentro(a)) tagliato.push(a);
+    if (dentro(a) !== dentro(b)) {
+      const t = (y - a[1]) / (b[1] - a[1]);
+      tagliato.push([a[0] + t * (b[0] - a[0]), y]);
+    }
+  }
+  let s = 0;
+  for (let i = 0; i < tagliato.length; i++) {
+    const [x1, y1] = tagliato[i];
+    const [x2, y2] = tagliato[(i + 1) % tagliato.length];
+    s += x1 * y2 - x2 * y1;
+  }
+  return Math.abs(s) / 2;
+}
+
+// All'inizio l'acqua è solo nel recipiente largo, fino a PIENO, e nel tubo fino al rubinetto.
+// Aperto il rubinetto, riempie il resto del tubo e si divide tra i recipienti: il livello
+// finale si calcola conservando la quantità d'acqua (le aree del disegno).
+const PIENO = 175;
+const acquaTotale = areaSotto(recipienti[0].interno, PIENO) - (TUBO.x2 - RUBINETTO) * TUBO.h;
+let [alto, basso] = [BOCCA, FONDO];
+for (let i = 0; i < 60; i++) {
+  const medio = (alto + basso) / 2;
+  const area = recipienti.reduce((s, v) => s + areaSotto(v.interno, medio), 0);
+  if (area > acquaTotale) alto = medio;
+  else basso = medio;
+}
+const LIVELLO = r((alto + basso) / 2);
+
+const punti = (p: Punto[]) => p.map(([x, y]) => `${x},${y}`).join(' ');
+/** Le due pareti di un recipiente (aperto in alto). */
+const pareti = (p: Punto[]) => `M${p[3][0]} ${p[3][1]}L${p[0][0]} ${p[0][1]}M${p[1][0]} ${p[1][1]}L${p[2][0]} ${p[2][1]}`;
+/** x del centro di un recipiente alla quota y. */
+const centroA = (p: Punto[], y: number) => {
+  const t = (FONDO - y) / (FONDO - BOCCA);
+  return r(((p[0][0] + p[1][0]) / 2) * (1 - t) + ((p[2][0] + p[3][0]) / 2) * t);
+};
+
+// Frecce della pressione nel recipiente largo: più lunghe più in basso.
+const spinte = [
+  { y: LIVELLO + 22, l: 22 },
+  { y: (LIVELLO + FONDO) / 2, l: 42 },
+  { y: FONDO - 18, l: 64 },
+].map((s) => ({ ...s, y: r(s.y) }));
+
+// ---------------------------------------------------------------------------
+// Scena 2: l'annaffiatoio.
+// ---------------------------------------------------------------------------
+
+const CORPO: Punto[] = [[160, 500], [340, 500], [340, 250], [160, 250]];
+const LIVELLO_ANN = 330;
+// Il beccuccio: una striscia larga 26 dal fondo del corpo verso l'alto a destra.
+const becco = (() => {
+  const a: Punto = [318, 488];
+  const b: Punto = [510, 250];
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const [nx, ny] = [(-(b[1] - a[1]) / len) * 13, ((b[0] - a[0]) / len) * 13];
+  return [
+    [r(a[0] - nx), r(a[1] - ny)],
+    [r(a[0] + nx), r(a[1] + ny)],
+    [r(b[0] + nx), r(b[1] + ny)],
+    [r(b[0] - nx), r(b[1] - ny)],
+  ] as Punto[];
+})();
+
+// ---------------------------------------------------------------------------
+// Scena 3: l'acquedotto. Serbatoio su una torre in collina, tubo sotto terra, palazzo.
+// ---------------------------------------------------------------------------
+
+const SERBATOIO = { x: 80, y: 110, l: 130, h: 80 };
+const LIVELLO_SERB = 128;
+const TERRENO = 540;
+const COLONNA = 640; // x del tubo che sale nel palazzo
+const tuboAcquedotto = `M145 ${SERBATOIO.y + SERBATOIO.h}V575H${COLONNA}V70`;
+const tuboPieno = `M145 ${SERBATOIO.y + SERBATOIO.h}V575H${COLONNA}V${LIVELLO_SERB}`;
+
+const descrizioni = [
+  'Quattro recipienti vuoti, aperti in alto: uno largo, uno stretto, uno a imbuto e uno inclinato. In basso un tubo orizzontale li collega tutti. Sul tubo, tra il primo e il secondo recipiente, c’è un rubinetto.',
+  'Il recipiente largo è quasi pieno d’acqua. Il rubinetto è chiuso: il tubo è pieno solo fino al rubinetto e gli altri recipienti sono vuoti.',
+  'Il rubinetto si apre. Nel recipiente largo il livello scende; il tubo si riempie e l’acqua sale negli altri tre recipienti.',
+  'Una linea tratteggiata attraversa i quattro recipienti: l’acqua è alla stessa altezza in tutti.',
+  'In ogni recipiente una freccia verticale misura l’altezza dell’acqua dal fondo: le quattro frecce sono uguali.',
+  'Nel recipiente largo tre frecce spingono contro la parete: corta vicino alla superficie, media a metà, lunga sul fondo.',
+  'Nel tubo, tra il recipiente stretto e quello a imbuto, due frecce uguali spingono una contro l’altra.',
+  'Un annaffiatoio: nel corpo e nel beccuccio l’acqua arriva alla stessa altezza, segnata da una linea tratteggiata. La punta del beccuccio è alta come il bordo del corpo.',
+  'Un serbatoio su una torre, in cima a una collina. Un tubo scende sotto terra e risale in un palazzo. Nel tubo del palazzo l’acqua arriva alla stessa altezza dell’acqua nel serbatoio.',
+];
+---
+
+<div class="vasi" style={`--pieno: ${PIENO}px; --uguale: ${LIVELLO}px`}>
+  <svg class="vasi__disegno" viewBox="0 0 800 600" aria-hidden="true" focusable="false">
+    <defs>
+      {
+        recipienti.map((v) => (
+          <clipPath id={`vasi-${v.id}`}>
+            <polygon points={punti(v.interno)} />
+          </clipPath>
+        ))
+      }
+      <clipPath id="vasi-tubo">
+        <rect x={TUBO.x1} y={TUBO.y} width={TUBO.x2 - TUBO.x1} height={TUBO.h} rx="14" />
+      </clipPath>
+      <clipPath id="vasi-corpo"><polygon points={punti(CORPO)} /></clipPath>
+      <clipPath id="vasi-becco"><polygon points={punti(becco)} /></clipPath>
+    </defs>
+
+    {/* ------------------------- Scena 1: i recipienti ------------------------- */}
+    <g data-passi="0 1 2 3 4 5 6">
+      {/* Le pareti: prima il contorno spesso, poi l'interno bianco che ne copre metà e le giunture */}
+      <g class="parete">
+        <rect x={TUBO.x1} y={TUBO.y} width={TUBO.x2 - TUBO.x1} height={TUBO.h} rx="14" />
+        {recipienti.map((v) => <path d={pareti(v.interno)} />)}
+      </g>
+      <g class="interno">
+        <rect x={TUBO.x1} y={TUBO.y} width={TUBO.x2 - TUBO.x1} height={TUBO.h} rx="14" />
+        {recipienti.map((v) => <polygon points={punti(v.interno)} />)}
+      </g>
+
+      {/* L'acqua: un rettangolo per recipiente che sale e scende, ritagliato dalla sua forma */}
+      {
+        recipienti.map((v) => (
+          <g clip-path={`url(#vasi-${v.id})`}>
+            <g class={`livello livello--${v.id}`}>
+              <rect class="acqua" x="0" y="0" width="800" height="600" />
+              <line class="pelo" x1="0" y1="0" x2="800" y2="0" />
+            </g>
+          </g>
+        ))
+      }
+      <g clip-path="url(#vasi-tubo)">
+        <rect class="acqua tubo-acqua tubo-acqua--sinistra" x={TUBO.x1} y={TUBO.y} width={RUBINETTO - TUBO.x1} height={TUBO.h} />
+        <rect class="acqua tubo-acqua tubo-acqua--destra" x={RUBINETTO} y={TUBO.y} width={TUBO.x2 - RUBINETTO} height={TUBO.h} />
+      </g>
+
+      {/* Il rubinetto: leva di traverso = chiuso, lungo il tubo = aperto */}
+      <g class="rubinetto" transform={`translate(${RUBINETTO} ${TUBO.y + TUBO.h / 2})`}>
+        <circle class="rubinetto__corpo" r="17" />
+        <g class="rubinetto__leva">
+          <line x1="0" y1="0" x2="0" y2="-46" />
+          <circle cy="-46" r="6" />
+        </g>
+      </g>
+
+      {/* Nomi dei recipienti */}
+      {
+        recipienti.map((v) => (
+          <text class="nome" x={centroA(v.interno, BOCCA)} y={BOCCA - 22} text-anchor="middle" data-passi="0 4">
+            {v.nome}
+          </text>
+        ))
+      }
+      <g class="etichetta" data-passi="0 1 2">
+        <line x1={RUBINETTO} y1={TUBO.y + TUBO.h + 20} x2={RUBINETTO} y2={TUBO.y + TUBO.h + 36} />
+      </g>
+      <text x={RUBINETTO} y={TUBO.y + TUBO.h + 66} text-anchor="middle" data-passi="0">Rubinetto</text>
+      <text x={RUBINETTO} y={TUBO.y + TUBO.h + 66} text-anchor="middle" data-passi="1">Rubinetto chiuso</text>
+      <text x={RUBINETTO} y={TUBO.y + TUBO.h + 66} text-anchor="middle" data-passi="2">Rubinetto aperto</text>
+      <g class="etichetta" data-passi="0">
+        <line x1="400" y1={TUBO.y + TUBO.h + 4} x2="400" y2={TUBO.y + TUBO.h + 36} />
+        <text x="400" y={TUBO.y + TUBO.h + 66} text-anchor="middle">Tubo</text>
+      </g>
+
+      {/* 3: lo stesso livello */}
+      <g data-passi="3 4 5 6">
+        <line class="riferimento" x1="40" y1={LIVELLO} x2="760" y2={LIVELLO} />
+      </g>
+      <g class="etichetta" data-passi="3">
+        <line x1="745" y1="112" x2="745" y2={LIVELLO - 6} />
+        <text x="770" y="96" text-anchor="end">Stesso livello</text>
+      </g>
+
+      {/* 4: le altezze, tutte uguali */}
+      <g data-passi="4">
+        {
+          recipienti.map((v) => {
+            const x = centroA(v.interno, (LIVELLO + FONDO) / 2);
+            return <path class="misura" d={`M${x} ${FONDO - 4}V${LIVELLO + 4}M${x - 9} ${LIVELLO + 14}L${x} ${LIVELLO + 4}L${x + 9} ${LIVELLO + 14}M${x - 9} ${FONDO - 14}L${x} ${FONDO - 4}L${x + 9} ${FONDO - 14}`} />;
+          })
+        }
+        <line class="riferimento riferimento--fondo" x1="40" y1={FONDO} x2="760" y2={FONDO} />
+      </g>
+      <g class="etichetta" data-passi="4">
+        <text x="400" y={TUBO.y + TUBO.h + 66} text-anchor="middle">Altezze uguali</text>
+      </g>
+
+      {/* 5: la pressione cresce con la profondità */}
+      <g data-passi="5">
+        {spinte.map((s) => <path class="spinta" d={freccia(125, s.y, 125 + s.l, s.y, 12)} />)}
+      </g>
+      <g class="etichetta" data-passi="5">
+        <text x="40" y="100">Più giù, più spinta</text>
+      </g>
+
+      {/* 6: nel tubo le spinte si bilanciano */}
+      <g data-passi="6">
+        <path class="spinta" d={freccia(330, TUBO.y + TUBO.h / 2, 378, TUBO.y + TUBO.h / 2, 12)} />
+        <path class="spinta" d={freccia(430, TUBO.y + TUBO.h / 2, 392, TUBO.y + TUBO.h / 2, 12)} />
+      </g>
+      <g class="etichetta" data-passi="6">
+        <line x1="385" y1={TUBO.y + TUBO.h + 6} x2="385" y2={TUBO.y + TUBO.h + 36} />
+        <text x="385" y={TUBO.y + TUBO.h + 66} text-anchor="middle">Spinte uguali</text>
+      </g>
+    </g>
+
+    {/* ------------------------- Scena 2: l'annaffiatoio ------------------------- */}
+    <g data-passi="7">
+      <path class="manico" d="M200 250C200 170 300 170 300 250" />
+      <g class="parete">
+        <path d={`M${becco[0][0]} ${becco[0][1]}L${becco[3][0]} ${becco[3][1]}M${becco[1][0]} ${becco[1][1]}L${becco[2][0]} ${becco[2][1]}`} />
+        <path d={`M${CORPO[3][0]} ${CORPO[3][1]}V${CORPO[0][1]}H${CORPO[1][0]}V${CORPO[2][1]}`} />
+      </g>
+      <g class="interno">
+        <polygon points={punti(becco)} />
+        <polygon points={punti(CORPO)} />
+      </g>
+      <g class="acque-sovrapposte">
+      <g clip-path="url(#vasi-corpo)">
+        <rect class="acqua" x="100" y={LIVELLO_ANN} width="300" height="300" />
+        <line class="pelo" x1="100" y1={LIVELLO_ANN} x2="400" y2={LIVELLO_ANN} />
+      </g>
+      <g clip-path="url(#vasi-becco)">
+        <rect class="acqua" x="300" y={LIVELLO_ANN} width="300" height="300" />
+        <line class="pelo" x1="300" y1={LIVELLO_ANN} x2="600" y2={LIVELLO_ANN} />
+      </g>
+      </g>
+      <line class="riferimento" x1="100" y1={LIVELLO_ANN} x2="790" y2={LIVELLO_ANN} />
+      <line class="riferimento riferimento--fondo" x1="130" y1="250" x2="560" y2="250" />
+      <g class="etichetta">
+        <line x1="146" y1="420" x2="175" y2="420" />
+        <text x="140" y="429" text-anchor="end">Corpo</text>
+        <line x1="640" y1="222" x2="522" y2="248" />
+        <text x="790" y="230" text-anchor="end">Beccuccio</text>
+        <text x="790" y={LIVELLO_ANN - 16} text-anchor="end">Stesso livello</text>
+      </g>
+    </g>
+
+    {/* ------------------------- Scena 3: l'acquedotto ------------------------- */}
+    <g data-passi="8">
+      <path class="collina" d={`M0 ${TERRENO + 60}V300C40 250 220 230 260 280C330 370 360 ${TERRENO} 420 ${TERRENO}H800V600H0Z`} />
+      <line class="suolo" x1="0" y1={TERRENO} x2="800" y2={TERRENO} />
+      {/* La torre */}
+      <path class="linea" d="M100 190L88 262M190 190L202 268M95 225H195" />
+      {/* Il palazzo */}
+      <rect class="palazzo" x="470" y="200" width="150" height={TERRENO - 200} />
+      {
+        [240, 320, 400, 480].map((y) =>
+          [495, 555].map((x) => <rect class="finestra" x={x} y={y} width="36" height="44" />),
+        )
+      }
+      {/* Il tubo: contorno, interno vuoto, acqua fino al livello del serbatoio */}
+      <path class="tubo tubo--contorno" d={tuboAcquedotto} />
+      <path class="tubo tubo--vuoto" d={tuboAcquedotto} />
+      <path class="tubo tubo--acqua" d={tuboPieno} />
+      {/* Il serbatoio */}
+      <rect class="serbatoio" x={SERBATOIO.x} y={SERBATOIO.y} width={SERBATOIO.l} height={SERBATOIO.h} />
+      <rect class="acqua" x={SERBATOIO.x} y={LIVELLO_SERB} width={SERBATOIO.l} height={SERBATOIO.y + SERBATOIO.h - LIVELLO_SERB} />
+      <line class="pelo" x1={SERBATOIO.x} y1={LIVELLO_SERB} x2={SERBATOIO.x + SERBATOIO.l} y2={LIVELLO_SERB} />
+      <path class="linea" d={`M${SERBATOIO.x} ${SERBATOIO.y}V${SERBATOIO.y + SERBATOIO.h}H${SERBATOIO.x + SERBATOIO.l}V${SERBATOIO.y}`} />
+      <line class="riferimento" x1={SERBATOIO.x} y1={LIVELLO_SERB} x2={COLONNA + 40} y2={LIVELLO_SERB} />
+      <g class="etichetta">
+        <text x={SERBATOIO.x + SERBATOIO.l / 2} y={SERBATOIO.y - 20} text-anchor="middle">Serbatoio</text>
+        <text x={COLONNA - 14} y={LIVELLO_SERB - 16} text-anchor="end">Stesso livello</text>
+        <line x1="700" y1="420" x2={COLONNA + 12} y2="420" />
+        <text x="792" y="429" text-anchor="end">Tubo</text>
+      </g>
+    </g>
+  </svg>
+
+  <div class="solo-lettori">
+    {
+      descrizioni.map((d, i) => (
+        <p class="descrizione" data-per={i}>
+          Disegno: {d}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .vasi {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+  }
+  .vasi__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .vasi svg :is(path, rect, circle, line, polygon) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Che cosa si vede in ogni passaggio --- */
+
+  .vasi [data-passi] {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  [data-indice='0'] .vasi [data-passi~='0'],
+  [data-indice='1'] .vasi [data-passi~='1'],
+  [data-indice='2'] .vasi [data-passi~='2'],
+  [data-indice='3'] .vasi [data-passi~='3'],
+  [data-indice='4'] .vasi [data-passi~='4'],
+  [data-indice='5'] .vasi [data-passi~='5'],
+  [data-indice='6'] .vasi [data-passi~='6'],
+  [data-indice='7'] .vasi [data-passi~='7'],
+  [data-indice='8'] .vasi [data-passi~='8'] {
+    opacity: 1;
+  }
+
+  /* --- Recipienti --- */
+
+  .vasi .parete :is(rect, path, polygon) {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vasi .interno :is(rect, polygon) {
+    fill: var(--superficie);
+  }
+  .vasi .acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.5;
+  }
+  /* Corpo e beccuccio si sovrappongono: l'acqua è opaca dentro un gruppo trasparente. */
+  .vasi .acque-sovrapposte {
+    opacity: 0.5;
+  }
+  .vasi .acque-sovrapposte .acqua {
+    fill-opacity: 1;
+  }
+  .vasi .acque-sovrapposte .pelo {
+    stroke-opacity: 0;
+  }
+  .vasi .pelo {
+    stroke: var(--acqua);
+    stroke-width: 3;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+
+  /* Il livello di ogni recipiente: vuoto (sotto il fondo), pieno o allo stesso livello. */
+  .vasi .livello {
+    --vuoto: 490px;
+    transform: translateY(var(--vuoto));
+    transition: transform 2s ease-in-out;
+  }
+  .vasi .tubo-acqua {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+  [data-indice='1'] .vasi .livello--largo {
+    transform: translateY(var(--pieno));
+    transition-duration: 1.2s;
+  }
+  [data-indice='1'] .vasi .tubo-acqua--sinistra {
+    opacity: 1;
+  }
+  :is([data-indice='2'], [data-indice='3'], [data-indice='4'], [data-indice='5'], [data-indice='6']) .vasi .livello {
+    transform: translateY(var(--uguale));
+    transition-delay: 0.4s;
+  }
+  :is([data-indice='2'], [data-indice='3'], [data-indice='4'], [data-indice='5'], [data-indice='6']) .vasi .tubo-acqua {
+    opacity: 1;
+  }
+
+  /* --- Rubinetto --- */
+
+  .vasi .rubinetto__corpo {
+    fill: var(--argento);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .vasi .rubinetto__leva line {
+    stroke: var(--contorno);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .vasi .rubinetto__leva circle {
+    fill: var(--contorno);
+  }
+  .vasi .rubinetto__leva {
+    transform: rotate(0deg);
+    transition: transform 0.8s ease-in-out;
+  }
+  /* Aperto: la leva si gira lungo il tubo. */
+  :is([data-indice='2'], [data-indice='3'], [data-indice='4'], [data-indice='5'], [data-indice='6']) .vasi .rubinetto__leva {
+    transform: rotate(90deg);
+  }
+
+  /* --- Linee, frecce e misure --- */
+
+  .vasi .riferimento {
+    stroke: var(--accento);
+    stroke-width: 3;
+    stroke-dasharray: 10 8;
+  }
+  .vasi .riferimento--fondo {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 4 8;
+  }
+  .vasi .misura {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vasi .spinta {
+    fill: none;
+    stroke: var(--testo);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vasi .linea {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* --- Annaffiatoio e acquedotto --- */
+
+  .vasi .manico {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 8;
+    stroke-linecap: round;
+  }
+  .vasi .collina {
+    fill: var(--foglie);
+    fill-opacity: 0.35;
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .vasi .suolo {
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .vasi .palazzo {
+    fill: var(--muro);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .vasi .finestra {
+    fill: var(--superficie);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .vasi .serbatoio {
+    fill: var(--superficie);
+  }
+  .vasi .tubo {
+    fill: none;
+    vector-effect: none;
+    stroke-linejoin: round;
+  }
+  .vasi .tubo--contorno {
+    stroke: var(--contorno);
+    stroke-width: 20;
+  }
+  .vasi .tubo--vuoto {
+    stroke: var(--superficie);
+    stroke-width: 14;
+  }
+  .vasi .tubo--acqua {
+    stroke: var(--acqua);
+    stroke-opacity: 0.75;
+    stroke-width: 14;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  [data-indice='1'] .vasi .livello--largo .pelo,
+  [data-indice='2'] .vasi .livello .pelo {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  :is([data-indice='1'], [data-indice='2']) .vasi .rubinetto__corpo {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Testi --- */
+
+  .vasi text {
+    fill: var(--testo);
+    font-size: 26px;
+    font-weight: 700;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 6px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  .vasi .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  /* Sul telefono il disegno è piccolo: le scritte crescono per restare leggibili. */
+  @container (max-width: 620px) {
+    .vasi text {
+      font-size: 36px;
+    }
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .vasi .descrizione {
+    display: none;
+  }
+  [data-indice='0'] .vasi .descrizione[data-per='0'],
+  [data-indice='1'] .vasi .descrizione[data-per='1'],
+  [data-indice='2'] .vasi .descrizione[data-per='2'],
+  [data-indice='3'] .vasi .descrizione[data-per='3'],
+  [data-indice='4'] .vasi .descrizione[data-per='4'],
+  [data-indice='5'] .vasi .descrizione[data-per='5'],
+  [data-indice='6'] .vasi .descrizione[data-per='6'],
+  [data-indice='7'] .vasi .descrizione[data-per='7'],
+  [data-indice='8'] .vasi .descrizione[data-per='8'] {
+    display: block;
+  }
+</style>

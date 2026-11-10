@@ -1,0 +1,64 @@
+passaggi:
+  - id: tubi
+    titolo: Tubi sottili
+    breve: In una vaschetta d'acqua mettiamo tre tubi di vetro di larghezza diversa.
+    spiegazione: >
+      I tubi sono aperti in basso e in alto: con la vaschetta formano dei vasi comunicanti.
+      Ci aspetteremmo che l'acqua nei tubi resti allo stesso livello della vaschetta.
+
+  - id: risale
+    titolo: L'acqua sale
+    breve: Nei tubi l'acqua sale più in alto che nella vaschetta.
+    spiegazione: >
+      L'acqua sale da sola dentro i tubi, verso l'alto.
+      Questo fenomeno si chiama **capillarità**, dal latino *capillus*, "capello".
+      Succede nei tubi sottili come capelli, che si chiamano **tubi capillari**.
+
+  - id: piu-sottile
+    titolo: Più è sottile, più sale
+    breve: Più il tubo è sottile, più in alto arriva l'acqua.
+    spiegazione: >
+      Nel tubo largo l'acqua sale poco, in quello sottile molto di più.
+      Se il tubo è largo la metà, l'acqua sale il doppio.
+      In un tubo di vetro largo mezzo millimetro, l'acqua sale di circa 6 cm.
+
+  - id: menisco
+    titolo: Il menisco
+    breve: Nel tubo la superficie dell'acqua è curva, più alta ai bordi.
+    spiegazione: >
+      Guardiamo da vicino la superficie dell'acqua in un tubo.
+      Non è piatta: si incurva verso l'alto vicino al vetro.
+      Questa superficie curva si chiama **menisco**.
+
+  - id: adesione
+    titolo: Acqua e vetro si attraggono
+    breve: Il vetro attira le molecole d'acqua e le tira su lungo la parete.
+    spiegazione: >
+      Il vetro e l'acqua si attraggono: l'attrazione tra sostanze diverse si chiama **adesione**.
+      Per l'acqua il vetro "tira" più forte delle altre molecole d'acqua.
+      Così le molecole vicine alla parete salgono, e trascinano le altre per **coesione**.
+
+  - id: peso
+    titolo: Fin dove sale
+    breve: L'acqua si ferma quando il suo peso bilancia la forza che la tira su.
+    spiegazione: >
+      La superficie tesa, attaccata al vetro, tira su la colonna d'acqua.
+      Più la colonna sale, più pesa.
+      Quando il peso è uguale alla forza verso l'alto, l'acqua si ferma.
+      In un tubo sottile c'è poca acqua da sollevare, così la colonna diventa più alta.
+
+  - id: carta
+    titolo: La carta assorbente
+    breve: Tra le fibre della carta l'acqua risale come in tanti tubicini.
+    spiegazione: >
+      Immergiamo il bordo di una striscia di carta assorbente in acqua.
+      La parte bagnata sale piano piano verso l'alto.
+      Gli spazi sottilissimi tra le fibre della carta funzionano come tubi capillari, come in una spugna o in uno strofinaccio.
+
+  - id: piante
+    titolo: Nelle piante
+    breve: Nel fusto delle piante l'acqua sale in tubicini sottilissimi.
+    spiegazione: >
+      Il gambo di un fiore contiene tanti tubicini, i **vasi**, che portano l'acqua dalle radici alle foglie.
+      La capillarità aiuta l'acqua a salire, ma da sola non basta per un albero alto.
+      L'acqua viene tirata su soprattutto dall'acqua che evapora dalle foglie.

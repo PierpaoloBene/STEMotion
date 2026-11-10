@@ -1,0 +1,515 @@
+---
+/**
+ * La capillarità: tre tubi di vetro di larghezza diversa in una vaschetta d'acqua. L'acqua
+ * sale di più nel tubo più sottile; poi un tubo visto da vicino (menisco, adesione e coesione,
+ * peso della colonna), la carta assorbente e il fusto di un fiore.
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Ciò che compare e scompare ha l'attributo data-passi
+ * con l'elenco dei passaggi (da 0) in cui si vede, come nelle storie.
+ *
+ * Un solo disegno 4:3 (800 × 600): sul telefono le scritte crescono (container query).
+ */
+import { freccia } from '../../../src/components/storie/disegno';
+
+type Punto = [number, number];
+const r = (v: number) => +v.toFixed(1);
+
+// ---------------------------------------------------------------------------
+// Scena 1: la vaschetta con tre tubi (passaggi 0–2).
+// ---------------------------------------------------------------------------
+
+const VASCA = { x1: 80, x2: 720, bordo: 330, fondo: 545 };
+const LIV = 440; // livello dell'acqua nella vaschetta
+const CIMA = 120; // bordo in alto dei tubi
+const PIEDE = 515; // bordo in basso dei tubi, sott'acqua
+// Larghezze 4 : 2 : 1, altezze 1 : 2 : 4 (legge di Jurin: altezza inversamente proporzionale al raggio).
+const tubi = [
+  { id: 'largo', nome: 'Largo', x: 220, l: 64, h: 38 },
+  { id: 'medio', nome: 'Medio', x: 400, l: 32, h: 76 },
+  { id: 'sottile', nome: 'Sottile', x: 580, l: 16, h: 152 },
+].map((t) => {
+  const m = t.l * 0.35; // quanto il menisco sale ai bordi
+  const [a, b] = [-t.l / 2, t.l / 2];
+  // La colonna d'acqua: il menisco in cima (centro in y = 0) e poi giù fino in fondo.
+  const colonna = `M${a} ${-m}C${a} ${r(-m * 0.2)} ${r(a * 0.5)} 0 0 0C${r(b * 0.5)} 0 ${b} ${r(-m * 0.2)} ${b} ${-m}V600H${a}Z`;
+  return { ...t, colonna, alto: LIV - t.h };
+});
+
+// ---------------------------------------------------------------------------
+// Scena 2: un tubo visto da vicino (passaggi 3–5).
+// ---------------------------------------------------------------------------
+
+const PARETE = { sx: 250, dx: 550, spessore: 30 };
+const BORDO_M = 200; // dove l'acqua tocca il vetro
+const CENTRO_M = 300; // il punto più basso del menisco
+const menisco = `M${PARETE.sx} ${BORDO_M}C${PARETE.sx} ${BORDO_M + 85} ${PARETE.sx + 60} ${CENTRO_M} 400 ${CENTRO_M}C${PARETE.dx - 60} ${CENTRO_M} ${PARETE.dx} ${BORDO_M + 85} ${PARETE.dx} ${BORDO_M}`;
+// Molecole vicine alle pareti (adesione) e dentro il liquido (coesione).
+const R_MOL = 14;
+const aderenti: { p: Punto; verso: -1 | 1 }[] = [
+  { p: [270, 222], verso: -1 },
+  { p: [272, 270], verso: -1 },
+  { p: [530, 222], verso: 1 },
+  { p: [528, 270], verso: 1 },
+];
+const interne: Punto[] = [
+  [340, 330],
+  [400, 345],
+  [460, 330],
+  [370, 395],
+  [430, 395],
+  [400, 450],
+  [310, 300],
+  [490, 300],
+];
+const legamiInterni: [Punto, Punto][] = [];
+interne.forEach((a, i) =>
+  interne.slice(i + 1).forEach((b) => {
+    if (Math.hypot(a[0] - b[0], a[1] - b[1]) < 75) legamiInterni.push([a, b]);
+  }),
+);
+
+// ---------------------------------------------------------------------------
+// Scena 3: la carta assorbente (passaggio 6). Scena 4: il fiore (passaggio 7).
+// ---------------------------------------------------------------------------
+
+const BICCHIERE = { x1: 300, x2: 500, bordo: 360, fondo: 540, liv: 420 };
+const CARTA = { x1: 365, x2: 435, cima: 90, fondo: 500 };
+const BAGNATA = 200; // fin dove arriva l'acqua nella carta
+const fibre = Array.from({ length: 14 }, (_, i) => {
+  const y = CARTA.cima + 26 + i * 28;
+  const x = CARTA.x1 + 10 + ((i * 23) % 40);
+  return `M${x} ${y}l${(i % 3) * 6 + 10} ${i % 2 ? 8 : -6}`;
+});
+const FUSTO = 'M400 520C400 420 395 300 400 175';
+
+const descrizioni = [
+  'Una vaschetta d’acqua con tre tubi di vetro immersi: uno largo, uno medio e uno sottile. Nei tubi l’acqua è allo stesso livello della vaschetta.',
+  'In tutti e tre i tubi l’acqua sale sopra il livello della vaschetta, segnato da una linea tratteggiata.',
+  'Accanto a ogni tubo una freccia misura quanto è salita l’acqua: poco nel tubo largo, il doppio nel medio, quattro volte tanto nel sottile.',
+  'Un tubo visto da molto vicino: le due pareti di vetro e, tra loro, la superficie dell’acqua curva, più alta vicino al vetro e più bassa in mezzo.',
+  'Nel tubo ingrandito, le molecole d’acqua vicine al vetro sono tirate verso la parete: è l’adesione. Le molecole in mezzo sono legate tra loro: è la coesione.',
+  'Nel tubo ingrandito, due frecce vicino alle pareti tirano verso l’alto; una freccia in mezzo alla colonna d’acqua spinge verso il basso: è il peso.',
+  'Una striscia di carta assorbente pende in un bicchiere d’acqua con il bordo immerso. La parte bagnata sale lungo la carta.',
+  'Un fiore in un bicchiere d’acqua. Nel fusto l’acqua sale in due tubicini fino alle foglie e al fiore. Dalle foglie piccole frecce mostrano l’acqua che evapora.',
+];
+---
+
+<div class="capillari">
+  <svg class="capillari__disegno" viewBox="0 0 800 600" aria-hidden="true" focusable="false">
+    <defs>
+      {
+        tubi.map((t) => (
+          <clipPath id={`capillari-${t.id}`}>
+            <rect x={t.x - t.l / 2} y={CIMA} width={t.l} height={PIEDE - CIMA} />
+          </clipPath>
+        ))
+      }
+      <clipPath id="capillari-carta">
+        <rect x={CARTA.x1} y={CARTA.cima} width={CARTA.x2 - CARTA.x1} height={CARTA.fondo - CARTA.cima} />
+      </clipPath>
+    </defs>
+
+    {/* ------------------------- Scena 1: i tre tubi ------------------------- */}
+    <g data-passi="0 1 2">
+      <rect class="interno" x={VASCA.x1} y={VASCA.bordo} width={VASCA.x2 - VASCA.x1} height={VASCA.fondo - VASCA.bordo} />
+      <rect class="acqua" x={VASCA.x1} y={LIV} width={VASCA.x2 - VASCA.x1} height={VASCA.fondo - LIV} />
+      <line class="pelo" x1={VASCA.x1} y1={LIV} x2={VASCA.x2} y2={LIV} />
+      {
+        tubi.map((t) => (
+          <g>
+            <rect class="tubo__interno" x={t.x - t.l / 2} y={CIMA} width={t.l} height={PIEDE - CIMA} />
+            <g clip-path={`url(#capillari-${t.id})`}>
+              <g transform={`translate(${t.x} 0)`}>
+                <g class={`colonna colonna--${t.id}`} style={`--alto: ${t.alto}px`}>
+                  <path class="acqua acqua--tubo" d={t.colonna} />
+                </g>
+              </g>
+            </g>
+            <path class="vetro" d={`M${t.x - t.l / 2 - 3} ${CIMA}V${PIEDE}M${t.x + t.l / 2 + 3} ${CIMA}V${PIEDE}`} />
+          </g>
+        ))
+      }
+      <path class="vasca" d={`M${VASCA.x1} ${VASCA.bordo}V${VASCA.fondo}H${VASCA.x2}V${VASCA.bordo}`} />
+      {
+        tubi.map((t) => (
+          <text x={t.x} y={CIMA - 24} text-anchor="middle" data-passi="0 2">
+            {t.nome}
+          </text>
+        ))
+      }
+      <g data-passi="1 2">
+        <line class="riferimento" x1="40" y1={LIV} x2="760" y2={LIV} />
+      </g>
+      <g data-passi="2">
+        {
+          tubi.map((t) => {
+            const x = t.x + t.l / 2 + 24;
+            return <path class="misura" d={`M${x} ${LIV - 3}V${t.alto + 3}M${x - 8} ${t.alto + 13}L${x} ${t.alto + 3}L${x + 8} ${t.alto + 13}M${x - 8} ${LIV - 13}L${x} ${LIV - 3}L${x + 8} ${LIV - 13}`} />;
+          })
+        }
+      </g>
+      <g class="etichetta" data-passi="0">
+        <line x1="680" y1="500" x2="680" y2="560" />
+        <text x="680" y="590" text-anchor="middle">Acqua</text>
+      </g>
+    </g>
+
+    {/* ------------------------- Scena 2: il tubo da vicino ------------------------- */}
+    <g data-passi="3 4 5">
+      <rect class="tubo__interno" x={PARETE.sx} y="40" width={PARETE.dx - PARETE.sx} height="560" />
+      <path class="acqua" d={menisco + 'V600H' + PARETE.sx + 'Z'} />
+      <path class="pelo pelo--menisco" d={menisco} />
+      <rect class="vetro-pieno" x={PARETE.sx - PARETE.spessore} y="40" width={PARETE.spessore} height="560" />
+      <rect class="vetro-pieno" x={PARETE.dx} y="40" width={PARETE.spessore} height="560" />
+      <text x="40" y="30" class="titoletto">Il tubo, da vicino</text>
+
+      <g class="etichetta" data-passi="3">
+        <line x1="400" y1="130" x2="400" y2={CENTRO_M - 8} />
+        <text x="400" y="118" text-anchor="middle">Menisco</text>
+        <line x1="150" y1="400" x2={PARETE.sx - PARETE.spessore / 2} y2="400" />
+        <text x="140" y="409" text-anchor="end">Vetro</text>
+      </g>
+
+      {/* 4: adesione e coesione */}
+      <g data-passi="4">
+        <g class="legami">
+          {legamiInterni.map(([a, b]) => <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} />)}
+        </g>
+        {interne.map(([x, y]) => <circle class="molecola" cx={x} cy={y} r={R_MOL} />)}
+        {aderenti.map(({ p }) => <circle class="molecola molecola--aderente" cx={p[0]} cy={p[1]} r={R_MOL} />)}
+        {aderenti.map(({ p, verso }) => <path class="tiro" d={freccia(p[0], p[1] - R_MOL - 2, p[0] + verso * 2, p[1] - R_MOL - 30, 9)} />)}
+      </g>
+      <g class="etichetta" data-passi="4">
+        <line x1="206" y1="246" x2="236" y2="246" />
+        <text x="200" y="255" text-anchor="end">Adesione</text>
+        <line x1="580" y1="420" x2="436" y2="400" />
+        <text x="590" y="429">Coesione</text>
+      </g>
+
+      {/* 5: la forza verso l'alto e il peso */}
+      <g data-passi="5">
+        <path class="forza" d={freccia(275, 320, 275, 210, 14)} />
+        <path class="forza" d={freccia(525, 320, 525, 210, 14)} />
+        <path class="forza forza--peso" d={freccia(400, 360, 400, 540, 16)} />
+      </g>
+      <g class="etichetta" data-passi="5">
+        <line x1="150" y1="266" x2="262" y2="266" />
+        <text x="140" y="250" text-anchor="end">Tira</text>
+        <text x="140" y="284" text-anchor="end">su</text>
+        <line x1="580" y1="470" x2="414" y2="470" />
+        <text x="590" y="479">Peso</text>
+      </g>
+    </g>
+
+    {/* ------------------------- Scena 3: la carta assorbente ------------------------- */}
+    <g data-passi="6">
+      <line class="sostegno" x1="300" y1={CARTA.cima} x2="500" y2={CARTA.cima} />
+      <rect class="interno" x={BICCHIERE.x1} y={BICCHIERE.bordo} width={BICCHIERE.x2 - BICCHIERE.x1} height={BICCHIERE.fondo - BICCHIERE.bordo} />
+      <rect class="acqua" x={BICCHIERE.x1} y={BICCHIERE.liv} width={BICCHIERE.x2 - BICCHIERE.x1} height={BICCHIERE.fondo - BICCHIERE.liv} />
+      <rect class="carta" x={CARTA.x1} y={CARTA.cima} width={CARTA.x2 - CARTA.x1} height={CARTA.fondo - CARTA.cima} />
+      <g clip-path="url(#capillari-carta)">
+        <rect class="bagnato" x={CARTA.x1} y="0" width={CARTA.x2 - CARTA.x1} height="600" style={`--bagnata: ${BAGNATA}px; --asciutta: ${BICCHIERE.liv}px`} />
+      </g>
+      {fibre.map((d) => <path class="fibra" d={d} />)}
+      <rect class="carta-bordo" x={CARTA.x1} y={CARTA.cima} width={CARTA.x2 - CARTA.x1} height={CARTA.fondo - CARTA.cima} />
+      <line class="pelo" x1={BICCHIERE.x1} y1={BICCHIERE.liv} x2={BICCHIERE.x2} y2={BICCHIERE.liv} />
+      <path class="vasca" d={`M${BICCHIERE.x1} ${BICCHIERE.bordo}V${BICCHIERE.fondo}H${BICCHIERE.x2}V${BICCHIERE.bordo}`} />
+      <rect class="molletta" x="388" y={CARTA.cima - 22} width="24" height="44" rx="5" />
+      <g class="etichetta">
+        <line x1="450" y1="140" x2="520" y2="140" />
+        <text x="530" y="131">Carta</text>
+        <text x="530" y="165">assorbente</text>
+        <line x1="350" y1="300" x2="290" y2="300" />
+        <text x="280" y="291" text-anchor="end">Parte</text>
+        <text x="280" y="325" text-anchor="end">bagnata</text>
+      </g>
+    </g>
+
+    {/* ------------------------- Scena 4: il fiore ------------------------- */}
+    <g data-passi="7">
+      <rect class="interno" x="330" y="380" width="140" height="160" />
+      <rect class="acqua" x="330" y="430" width="140" height="110" />
+      <path class="fusto" d={FUSTO} />
+      <path class="foglia" d="M398 360C430 320 480 320 500 330C480 360 430 370 398 360Z" />
+      <path class="foglia" d="M402 280C370 240 320 240 300 250C320 280 370 290 402 280Z" />
+      <path class="vaso-pianta" d="M396 520C396 420 391 300 396 178" pathLength="1" />
+      <path class="vaso-pianta" d="M404 520C404 420 399 300 404 178" pathLength="1" />
+      <g transform="translate(400 150)">
+        {[0, 60, 120, 180, 240, 300].map((a) => <ellipse class="petalo" cx="0" cy="-34" rx="17" ry="30" transform={`rotate(${a})`} />)}
+        <circle class="bottone" r="16" />
+      </g>
+      <line class="pelo" x1="330" y1="430" x2="470" y2="430" />
+      <path class="vasca" d="M330 380V540H470V380" />
+      <g class="vapore">
+        <path d={freccia(480, 316, 500, 250, 10)} />
+        <path d={freccia(330, 236, 310, 170, 10)} />
+        <path d={freccia(455, 312, 460, 240, 10)} />
+      </g>
+      <g class="etichetta">
+        <line x1="408" y1="470" x2="560" y2="470" />
+        <text x="570" y="460">Vasi</text>
+        <text x="570" y="494">del fusto</text>
+        <text x="520" y="236">Evapora</text>
+      </g>
+    </g>
+  </svg>
+
+  <div class="solo-lettori">
+    {
+      descrizioni.map((d, i) => (
+        <p class="descrizione" data-per={i}>
+          Disegno: {d}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .capillari {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+  }
+  .capillari__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .capillari svg :is(path, rect, circle, ellipse, line) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Che cosa si vede in ogni passaggio --- */
+
+  .capillari [data-passi] {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  [data-indice='0'] .capillari [data-passi~='0'],
+  [data-indice='1'] .capillari [data-passi~='1'],
+  [data-indice='2'] .capillari [data-passi~='2'],
+  [data-indice='3'] .capillari [data-passi~='3'],
+  [data-indice='4'] .capillari [data-passi~='4'],
+  [data-indice='5'] .capillari [data-passi~='5'],
+  [data-indice='6'] .capillari [data-passi~='6'],
+  [data-indice='7'] .capillari [data-passi~='7'] {
+    opacity: 1;
+  }
+
+  /* --- Acqua, vetro, recipienti --- */
+
+  .capillari .interno,
+  .capillari .tubo__interno {
+    fill: var(--superficie);
+  }
+  .capillari .acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.45;
+  }
+  .capillari .acqua--tubo {
+    fill-opacity: 0.6;
+  }
+  .capillari .pelo {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 3;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .capillari .vasca,
+  .capillari .vetro {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .capillari .vetro-pieno {
+    fill: #e8f1f6;
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+
+  /* La colonna d'acqua nei tubi: al livello della vaschetta, poi più in alto. */
+  .capillari .colonna {
+    transform: translateY(440px);
+    transition: transform 2s ease-in-out;
+  }
+  :is([data-indice='1'], [data-indice='2']) .capillari .colonna {
+    transform: translateY(var(--alto));
+  }
+
+  /* --- Linee, misure e frecce --- */
+
+  .capillari .riferimento {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 8 8;
+  }
+  .capillari .misura,
+  .capillari .forza,
+  .capillari .tiro {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .capillari .misura {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  .capillari .forza,
+  .capillari .tiro {
+    stroke: var(--testo);
+    stroke-width: 5;
+  }
+  .capillari .tiro {
+    stroke-width: 3;
+  }
+
+  /* --- Molecole --- */
+
+  .capillari .molecola {
+    fill: var(--acqua);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .capillari .legami line {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+  }
+
+  /* --- Carta e fiore --- */
+
+  .capillari .sostegno {
+    stroke: var(--contorno);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .capillari .carta {
+    fill: var(--carta);
+  }
+  .capillari .carta-bordo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .capillari .fibra {
+    fill: none;
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.5;
+  }
+  .capillari .molletta {
+    fill: var(--legno);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .capillari .bagnato {
+    fill: var(--acqua);
+    fill-opacity: 0.45;
+    transform: translateY(var(--asciutta));
+    transition: transform 2.4s ease-in-out;
+  }
+  [data-indice='6'] .capillari .bagnato {
+    transform: translateY(var(--bagnata));
+    transition-delay: 0.5s;
+  }
+  .capillari .fusto {
+    fill: none;
+    stroke: var(--foglie);
+    stroke-width: 18;
+    stroke-linecap: round;
+    vector-effect: none;
+  }
+  .capillari .foglia {
+    fill: var(--foglie);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .capillari .petalo {
+    fill: var(--superficie);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .capillari .bottone {
+    fill: var(--oro);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .capillari .vaso-pianta {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    vector-effect: none;
+  }
+  [data-indice='7'] .capillari .vaso-pianta {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 2.4s ease-in-out 0.5s;
+  }
+  .capillari .vapore path {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 3;
+    stroke-dasharray: 6 6;
+    stroke-linecap: round;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  [data-indice='1'] .capillari .colonna .acqua--tubo,
+  [data-indice='3'] .capillari .pelo--menisco {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  [data-indice='4'] .capillari .molecola--aderente {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Testi --- */
+
+  .capillari text {
+    fill: var(--testo);
+    font-size: 26px;
+    font-weight: 700;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 6px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  .capillari .titoletto {
+    fill: var(--testo-2);
+  }
+  .capillari .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  /* Sul telefono il disegno è piccolo: le scritte crescono per restare leggibili. */
+  @container (max-width: 620px) {
+    .capillari text {
+      font-size: 36px;
+    }
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .capillari .descrizione {
+    display: none;
+  }
+  [data-indice='0'] .capillari .descrizione[data-per='0'],
+  [data-indice='1'] .capillari .descrizione[data-per='1'],
+  [data-indice='2'] .capillari .descrizione[data-per='2'],
+  [data-indice='3'] .capillari .descrizione[data-per='3'],
+  [data-indice='4'] .capillari .descrizione[data-per='4'],
+  [data-indice='5'] .capillari .descrizione[data-per='5'],
+  [data-indice='6'] .capillari .descrizione[data-per='6'],
+  [data-indice='7'] .capillari .descrizione[data-per='7'] {
+    display: block;
+  }
+</style>

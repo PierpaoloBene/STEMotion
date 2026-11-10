@@ -1,0 +1,19 @@
+titolo: I vasi comunicanti
+sottotitolo: Perché un liquido in recipienti collegati arriva sempre alla stessa altezza
+materia: scienze
+area: fisica
+modello: passaggi
+durata_minuti: 15
+prerequisiti: [stati-della-materia]
+obiettivi:
+  - Riconoscere un sistema di vasi comunicanti
+  - Enunciare il principio dei vasi comunicanti
+  - Spiegare che il livello non dipende dalla forma né dalla larghezza dei recipienti
+  - Collegare il principio alla pressione, che cresce con la profondità
+  - Riconoscere i vasi comunicanti nell'annaffiatoio e nell'acquedotto
+parole_chiave: [vasi comunicanti, livello, pressione, profondità, liquido, acquedotto, annaffiatoio]
+stato: bozza
+revisionato_da: null
+fonti:
+  - "U. Amaldi, Le traiettorie della fisica, Zanichelli: capitolo sull'equilibrio dei fluidi (legge di Stevino, vasi comunicanti)"
+  - "D. Halliday, R. Resnick, J. Walker, Fondamenti di fisica, capitolo sui fluidi: la pressione in un liquido in quiete dipende solo dalla profondità"

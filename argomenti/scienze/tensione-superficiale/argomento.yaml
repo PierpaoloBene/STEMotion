@@ -1,0 +1,21 @@
+titolo: La tensione superficiale
+sottotitolo: Perché una graffetta d'acciaio può restare a galla sull'acqua
+materia: scienze
+area: fisica
+modello: passaggi
+durata_minuti: 15
+prerequisiti: [stati-della-materia]
+obiettivi:
+  - Descrivere la coesione come attrazione tra molecole uguali
+  - Spiegare perché le molecole della superficie sono tirate verso l'interno
+  - Definire la tensione superficiale come l'effetto "pellicola" della superficie di un liquido
+  - Riconoscere la tensione superficiale negli insetti sull'acqua e nella forma delle gocce
+  - Spiegare perché il sapone fa affondare la graffetta
+parole_chiave: [tensione superficiale, coesione, molecole, superficie, goccia, idrometra, sapone]
+stato: bozza
+revisionato_da: null
+fonti:
+  - "U. Amaldi, Le traiettorie della fisica, Zanichelli: capitolo sui fluidi, tensione superficiale"
+  - "P.-G. de Gennes, F. Brochard-Wyart, D. Quéré, Gocce, bolle, perle e onde, Bollati Boringhieri: capitolo 1"
+  - "Tensione superficiale dell'acqua a 20 °C: circa 0,073 N/m (CRC Handbook of Chemistry and Physics)"
+  - "X. Gao, L. Jiang, Water-repellent legs of water striders, Nature 432, 36 (2004)"

@@ -1,0 +1,499 @@
+---
+/**
+ * La tensione superficiale: una graffetta che resta a galla, le molecole d'acqua viste da
+ * vicino (dentro il liquido e in superficie), l'idrometra, le gocce e il sapone.
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Ciò che compare e scompare ha l'attributo data-passi
+ * con l'elenco dei passaggi (da 0) in cui si vede, come nelle storie.
+ *
+ * Un solo disegno 4:3 (800 × 600): sul telefono le scritte crescono (container query).
+ */
+import { freccia } from '../../../src/components/storie/disegno';
+
+type Punto = [number, number];
+const r = (v: number) => +v.toFixed(1);
+
+// ---------------------------------------------------------------------------
+// Scena 1: la vaschetta con la graffetta (passaggi 0 e 7).
+// ---------------------------------------------------------------------------
+
+const VASCA = { x1: 120, x2: 680, bordo: 180, fondo: 500 };
+const PELO = 280;
+const CENTRO = 400;
+const INCAVO = 18; // di quanto si abbassa la superficie sotto la graffetta
+const piega = `M${CENTRO - 150} ${PELO}C${CENTRO - 100} ${PELO} ${CENTRO - 100} ${PELO + INCAVO} ${CENTRO} ${PELO + INCAVO}C${CENTRO + 100} ${PELO + INCAVO} ${CENTRO + 100} ${PELO} ${CENTRO + 150} ${PELO}`;
+// La graffetta vista dall'alto e un po' di sbieco: una spirale di filo d'acciaio.
+const GRAFFETTA = 'M-62 -12H50A12 12 0 0 1 50 12H-48A9 9 0 0 1 -48 -6H38A6 6 0 0 1 38 6H-30';
+// Il sapone si sparge sulla superficie.
+const sapone = [-150, -95, -40, 20, 75, 130, 185].map((dx, i) => ({ x: 250 + dx + 60, ritardo: r(0.7 + i * 0.08) }));
+
+// ---------------------------------------------------------------------------
+// Scena 2: le molecole (passaggi 1–4). Un reticolo di palline: ogni molecola ha sei vicine.
+// ---------------------------------------------------------------------------
+
+const D = 64; // distanza tra due molecole vicine
+const R_MOL = 16;
+const SUPERFICIE = 250; // centro della prima fila
+const molecole: Punto[] = [];
+for (let fila = 0; SUPERFICIE + fila * D * 0.866 < 640; fila++) {
+  const y = r(SUPERFICIE + fila * D * 0.866);
+  for (let x = fila % 2 ? 72 : 40; x <= 770; x += D) molecole.push([x, y]);
+}
+const legami: [Punto, Punto][] = [];
+molecole.forEach((a, i) =>
+  molecole.slice(i + 1).forEach((b) => {
+    if (Math.abs(Math.hypot(a[0] - b[0], a[1] - b[1]) - D) < 2) legami.push([a, b]);
+  }),
+);
+const vicina = (p: Punto) => molecole.reduce((m, q) => (Math.hypot(q[0] - p[0], q[1] - p[1]) < Math.hypot(m[0] - p[0], m[1] - p[1]) ? q : m));
+const vicineDi = (p: Punto) => molecole.filter((q) => Math.abs(Math.hypot(q[0] - p[0], q[1] - p[1]) - D) < 2);
+/** Frecce da una molecola verso le sue vicine: la molecola è tirata verso ciascuna. */
+const tiri = (p: Punto) =>
+  vicineDi(p).map((q) => {
+    const [ux, uy] = [(q[0] - p[0]) / D, (q[1] - p[1]) / D];
+    return freccia(r(p[0] + ux * (R_MOL + 2)), r(p[1] + uy * (R_MOL + 2)), r(p[0] + ux * (D - R_MOL - 4)), r(p[1] + uy * (D - R_MOL - 4)), 10);
+  });
+const INTERNA = vicina([400, 420]);
+const ESTERNA = vicina([600, SUPERFICIE]);
+const primaFila = molecole.filter((m) => m[1] === SUPERFICIE);
+
+// ---------------------------------------------------------------------------
+// Scena 3: l'idrometra (passaggio 5). Le zampe toccano l'acqua e la piegano.
+// ---------------------------------------------------------------------------
+
+const PELO_I = 400;
+const appoggi = [150, 270, 560, 680];
+const peloIdrometra = (() => {
+  let d = `M0 ${PELO_I}`;
+  for (const x of appoggi) d += `H${x - 34}C${x - 14} ${PELO_I} ${x - 10} ${PELO_I + 16} ${x} ${PELO_I + 16}C${x + 10} ${PELO_I + 16} ${x + 14} ${PELO_I} ${x + 34} ${PELO_I}`;
+  return d + 'H800';
+})();
+const CORPO_I: Punto = [410, 320];
+const zampe = [
+  `M${CORPO_I[0] + 60} ${CORPO_I[1] + 4}L${CORPO_I[0] + 130} ${CORPO_I[1] - 30}L${appoggi[2]} ${PELO_I + 14}`,
+  `M${CORPO_I[0] + 80} ${CORPO_I[1] + 2}L${CORPO_I[0] + 210} ${CORPO_I[1] - 40}L${appoggi[3]} ${PELO_I + 14}`,
+  `M${CORPO_I[0] - 20} ${CORPO_I[1] + 8}L${CORPO_I[0] - 100} ${CORPO_I[1] - 34}L${appoggi[1]} ${PELO_I + 14}`,
+  `M${CORPO_I[0] - 40} ${CORPO_I[1] + 8}L${CORPO_I[0] - 170} ${CORPO_I[1] - 50}L${appoggi[0]} ${PELO_I + 14}`,
+  `M${CORPO_I[0] + 92} ${CORPO_I[1] - 4}L${CORPO_I[0] + 130} ${CORPO_I[1] + 26}`,
+];
+
+// ---------------------------------------------------------------------------
+// Scena 4: gocce piccole e grandi su un piano (passaggio 6).
+// ---------------------------------------------------------------------------
+
+const PIANO = 420;
+const piccole = [
+  { x: 140, r: 22 },
+  { x: 220, r: 15 },
+  { x: 290, r: 26 },
+];
+const GRANDE = { x: 560, l: 130, h: 52 };
+
+const descrizioni = [
+  'Una vaschetta d’acqua vista di lato. Sulla superficie è appoggiata una graffetta d’acciaio: non affonda, e sotto di lei la superficie si piega un poco.',
+  'L’acqua ingrandita moltissimo: molecole tutte uguali, a file. Sopra c’è l’aria. Linee sottili collegano ogni molecola alle sue vicine.',
+  'Una molecola in mezzo al liquido è evidenziata. Sei frecce partono da lei verso le sei vicine, in tutte le direzioni.',
+  'Una molecola della superficie è evidenziata. Quattro frecce la tirano di lato e verso il basso; verso l’alto, dove c’è l’aria, nessuna freccia.',
+  'La prima fila di molecole, quella della superficie, è evidenziata come una striscia: le molecole si tengono strette come una pellicola.',
+  'Un’idrometra, un insetto dalle zampe lunghe e sottili, sta sulla superficie dell’acqua. Dove le zampe toccano l’acqua la superficie si piega, ma non si rompe.',
+  'Su un piano ci sono tre gocce d’acqua piccole, quasi rotonde come palline, e una goccia grande, schiacciata.',
+  'Di nuovo la vaschetta con la graffetta. Un contagocce lascia cadere una goccia di sapone, disegnato a pallini viola, che si sparge sulla superficie. La graffetta affonda e va sul fondo.',
+];
+---
+
+<div class="tensione">
+  <svg class="tensione__disegno" viewBox="0 0 800 600" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="tensione-vasca">
+        <rect x={VASCA.x1} y={VASCA.bordo - 40} width={VASCA.x2 - VASCA.x1} height={VASCA.fondo - VASCA.bordo + 40} />
+      </clipPath>
+    </defs>
+
+    {/* ------------------------- Scena 1: la graffetta ------------------------- */}
+    <g data-passi="0 7">
+      <rect class="vasca__interno" x={VASCA.x1} y={VASCA.bordo} width={VASCA.x2 - VASCA.x1} height={VASCA.fondo - VASCA.bordo} />
+      <g clip-path="url(#tensione-vasca)">
+        <rect class="acqua" x={VASCA.x1} y={PELO} width={VASCA.x2 - VASCA.x1} height={VASCA.fondo - PELO} />
+        <path class="incavo" d={piega + `H${CENTRO - 150}Z`} />
+        <line class="pelo pelo--piatto" x1={VASCA.x1} y1={PELO} x2={VASCA.x2} y2={PELO} />
+        <path class="pelo pelo--piegato" d={`M${VASCA.x1} ${PELO}H${CENTRO - 150}` + piega.slice(piega.indexOf('C')) + `H${VASCA.x2}`} />
+        <g class="graffetta" transform={`translate(${CENTRO} ${PELO + INCAVO - 6})`}>
+          <g class="graffetta__filo">
+            <path d={GRAFFETTA} transform="scale(1.5 0.6)" />
+          </g>
+        </g>
+        {sapone.map((s) => <circle class="sapone sapone--sparso" cx={s.x} cy={PELO + 2} r="6" style={`--ritardo: ${s.ritardo}s`} />)}
+      </g>
+      <path class="vasca__vetro" d={`M${VASCA.x1} ${VASCA.bordo}V${VASCA.fondo}H${VASCA.x2}V${VASCA.bordo}`} />
+      <g class="etichetta">
+        <line x1={CENTRO + 50} y1={PELO - 6} x2={CENTRO + 70} y2={PELO - 70} />
+        <text x={CENTRO + 76} y={PELO - 78}>Graffetta</text>
+        <line x1={VASCA.x1 + 60} y1={VASCA.fondo - 40} x2={VASCA.x1 + 60} y2={VASCA.fondo + 22} />
+        <text x={VASCA.x1 + 60} y={VASCA.fondo + 54} text-anchor="middle">Acqua</text>
+      </g>
+    </g>
+    {/* 7: il contagocce con il sapone */}
+    <g data-passi="7">
+      <rect class="contagocce" x="296" y="40" width="28" height="80" rx="6" />
+      <path class="contagocce" d="M302 120L310 146L318 120Z" />
+      <ellipse class="contagocce contagocce--pera" cx="310" cy="40" rx="22" ry="26" />
+      <circle class="sapone sapone--goccia" cx="310" cy="160" r="9" />
+      <g class="etichetta">
+        <line x1="290" y1="80" x2="240" y2="80" />
+        <text x="232" y="89" text-anchor="end">Sapone</text>
+      </g>
+    </g>
+
+    {/* ------------------------- Scena 2: le molecole ------------------------- */}
+    <g data-passi="1 2 3 4">
+      <rect class="acqua acqua--chiara" x="0" y={SUPERFICIE - R_MOL - 6} width="800" height={600 - SUPERFICIE + R_MOL + 6} />
+      <g class="legami">
+        {legami.map(([a, b]) => <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} />)}
+      </g>
+      <rect class="striscia" x="14" y={SUPERFICIE - R_MOL - 8} width="772" height={2 * R_MOL + 16} rx={R_MOL + 8} data-passi="4" />
+      {
+        molecole.map(([x, y]) => (
+          <circle
+            class:list={['molecola', x === INTERNA[0] && y === INTERNA[1] && 'molecola--interna', x === ESTERNA[0] && y === ESTERNA[1] && 'molecola--esterna']}
+            cx={x}
+            cy={y}
+            r={R_MOL}
+          />
+        ))
+      }
+      <g class="tiri" data-passi="2">
+        {tiri(INTERNA).map((d) => <path d={d} />)}
+      </g>
+      <g class="tiri" data-passi="3">
+        {tiri(ESTERNA).map((d) => <path d={d} />)}
+      </g>
+      <text x="40" y="70" class="titoletto">Aria</text>
+      <g class="etichetta" data-passi="1">
+        <text x="40" y="150">Molecole d'acqua</text>
+        <text x="40" y="186" class="secondaria">che si attraggono</text>
+      </g>
+      <g class="etichetta" data-passi="2">
+        <line x1={INTERNA[0]} y1="160" x2={INTERNA[0]} y2={INTERNA[1] - R_MOL - 4} />
+        <text x={INTERNA[0]} y="148" text-anchor="middle">Tirata da tutte le parti</text>
+      </g>
+      <g class="etichetta" data-passi="3">
+        <path class="niente-su" d={`M${ESTERNA[0]} ${ESTERNA[1] - R_MOL - 10}V${ESTERNA[1] - 70}`} />
+        <text x={ESTERNA[0]} y="148" text-anchor="middle">Niente la tira su</text>
+      </g>
+      <g class="etichetta" data-passi="4">
+        <text x="400" y="186" text-anchor="middle">Come una pellicola tesa</text>
+      </g>
+    </g>
+
+    {/* ------------------------- Scena 3: l'idrometra ------------------------- */}
+    <g data-passi="5">
+      <path class="acqua" d={peloIdrometra + 'V600H0Z'} />
+      <path class="pelo" d={peloIdrometra} />
+      {zampe.map((d) => <path class="zampa" d={d} />)}
+      <ellipse class="insetto" cx={CORPO_I[0]} cy={CORPO_I[1]} rx="110" ry="17" />
+      <circle class="insetto" cx={CORPO_I[0] + 118} cy={CORPO_I[1] - 6} r="14" />
+      <g class="etichetta">
+        <line x1={CORPO_I[0]} y1={CORPO_I[1] - 20} x2={CORPO_I[0]} y2="200" />
+        <text x={CORPO_I[0]} y="188" text-anchor="middle">Idrometra</text>
+        <line x1={appoggi[0]} y1={PELO_I + 24} x2={appoggi[0]} y2="490" />
+        <text x={appoggi[0] - 30} y="526">La superficie si piega</text>
+      </g>
+    </g>
+
+    {/* ------------------------- Scena 4: le gocce ------------------------- */}
+    <g data-passi="6">
+      <rect class="piano" x="60" y={PIANO} width="680" height="40" rx="6" />
+      {
+        piccole.map((g) => (
+          <g>
+            <circle class="goccia" cx={g.x} cy={PIANO - g.r + 2} r={g.r} />
+            <circle class="riflesso" cx={g.x - g.r * 0.35} cy={PIANO - g.r * 1.35 + 2} r={g.r * 0.22} />
+          </g>
+        ))
+      }
+      <path
+        class="goccia"
+        d={`M${GRANDE.x - GRANDE.l} ${PIANO}C${GRANDE.x - GRANDE.l - 6} ${PIANO - GRANDE.h} ${GRANDE.x - GRANDE.l + 30} ${PIANO - GRANDE.h} ${GRANDE.x} ${PIANO - GRANDE.h}C${GRANDE.x + GRANDE.l - 30} ${PIANO - GRANDE.h} ${GRANDE.x + GRANDE.l + 6} ${PIANO - GRANDE.h} ${GRANDE.x + GRANDE.l} ${PIANO}Z`}
+      />
+      <ellipse class="riflesso" cx={GRANDE.x - 60} cy={PIANO - GRANDE.h + 14} rx="26" ry="6" />
+      <g class="etichetta">
+        <line x1="220" y1="370" x2="220" y2="250" />
+        <text x="220" y="200" text-anchor="middle">Piccole:</text>
+        <text x="220" y="236" text-anchor="middle" class="secondaria">quasi palline</text>
+        <line x1={GRANDE.x} y1={PIANO - GRANDE.h - 8} x2={GRANDE.x} y2="250" />
+        <text x={GRANDE.x} y="200" text-anchor="middle">Grande:</text>
+        <text x={GRANDE.x} y="236" text-anchor="middle" class="secondaria">schiacciata</text>
+      </g>
+    </g>
+  </svg>
+
+  <div class="solo-lettori">
+    {
+      descrizioni.map((d, i) => (
+        <p class="descrizione" data-per={i}>
+          Disegno: {d}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .tensione {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+  }
+  .tensione__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .tensione svg :is(path, rect, circle, ellipse, line) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Che cosa si vede in ogni passaggio --- */
+
+  .tensione [data-passi] {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  [data-indice='0'] .tensione [data-passi~='0'],
+  [data-indice='1'] .tensione [data-passi~='1'],
+  [data-indice='2'] .tensione [data-passi~='2'],
+  [data-indice='3'] .tensione [data-passi~='3'],
+  [data-indice='4'] .tensione [data-passi~='4'],
+  [data-indice='5'] .tensione [data-passi~='5'],
+  [data-indice='6'] .tensione [data-passi~='6'],
+  [data-indice='7'] .tensione [data-passi~='7'] {
+    opacity: 1;
+  }
+
+  /* --- Acqua e vaschetta --- */
+
+  .tensione .acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.45;
+  }
+  .tensione .acqua--chiara {
+    fill-opacity: 0.15;
+  }
+  .tensione .pelo {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 3;
+  }
+  .tensione .vasca__interno {
+    fill: var(--superficie);
+  }
+  .tensione .vasca__vetro {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  /* L'incavo sotto la graffetta: lo spazio tra la superficie piatta e quella piegata è aria. */
+  .tensione .incavo {
+    fill: var(--superficie);
+    transition: opacity 0.6s ease-in-out;
+  }
+  .tensione .pelo--piatto {
+    opacity: 0;
+  }
+  .tensione :is(.pelo--piatto, .pelo--piegato) {
+    transition: opacity 0.6s ease-in-out;
+  }
+  .tensione .graffetta__filo path {
+    fill: none;
+    stroke: var(--ferro);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+  .tensione .graffetta__filo {
+    transition: transform 1.4s ease-in-out;
+  }
+
+  /* --- 7: il sapone cade, si sparge e la graffetta affonda --- */
+
+  .tensione .contagocce {
+    fill: var(--superficie);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .tensione .contagocce--pera {
+    fill: var(--argento);
+  }
+  .tensione .sapone {
+    fill: var(--nutrienti);
+  }
+  .tensione .sapone--goccia {
+    opacity: 0;
+  }
+  .tensione .sapone--sparso {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  @keyframes tensione-goccia {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    90% {
+      opacity: 1;
+      transform: translateY(120px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(120px);
+    }
+  }
+  [data-indice='7'] .tensione .sapone--goccia {
+    animation: tensione-goccia 0.7s ease-in 0.3s both;
+    animation-fill-mode: backwards;
+  }
+  [data-indice='7'] .tensione .sapone--sparso {
+    opacity: 1;
+    transition-delay: var(--ritardo);
+  }
+  [data-indice='7'] .tensione :is(.incavo, .pelo--piegato) {
+    opacity: 0;
+    transition-delay: 1.2s;
+  }
+  [data-indice='7'] .tensione .pelo--piatto {
+    opacity: 1;
+    transition-delay: 1.2s;
+  }
+  [data-indice='7'] .tensione .graffetta__filo {
+    transform: translate(10px, 190px) rotate(8deg);
+    transition-delay: 1.2s;
+  }
+
+  /* --- Molecole --- */
+
+  .tensione .molecola {
+    fill: var(--acqua);
+    stroke: var(--contorno);
+    stroke-width: 2;
+    transition:
+      stroke 0.3s ease-in-out,
+      stroke-width 0.3s ease-in-out;
+  }
+  .tensione .legami line {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+  :is([data-indice='1'], [data-indice='2'], [data-indice='3'], [data-indice='4']) .tensione .legami line {
+    opacity: 0.5;
+  }
+  .tensione .tiri path,
+  .tensione .niente-su {
+    fill: none;
+    stroke: var(--testo);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tensione .niente-su {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+  .tensione .striscia {
+    fill: var(--accento);
+    fill-opacity: 0.12;
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Idrometra e gocce --- */
+
+  .tensione .zampa {
+    fill: none;
+    stroke: var(--capelli-castani);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tensione .insetto {
+    fill: var(--capelli-castani);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .tensione .piano {
+    fill: var(--legno);
+    stroke: var(--contorno);
+    stroke-width: 3;
+  }
+  .tensione .goccia {
+    fill: var(--acqua);
+    fill-opacity: 0.6;
+    stroke: var(--acqua);
+    stroke-width: 3;
+  }
+  .tensione .riflesso {
+    fill: var(--superficie);
+    opacity: 0.8;
+  }
+
+  /* --- Elemento evidenziato nel passaggio corrente (guida di stile, §3) --- */
+
+  [data-indice='2'] .tensione .molecola--interna,
+  [data-indice='3'] .tensione .molecola--esterna {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  [data-indice='0'] .tensione .pelo--piegato {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Testi --- */
+
+  .tensione text {
+    fill: var(--testo);
+    font-size: 26px;
+    font-weight: 700;
+    /* alone chiaro: il testo resta leggibile anche sopra una linea */
+    stroke: var(--sfondo);
+    stroke-width: 6px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+  .tensione .secondaria {
+    font-weight: 400;
+  }
+  .tensione .titoletto {
+    fill: var(--testo-2);
+  }
+  .tensione .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  /* Sul telefono il disegno è piccolo: le scritte crescono per restare leggibili. */
+  @container (max-width: 620px) {
+    .tensione text {
+      font-size: 36px;
+    }
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .tensione .descrizione {
+    display: none;
+  }
+  [data-indice='0'] .tensione .descrizione[data-per='0'],
+  [data-indice='1'] .tensione .descrizione[data-per='1'],
+  [data-indice='2'] .tensione .descrizione[data-per='2'],
+  [data-indice='3'] .tensione .descrizione[data-per='3'],
+  [data-indice='4'] .tensione .descrizione[data-per='4'],
+  [data-indice='5'] .tensione .descrizione[data-per='5'],
+  [data-indice='6'] .tensione .descrizione[data-per='6'],
+  [data-indice='7'] .tensione .descrizione[data-per='7'] {
+    display: block;
+  }
+</style>

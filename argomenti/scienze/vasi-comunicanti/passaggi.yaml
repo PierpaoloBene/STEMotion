@@ -1,0 +1,73 @@
+passaggi:
+  - id: recipienti
+    titolo: Recipienti collegati
+    breve: Quattro recipienti di forma diversa sono collegati dal fondo.
+    spiegazione: >
+      Ci sono un recipiente largo, uno stretto, uno a imbuto e uno inclinato.
+      In basso un tubo li unisce tutti, e in alto sono aperti.
+      Recipienti collegati in questo modo si chiamano **vasi comunicanti**.
+
+  - id: rubinetto-chiuso
+    titolo: Il rubinetto è chiuso
+    breve: Con il rubinetto chiuso, l'acqua resta nel recipiente largo.
+    spiegazione: >
+      Versiamo acqua nel recipiente largo.
+      Sul tubo c'è un **rubinetto** chiuso: blocca l'acqua.
+      Gli altri recipienti restano vuoti.
+
+  - id: rubinetto-aperto
+    titolo: Apriamo il rubinetto
+    breve: L'acqua scorre nel tubo e sale negli altri recipienti.
+    spiegazione: >
+      Il rubinetto si apre e l'acqua passa nel tubo.
+      Nel recipiente largo il livello scende, negli altri sale.
+      Dopo poco l'acqua smette di muoversi.
+
+  - id: stesso-livello
+    titolo: Lo stesso livello
+    breve: L'acqua si ferma alla stessa altezza in tutti i recipienti.
+    spiegazione: >
+      La superficie dell'acqua è alla stessa altezza in tutti e quattro i recipienti.
+      È il **principio dei vasi comunicanti**: un liquido in recipienti collegati raggiunge lo stesso livello.
+      Vale quando i recipienti sono aperti in alto e contengono un solo liquido.
+
+  - id: forma
+    titolo: La forma non conta
+    breve: Il livello non dipende né dalla forma né dalla larghezza.
+    spiegazione: >
+      Nel recipiente largo c'è molta più acqua che in quello stretto.
+      Eppure l'altezza dell'acqua è la stessa, anche nel recipiente inclinato.
+      Conta quanto è alta l'acqua, non quanta ce n'è.
+
+  - id: pressione
+    titolo: Più giù, più spinta
+    breve: Più si va in profondità, più l'acqua spinge forte.
+    spiegazione: >
+      L'acqua ha un peso e spinge in tutte le direzioni, anche contro le pareti.
+      Questa spinta si chiama **pressione**.
+      Più acqua c'è sopra un punto, cioè più il punto è profondo, più la pressione è grande.
+
+  - id: equilibrio
+    titolo: Perché si ferma
+    breve: Nel tubo, le spinte da destra e da sinistra sono uguali.
+    spiegazione: >
+      Nel tubo la pressione dipende dall'altezza dell'acqua nei recipienti sopra.
+      Se un livello fosse più alto, da quella parte la spinta sarebbe più forte e l'acqua scorrerebbe verso gli altri.
+      È quello che è successo quando abbiamo aperto il rubinetto.
+      Con i livelli uguali, le spinte si bilanciano e l'acqua sta ferma.
+
+  - id: annaffiatoio
+    titolo: L'annaffiatoio
+    breve: Il corpo e il beccuccio dell'annaffiatoio sono vasi comunicanti.
+    spiegazione: >
+      Nel beccuccio l'acqua sale alla stessa altezza che nel corpo.
+      Per questo la punta del beccuccio arriva in alto quanto il bordo del corpo.
+      Se fosse più bassa, l'acqua uscirebbe dal beccuccio prima di riempire l'annaffiatoio.
+
+  - id: acquedotto
+    titolo: L'acquedotto
+    breve: L'acqua del serbatoio sale nei tubi fino ai piani alti.
+    spiegazione: >
+      Il **serbatoio** dell'acquedotto si costruisce in alto, su una collina o su una torre.
+      Il serbatoio e i tubi delle case sono vasi comunicanti.
+      Così l'acqua può salire nei tubi fin quasi al livello del serbatoio, senza pompe.

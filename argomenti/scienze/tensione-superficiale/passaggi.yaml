@@ -1,0 +1,64 @@
+passaggi:
+  - id: graffetta
+    titolo: Una graffetta a galla
+    breve: Una graffetta d'acciaio, appoggiata con cura, resta sull'acqua.
+    spiegazione: >
+      Un pezzetto d'acciaio, di solito, nell'acqua va a fondo.
+      Se però appoggiamo una graffetta piano, resta in superficie.
+      Sotto la graffetta la superficie dell'acqua si piega, come un telo teso.
+
+  - id: coesione
+    titolo: Le molecole si attraggono
+    breve: Le molecole d'acqua si attraggono tra loro.
+    spiegazione: >
+      Ingrandiamo l'acqua fino a vedere le molecole.
+      Ogni molecola attira quelle vicine ed è attirata da loro.
+      Questa attrazione tra molecole della stessa sostanza si chiama **coesione**.
+
+  - id: dentro
+    titolo: Dentro il liquido
+    breve: Dentro l'acqua, una molecola è tirata da tutte le parti.
+    spiegazione: >
+      Una molecola in mezzo al liquido ha molecole vicine tutto intorno.
+      Ognuna la tira verso di sé, in tutte le direzioni.
+      Le attrazioni si bilanciano: è come se nessuno la tirasse.
+
+  - id: in-superficie
+    titolo: In superficie
+    breve: In superficie, una molecola è tirata solo di lato e verso il basso.
+    spiegazione: >
+      Sopra la superficie c'è l'aria, dove le molecole d'acqua sono pochissime.
+      Così una molecola della superficie non è tirata verso l'alto.
+      Le vicine la tirano di lato e verso l'interno del liquido.
+
+  - id: pellicola
+    titolo: Come una pellicola
+    breve: Le molecole della superficie si tengono strette, come una pellicola.
+    spiegazione: >
+      Le molecole della superficie si tengono strette tra loro.
+      La superficie si comporta come una pellicola tesa ed elastica: è la **tensione superficiale**.
+      Non c'è una pellicola vera: è fatta dalle stesse molecole d'acqua.
+
+  - id: idrometra
+    titolo: Insetti sull'acqua
+    breve: L'idrometra cammina sull'acqua senza affondare.
+    spiegazione: >
+      L'**idrometra** è un insetto che vive su stagni e ruscelli.
+      Ha zampe lunghe e sottili, coperte di peli finissimi che non si bagnano.
+      Le zampe piegano la superficie dell'acqua senza romperla.
+
+  - id: goccia
+    titolo: Gocce rotonde
+    breve: La tensione superficiale rende rotonde le gocce piccole.
+    spiegazione: >
+      La superficie di un liquido tende a diventare più piccola possibile.
+      A parità di volume, la sfera è la forma con la superficie più piccola.
+      Per questo una goccia d'acqua piccola è quasi una pallina; una più grande si schiaccia per il suo peso.
+
+  - id: sapone
+    titolo: Il sapone
+    breve: Una goccia di sapone indebolisce la pellicola e la graffetta affonda.
+    spiegazione: >
+      Le molecole del sapone si sistemano sulla superficie, tra quelle dell'acqua.
+      Così la tensione superficiale diminuisce.
+      La superficie non riesce più a reggere la graffetta, che va a fondo.
