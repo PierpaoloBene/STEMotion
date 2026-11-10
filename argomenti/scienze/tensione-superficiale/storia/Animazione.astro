@@ -1,0 +1,192 @@
+---
+/**
+ * Storia della tensione superficiale: Agnes Pockels, la vaschetta di latta (1882),
+ * la lettera a Lord Rayleigh e l'articolo su Nature (1891), la laurea ad honorem (1932).
+ *
+ * Sei scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Nella vaschetta la striscia scorre con CSS a partire da [data-indice].
+ * L'acqua è blu acqua, il sapone viola come le sostanze sciolte (guida di stile, §3).
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+const VASCHETTA = { x1: 110, x2: 690, pelo: 390, fondo: 440 };
+const DISCO = 560; // x del dischetto appeso alla bilancia
+
+const descrizioni = [
+  'Agnes Pockels da giovane, accanto a una pila di libri di fisica. In alto la data 1862 e la scritta Venezia.',
+  'Agnes accanto a una bacinella d’acqua con un piatto immerso. Sulla superficie galleggiano pallini viola di sapone.',
+  'Una vaschetta lunga e bassa, piena d’acqua. Sopra scorre una striscia che rimpicciolisce la superficie. Un dischetto appeso al braccio di una bilancia tocca l’acqua. In alto la data 1882.',
+  'Agnes a sinistra e Lord Rayleigh a destra. Tra loro una lettera e una freccia che va da lei a lui. In alto la data 1891.',
+  'La rivista Nature aperta sull’articolo Surface Tension, di Agnes Pockels. In alto la data 1891.',
+  'Agnes da anziana, con i capelli grigi, accanto a un diploma arrotolato. In alto la data 1932 e la scritta Braunschweig.',
+];
+---
+
+<Storia classe="storia-pockels" descrizioni={descrizioni}>
+  <!-- Agnes giovane, nelle scene 0, 1 e 3 -->
+  <g data-passi="0 1 3">
+    <g transform="translate(150 540)">
+      <Personaggio capelli="lunghi" colore_capelli="castani" veste="giacca" colore_veste="nero" />
+    </g>
+  </g>
+
+  <!-- 0: i libri del fratello -->
+  <g data-passi="0">
+    <line class="linea" x1="380" y1="470" x2="760" y2="470"></line>
+    <rect class="tratto libro libro--blu" x="440" y="420" width="260" height="50" rx="4"></rect>
+    <rect class="tratto libro libro--rosso" x="460" y="370" width="230" height="50" rx="4"></rect>
+    <rect class="tratto libro libro--verde" x="450" y="320" width="240" height="50" rx="4"></rect>
+    <text class="titolo" x="570" y="355">Fisica</text>
+  </g>
+  <text class="data" x="40" y="90" data-passi="0">1862</text>
+  <Etichetta testo="Venezia" x={40} y={140} passi="0" />
+  <Etichetta testo="I libri del fratello" x={570} y={280} allinea="centro" passi="0" />
+
+  <!-- 1: la bacinella dei piatti -->
+  <g data-passi="1">
+    <path class="tratto superficie" d="M380 330L410 480H730L760 330Z"></path>
+    <path class="acqua" d="M384 350L410 478H730L756 350Z"></path>
+    <ellipse class="tratto piatto" cx="560" cy="400" rx="110" ry="30" transform="rotate(-14 560 400)"></ellipse>
+    <line class="pelo" x1="384" y1="350" x2="756" y2="350"></line>
+    {[420, 470, 530, 610, 660, 710].map((x) => <circle class="sapone" cx={x} cy="350" r="7" />)}
+  </g>
+  <Etichetta testo="Acqua e sapone" x={570} y={290} allinea="centro" passi="1" />
+
+  <!-- 2: la vaschetta di latta e la bilancia -->
+  <g data-passi="2">
+    <line class="linea" x1="640" y1="470" x2="640" y2="190"></line>
+    <rect class="tratto superficie" x={VASCHETTA.x1} y="340" width={VASCHETTA.x2 - VASCHETTA.x1} height={VASCHETTA.fondo - 340}></rect>
+    <rect class="acqua" x={VASCHETTA.x1 + 2} y={VASCHETTA.pelo} width={VASCHETTA.x2 - VASCHETTA.x1 - 4} height={VASCHETTA.fondo - VASCHETTA.pelo - 2}></rect>
+    <line class="pelo" x1={VASCHETTA.x1} y1={VASCHETTA.pelo} x2={VASCHETTA.x2} y2={VASCHETTA.pelo}></line>
+    <path class="linea" d={`M${VASCHETTA.x1} 340V${VASCHETTA.fondo}H${VASCHETTA.x2}V340`}></path>
+    <g class="striscia">
+      <rect class="tratto latta" x="300" y="330" width="16" height="80" rx="3"></rect>
+    </g>
+    <path class="linea" d={freccia(290, 300, 230, 300, 12)}></path>
+    <line class="linea" x1={DISCO} y1="190" x2="720" y2="190"></line>
+    <path class="tratto latta" d="M630 190L640 172L650 190Z"></path>
+    <line class="filo" x1={DISCO} y1="190" x2={DISCO} y2={VASCHETTA.pelo - 6}></line>
+    <ellipse class="tratto latta evidenziato" cx={DISCO} cy={VASCHETTA.pelo - 4} rx="20" ry="5"></ellipse>
+    <line class="filo" x1="720" y1="190" x2="720" y2="250"></line>
+    <rect class="tratto latta" x="702" y="250" width="36" height="30" rx="4"></rect>
+  </g>
+  <text class="data" x="40" y="90" data-passi="2">1882</text>
+  <Etichetta testo="Striscia" x={230} y={270} allinea="centro" passi="2" />
+  <Etichetta testo="Dischetto" x={470} y={300} linea={[480, 310, DISCO - 14, VASCHETTA.pelo - 8]} allinea="fine" passi="2" />
+  <Etichetta testo="Bilancia" x={640} y={150} allinea="centro" passi="2" />
+
+  <!-- 3: la lettera a Lord Rayleigh -->
+  <g data-passi="3">
+    <g transform="translate(650 540)">
+      <Personaggio capelli="calvo" colore_capelli="grigi" barba="corta" baffi veste="giacca" colore_veste="nero" />
+    </g>
+    <g transform="rotate(-6 400 260)">
+      <rect class="tratto carta" x="330" y="180" width="140" height="170" rx="4"></rect>
+      {[215, 240, 265, 290, 315].map((y) => <line class="riga" x1="350" y1={y} x2="450" y2={y} />)}
+    </g>
+    <path class="linea" d={freccia(310, 400, 500, 400, 16)}></path>
+  </g>
+  <text class="data" x="40" y="90" data-passi="3">1891</text>
+  <Etichetta testo="Lord Rayleigh" x={650} y={330} allinea="centro" passi="3" />
+
+  <!-- 4: l'articolo su Nature -->
+  <g data-passi="4">
+    <rect class="tratto carta" x="230" y="110" width="340" height="420" rx="6"></rect>
+    <text class="testata" x="400" y="175">Nature</text>
+    <line class="linea" x1="260" y1="200" x2="540" y2="200"></line>
+    <text class="titolo" x="400" y="260">Surface Tension</text>
+    <text class="autrice" x="400" y="300">Agnes Pockels</text>
+    {[340, 365, 390, 415, 440, 465, 490].map((y) => <line class="riga" x1="270" y1={y} x2="530" y2={y} />)}
+  </g>
+  <text class="data" x="40" y="90" data-passi="4">1891</text>
+
+  <!-- 5: la laurea ad honorem -->
+  <g data-passi="5">
+    <g transform="translate(150 540)">
+      <Personaggio capelli="lunghi" colore_capelli="grigi" veste="giacca" colore_veste="nero" />
+    </g>
+    <rect class="tratto carta" x="400" y="290" width="320" height="70" rx="35"></rect>
+    <ellipse class="tratto carta" cx="400" cy="325" rx="16" ry="35"></ellipse>
+    <path class="tratto nastro" d="M560 290V360M572 360L560 400L548 360"></path>
+  </g>
+  <text class="data" x="40" y="90" data-passi="5">1932</text>
+  <Etichetta testo="Braunschweig" x={40} y={140} passi="5" />
+  <Etichetta testo="Laurea ad honorem" x={560} y={250} allinea="centro" passi="5" />
+</Storia>
+
+<style is:global>
+  .storia-pockels .libro--blu {
+    fill: var(--veste-blu);
+  }
+  .storia-pockels .libro--rosso {
+    fill: var(--veste-rosso);
+  }
+  .storia-pockels .libro--verde {
+    fill: var(--veste-verde);
+  }
+  .storia-pockels .superficie {
+    fill: var(--superficie);
+  }
+  .storia-pockels .acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.5;
+  }
+  .storia-pockels .pelo {
+    stroke: var(--acqua);
+    stroke-width: 3;
+  }
+  .storia-pockels .piatto {
+    fill: var(--superficie);
+  }
+  .storia-pockels .sapone {
+    fill: var(--nutrienti);
+  }
+  .storia-pockels .latta {
+    fill: var(--argento);
+  }
+  .storia-pockels .filo {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+  }
+  .storia-pockels .carta {
+    fill: var(--carta);
+  }
+  .storia-pockels .riga {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+  }
+  .storia-pockels .nastro {
+    fill: none;
+    stroke: var(--veste-rosso);
+    stroke-width: 6;
+  }
+  .storia-pockels .titolo,
+  .storia-pockels .testata,
+  .storia-pockels .autrice {
+    text-anchor: middle;
+  }
+  .storia-pockels .titolo {
+    font-size: 30px;
+  }
+  .storia-pockels .testata {
+    font-size: 44px;
+    font-style: italic;
+  }
+  .storia-pockels .autrice {
+    font-size: 24px;
+    font-weight: 400;
+  }
+
+  /* --- 2: la striscia scorre e la superficie si rimpicciolisce --- */
+
+  .storia-pockels .striscia {
+    transform: translateX(0);
+  }
+  [data-indice='2'] .storia-pockels .striscia {
+    transform: translateX(-90px);
+    transition: transform 1.6s ease-in-out 0.8s;
+  }
+</style>

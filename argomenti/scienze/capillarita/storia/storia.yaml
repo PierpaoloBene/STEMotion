@@ -1,0 +1,53 @@
+protagonista: James Jurin
+anni: 1684 – 1750
+richiamo: >
+  Più il tubo è sottile, più l'acqua sale: chi ha scoperto questa regola?
+  Un medico inglese che amava misurare tutto.
+titolo: James Jurin e i tubi di vetro
+ritratto:
+  capelli: lunghi
+  colore_capelli: bianchi
+  veste: giacca
+  colore_veste: rosso
+passaggi:
+  - id: hauksbee-tubi
+    titolo: Un mistero a Londra
+    breve: Nel 1709, a Londra, Francis Hauksbee mostra l'acqua che sale nei tubi sottili.
+    spiegazione: >
+      **Francis Hauksbee** prepara gli esperimenti per la **Royal Society**, l'accademia delle scienze inglese.
+      Mostra che nei tubi di vetro sottilissimi l'acqua sale da sola.
+      Nessuno sa spiegare bene perché.
+
+  - id: jurin-medico
+    titolo: Un medico che misura
+    breve: James Jurin, medico e matematico di Londra, vuole capire il fenomeno.
+    spiegazione: >
+      **James Jurin** nasce a Londra nel 1684 e studia matematica e medicina.
+      Nel 1717 entra nella Royal Society.
+      Vuole sapere da che cosa dipende l'altezza a cui sale l'acqua.
+
+  - id: jurin-misure
+    titolo: Tubi di larghezza diversa
+    breve: Nel 1718 misura l'acqua in tubi di vetro di larghezza diversa.
+    spiegazione: >
+      Jurin prende tubi di vetro di diametro diverso e misura quanto sale l'acqua in ognuno.
+      Nei tubi più sottili l'acqua sale più in alto.
+
+  - id: jurin-legge
+    titolo: La legge di Jurin
+    breve: Con un tubo largo la metà, l'acqua sale il doppio.
+    spiegazione: >
+      Jurin scopre che altezza e diametro, moltiplicati, danno sempre lo stesso numero.
+      Oggi questa regola si chiama **legge di Jurin**.
+
+  - id: jurin-anello
+    titolo: Chi tiene su l'acqua
+    breve: Secondo Jurin, l'acqua è tenuta su dal vetro attorno alla superficie.
+    spiegazione: >
+      Jurin pensa che a reggere la colonna sia l'anello di vetro a cui è attaccata la superficie, in cima.
+      Più il tubo è sottile, meno acqua c'è da reggere per ogni pezzetto di anello.
+      Oggi lo spieghiamo con l'adesione e la tensione superficiale.
+fonti:
+  - "J. Jurin, An account of some experiments shown before the Royal Society; with an enquiry into the cause of the ascent and suspension of water in capillary tubes, Philosophical Transactions 30, 739–747 (1718)"
+  - "F. Hauksbee, Physico-Mechanical Experiments on Various Subjects, Londra, 1709"
+  - "A. A. Rusnock (a cura di), The Correspondence of James Jurin (1684–1750), Rodopi, Amsterdam, 1996"

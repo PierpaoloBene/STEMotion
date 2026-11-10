@@ -1,0 +1,162 @@
+---
+/**
+ * Storia della capillarità: gli esperimenti di Hauksbee (1709) e la legge di Jurin (1718).
+ *
+ * Cinque scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * L'acqua nei tubi sale con CSS a partire da [data-indice]. L'acqua è blu acqua (guida di stile, §3).
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+const LIV = 430; // livello dell'acqua nella vaschetta
+/** Una vaschetta con dei tubi: larghezza e quanto sale l'acqua in ognuno (legge di Jurin). */
+const tubi = (xs: number[], larghezze: number[], k: number) =>
+  xs.map((x, i) => ({ x, l: larghezze[i], h: k / larghezze[i] }));
+const scena0 = tubi([470, 560, 650], [36, 18, 9], 1300);
+const scena2 = tubi([360, 460, 560, 660], [48, 24, 16, 12], 1900);
+
+const descrizioni = [
+  'Francis Hauksbee accanto a una vaschetta d’acqua con tre tubi di vetro sottili: in tutti l’acqua è salita sopra il livello della vaschetta. In alto la data 1709 e la scritta Londra.',
+  'James Jurin, con una parrucca bianca e una giacca rossa. Accanto, un righello e alcuni tubi di vetro. In alto la data 1684.',
+  'Una vaschetta con quattro tubi di larghezza diversa e un righello. Più il tubo è sottile, più in alto è salita l’acqua. In alto la data 1718.',
+  'Due tubi: in quello largo il doppio l’acqua sale la metà. Sopra la scritta: altezza per diametro, sempre lo stesso numero.',
+  'La cima di un tubo vista da vicino: la superficie curva dell’acqua è attaccata al vetro. L’anello di vetro attorno alla superficie è evidenziato e due frecce tirano su la colonna.',
+];
+---
+
+<Storia classe="storia-jurin" descrizioni={descrizioni}>
+  <!-- 0: Hauksbee e i tubi alla Royal Society -->
+  <g data-passi="0">
+    <g transform="translate(160 540)">
+      <Personaggio capelli="lunghi" colore_capelli="castani" veste="giacca" colore_veste="blu" />
+    </g>
+    <rect class="superficie" x="400" y="360" width="320" height="130"></rect>
+    <rect class="acqua" x="400" y={LIV} width="320" height={490 - LIV}></rect>
+    {
+      scena0.map((t) => (
+        <g>
+          <rect class="superficie" x={t.x - t.l / 2} y="150" width={t.l} height="320" />
+          <rect class="acqua colonna" x={t.x - t.l / 2} y={LIV - t.h} width={t.l} height={t.h + 40} />
+          <path class="linea" d={`M${t.x - t.l / 2 - 2} 150V470M${t.x + t.l / 2 + 2} 150V470`} />
+        </g>
+      ))
+    }
+    <path class="linea" d="M400 360V490H720V360"></path>
+  </g>
+  <text class="data" x="40" y="90" data-passi="0">1709</text>
+  <Etichetta testo="Londra" x={40} y={140} passi="0" />
+  <Etichetta testo="Francis Hauksbee" x={160} y={585} allinea="centro" passi="0" />
+
+  <!-- 1: James Jurin -->
+  <g data-passi="1 2 3 4">
+    <g transform="translate(140 540) scale(0.9)">
+      <Personaggio capelli="lunghi" colore_capelli="bianchi" veste="giacca" colore_veste="rosso" />
+    </g>
+  </g>
+  <g data-passi="1">
+    <line class="linea" x1="380" y1="470" x2="760" y2="470"></line>
+    <rect class="tratto legno" x="420" y="200" width="34" height="270"></rect>
+    {[230, 270, 310, 350, 390, 430].map((y) => <line class="linea" x1="420" y1={y} x2="436" y2={y} />)}
+    {[520, 580, 630, 670].map((x, i) => <rect class="tratto vetro" x={x} y={260 + i * 20} width={24 - i * 5} height={210 - i * 20} rx="2" />)}
+  </g>
+  <text class="data" x="40" y="90" data-passi="1">1684</text>
+  <Etichetta testo="James Jurin" x={140} y={585} allinea="centro" passi="1 2 3 4" />
+
+  <!-- 2: le misure -->
+  <g data-passi="2">
+    <rect class="superficie" x="300" y="360" width="440" height="130"></rect>
+    <rect class="acqua" x="300" y={LIV} width="440" height={490 - LIV}></rect>
+    {
+      scena2.map((t) => (
+        <g>
+          <rect class="superficie" x={t.x - t.l / 2} y="110" width={t.l} height="360" />
+          <rect class="acqua colonna" x={t.x - t.l / 2} y={LIV - t.h} width={t.l} height={t.h + 40} />
+          <path class="linea" d={`M${t.x - t.l / 2 - 2} 110V470M${t.x + t.l / 2 + 2} 110V470`} />
+        </g>
+      ))
+    }
+    <path class="linea" d="M300 360V490H740V360"></path>
+    <rect class="tratto legno" x="250" y="110" width="30" height="380"></rect>
+    {[150, 190, 230, 270, 310, 350, 390, 430].map((y) => <line class="linea" x1="250" y1={y} x2="264" y2={y} />)}
+  </g>
+  <text class="data" x="40" y="90" data-passi="2">1718</text>
+
+  <!-- 3: la legge -->
+  <g data-passi="3">
+    <rect class="superficie" x="380" y="400" width="340" height="90"></rect>
+    <rect class="acqua" x="380" y="450" width="340" height="40"></rect>
+    <rect class="superficie" x="440" y="200" width="60" height="270"></rect>
+    <rect class="acqua" x="440" y="390" width="60" height="80"></rect>
+    <rect class="superficie" x="615" y="200" width="30" height="270"></rect>
+    <rect class="acqua" x="615" y="330" width="30" height="140"></rect>
+    <path class="linea" d="M438 200V470M502 200V470M613 200V470M647 200V470M380 400V490H720V400"></path>
+    <path class="linea misura" d="M525 448V392M670 448V332"></path>
+    <line class="riferimento" x1="380" y1="450" x2="720" y2="450"></line>
+  </g>
+  <Etichetta testo="altezza × diametro =" x={560} y={110} allinea="centro" passi="3" />
+  <Etichetta testo="sempre lo stesso numero" x={560} y={150} allinea="centro" passi="3" />
+  <Etichetta testo="largo 2" x={470} y={540} allinea="centro" passi="3" />
+  <Etichetta testo="largo 1" x={630} y={540} allinea="centro" passi="3" />
+
+  <!-- 4: l'anello di vetro in cima alla colonna -->
+  <g data-passi="4">
+    <rect class="vetro" x="380" y="100" width="30" height="450"></rect>
+    <rect class="vetro" x="690" y="100" width="30" height="450"></rect>
+    <path class="acqua" d="M410 260C410 330 460 340 550 340C640 340 690 330 690 260V550H410Z"></path>
+    <path class="pelo" d="M410 260C410 330 460 340 550 340C640 340 690 330 690 260"></path>
+    <path class="linea" d="M380 100V550H410V100M690 100V550H720V100"></path>
+    <ellipse class="anello evidenziato" cx="550" cy="260" rx="155" ry="22"></ellipse>
+    <path class="linea spinta" d={freccia(430, 360, 430, 280, 14)}></path>
+    <path class="linea spinta" d={freccia(670, 360, 670, 280, 14)}></path>
+  </g>
+  <Etichetta testo="Anello di vetro" x={550} y={200} allinea="centro" passi="4" />
+</Storia>
+
+<style is:global>
+  .storia-jurin .superficie {
+    fill: var(--superficie);
+  }
+  .storia-jurin .acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.5;
+  }
+  .storia-jurin .pelo {
+    fill: none;
+    stroke: var(--acqua);
+    stroke-width: 3;
+  }
+  .storia-jurin .vetro {
+    fill: #e8f1f6;
+  }
+  .storia-jurin .legno {
+    fill: var(--legno);
+  }
+  .storia-jurin .anello {
+    fill: none;
+  }
+  .storia-jurin .riferimento {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+    stroke-dasharray: 8 8;
+  }
+  .storia-jurin .misura,
+  .storia-jurin .spinta {
+    stroke-width: 4;
+  }
+  .storia-jurin .misura {
+    stroke: var(--accento);
+  }
+
+  /* L'acqua nei tubi sale quando la scena compare. */
+  .storia-jurin .colonna {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transform: scaleY(0.25);
+  }
+  :is([data-indice='0'], [data-indice='2']) .storia-jurin .colonna {
+    transform: scaleY(1);
+    transition: transform 1.6s ease-in-out 0.6s;
+  }
+</style>

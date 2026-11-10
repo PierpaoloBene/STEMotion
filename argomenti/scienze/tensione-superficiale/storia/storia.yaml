@@ -1,0 +1,62 @@
+protagonista: Agnes Pockels
+anni: 1862 – 1935
+richiamo: >
+  La prima a misurare con precisione la tensione superficiale non era una scienziata di professione.
+  Faceva esperimenti nella cucina di casa.
+titolo: Agnes Pockels e la vaschetta di latta
+ritratto:
+  capelli: lunghi
+  colore_capelli: castani
+  veste: giacca
+  colore_veste: nero
+passaggi:
+  - id: pockels-libri
+    titolo: Studiare da sola
+    breve: Agnes Pockels nasce a Venezia nel 1862 e cresce in Germania.
+    spiegazione: >
+      La famiglia si trasferisce a Braunschweig, in Germania.
+      A quel tempo le ragazze non possono iscriversi all'università.
+      **Agnes Pockels** studia la fisica da sola, sui libri del fratello Friedrich, che invece va all'università.
+
+  - id: pockels-cucina
+    titolo: L'acqua dei piatti
+    breve: Lavando i piatti, osserva che sapone e grasso cambiano la superficie dell'acqua.
+    spiegazione: >
+      Nella cucina di casa Agnes nota che la superficie dell'acqua non è sempre uguale.
+      Con un po' di sapone o di grasso si comporta in modo diverso.
+      Decide di misurare questo effetto.
+
+  - id: pockels-vaschetta
+    titolo: La vaschetta
+    breve: Nel 1882 costruisce una vaschetta per misurare la tensione superficiale.
+    spiegazione: >
+      È una vaschetta di latta piena d'acqua, con una striscia che scorre sopra.
+      Spostando la striscia, la superficie diventa più grande o più piccola.
+      Un dischetto appeso a una bilancia tocca l'acqua: Agnes misura la forza che serve per staccarlo.
+
+  - id: pockels-lettera
+    titolo: Una lettera in Inghilterra
+    breve: Nel 1891 scrive le sue misure al fisico inglese Lord Rayleigh.
+    spiegazione: >
+      Ha lavorato quasi dieci anni da sola, senza un laboratorio.
+      Legge che **Lord Rayleigh**, un fisico famoso, studia la superficie dell'acqua.
+      Gli scrive una lunga lettera con il suo metodo e i suoi risultati.
+
+  - id: pockels-nature
+    titolo: Su una rivista scientifica
+    breve: Rayleigh fa pubblicare la lettera sulla rivista Nature, nel marzo 1891.
+    spiegazione: >
+      Rayleigh capisce che le misure sono accurate e il metodo è nuovo.
+      Manda la lettera alla rivista scientifica *Nature*, che la pubblica con il titolo "Surface Tension".
+      È il primo di molti articoli di Agnes.
+
+  - id: pockels-laurea
+    titolo: Una laurea, a 70 anni
+    breve: Nel 1932 l'università di Braunschweig le dà una laurea ad honorem.
+    spiegazione: >
+      Agnes continua a studiare la superficie dei liquidi per molti anni.
+      Nel 1932 riceve la laurea che da giovane non aveva potuto prendere.
+      Una vaschetta come la sua, migliorata, si usa ancora oggi nei laboratori.
+fonti:
+  - "A. Pockels, Surface Tension, Nature 43, 437–439 (12 marzo 1891)"
+  - "M. E. Derrick, Agnes Pockels, 1862–1935, Journal of Chemical Education 59, 1030 (1982)"
