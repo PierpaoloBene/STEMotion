@@ -1,0 +1,56 @@
+protagonista: Simon Stevin
+anni: 1548 – 1620
+richiamo: >
+  Perché l'acqua spinge sul fondo nello stesso modo, qualunque sia la forma del recipiente?
+  Se lo chiese un ingegnere di un paese pieno di dighe e canali.
+titolo: Simon Stevin e il peso dell'acqua
+ritratto:
+  capelli: corti
+  colore_capelli: castani
+  barba: corta
+  baffi: true
+  veste: giacca
+  colore_veste: nero
+passaggi:
+  - id: stevin-bruges
+    titolo: Un contabile appassionato di matematica
+    breve: Simon Stevin nasce nel 1548 a Bruges, nelle Fiandre.
+    spiegazione: >
+      **Simon Stevin** lavora prima come contabile, poi diventa matematico e ingegnere.
+      Verso il 1581 si trasferisce in Olanda, a Leida, dove studia all'università.
+
+  - id: stevin-dighe
+    titolo: Un paese sotto il mare
+    breve: In Olanda molte terre sono più basse del mare e servono dighe.
+    spiegazione: >
+      Per difendere i campi dall'acqua servono dighe e chiuse robuste.
+      Chi le costruisce deve sapere quanto spinge l'acqua.
+      Stevin progetta anche mulini a vento che tolgono l'acqua dai campi.
+
+  - id: stevin-libro
+    titolo: Un libro sul peso dell'acqua
+    breve: Nel 1586, a Leida, pubblica un libro sull'equilibrio dell'acqua.
+    spiegazione: >
+      Il titolo è *De Beghinselen des Waterwichts*, cioè "I princìpi del peso dell'acqua".
+      Stevin lo scrive in olandese e non in latino, la lingua dei dotti.
+      Vuole che lo possano leggere anche ingegneri e costruttori.
+
+  - id: stevin-fondo
+    titolo: Conta solo l'altezza
+    breve: La spinta dell'acqua sul fondo dipende solo da quanto è alta l'acqua.
+    spiegazione: >
+      Stevin confronta recipienti di forma diversa, con il fondo uguale e l'acqua alta uguale.
+      Sul fondo l'acqua spinge con la stessa forza, anche se in un recipiente ce n'è molta di più.
+      Sembra strano, per questo oggi si chiama **paradosso idrostatico**.
+
+  - id: stevin-vasi
+    titolo: Di nuovo i vasi comunicanti
+    breve: Dalla sua scoperta si capisce perché i livelli diventano uguali.
+    spiegazione: >
+      Se la spinta dipende solo dall'altezza, la forma dei recipienti non conta.
+      Nel tubo che unisce due vasi le spinte sono uguali solo quando i livelli sono uguali.
+      È proprio quello che hai visto nell'animazione.
+fonti:
+  - "S. Stevin, De Beghinselen des Waterwichts, Leida, 1586"
+  - "E. J. Dijksterhuis (a cura di), The Principal Works of Simon Stevin, vol. I: Mechanics, Swets & Zeitlinger, Amsterdam, 1955"
+  - "E. J. Dijksterhuis, Simon Stevin: Science in the Netherlands around 1600, Martinus Nijhoff, L'Aia, 1970"

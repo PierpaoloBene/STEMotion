@@ -1,0 +1,20 @@
+titolo: La capillarità
+sottotitolo: Come l'acqua riesce a salire da sola nei tubi sottilissimi
+materia: scienze
+area: fisica
+modello: passaggi
+durata_minuti: 15
+prerequisiti: [vasi-comunicanti, tensione-superficiale]
+obiettivi:
+  - Descrivere la risalita dell'acqua nei tubi sottili
+  - Collegare l'altezza raggiunta alla larghezza del tubo
+  - Distinguere adesione e coesione
+  - Spiegare la capillarità con l'adesione, la coesione e il peso della colonna d'acqua
+  - Riconoscere la capillarità nella carta assorbente e nelle piante
+parole_chiave: [capillarità, tubo capillare, menisco, adesione, coesione, tensione superficiale, carta assorbente]
+stato: bozza
+revisionato_da: null
+fonti:
+  - "U. Amaldi, Le traiettorie della fisica, Zanichelli: capitolo sui fluidi, capillarità e legge di Jurin"
+  - "P.-G. de Gennes, F. Brochard-Wyart, D. Quéré, Gocce, bolle, perle e onde, Bollati Boringhieri: la risalita capillare (legge di Jurin)"
+  - "N. A. Campbell, J. B. Reece e altri, Biologia, capitolo sul trasporto nelle piante: traspirazione e coesione-tensione"

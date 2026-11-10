@@ -1,0 +1,168 @@
+---
+/**
+ * Storia dei vasi comunicanti: Simon Stevin, le dighe d'Olanda e il paradosso idrostatico (1586).
+ *
+ * Cinque scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * L'acqua è blu acqua (guida di stile, §3).
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+// Case delle Fiandre con il tetto a gradini.
+const casa = (x: number, l: number, h: number) => {
+  const g = l / 6;
+  const t = 470 - h;
+  return `M${x} 470V${t}H${x + g}V${t - 22}H${x + 2 * g}V${t - 44}H${x + 4 * g}V${t - 22}H${x + 5 * g}V${t}H${x + l}V470Z`;
+};
+
+// Tre recipienti con lo stesso fondo e l'acqua alta uguale (scena 3).
+const FONDO = 470;
+const LIV = 290;
+const recipienti = [
+  { x: 180, alto: 80 }, // si allarga verso l'alto
+  { x: 350, alto: 40 }, // dritto
+  { x: 520, alto: 12 }, // si stringe verso l'alto
+].map(({ x, alto }) => {
+  const [b, cima] = [40, 200];
+  const lato = (y: number) => b + ((alto - b) * (FONDO - y)) / (FONDO - cima);
+  return {
+    x,
+    pareti: `M${x - alto} ${cima}L${x - b} ${FONDO}H${x + b}L${x + alto} ${cima}`,
+    acqua: `M${x - lato(LIV)} ${LIV}L${x - b} ${FONDO}H${x + b}L${x + lato(LIV)} ${LIV}Z`,
+  };
+});
+
+const descrizioni = [
+  'Simon Stevin accanto ad alcune case con il tetto a gradini. In alto la data 1548 e la scritta Bruges.',
+  'A sinistra il mare, più alto della terra. In mezzo una diga lo trattiene. A destra i campi, più bassi, con un mulino a vento.',
+  'Stevin accanto a un grande libro: De Beghinselen des Waterwichts, i princìpi del peso dell’acqua. In alto la data 1586.',
+  'Tre recipienti di forma diversa, con il fondo uguale e l’acqua alla stessa altezza. Sul fondo di ognuno una freccia uguale: l’acqua spinge allo stesso modo.',
+  'Due recipienti collegati da un tubo, uno largo e uno stretto. L’acqua è allo stesso livello; nel tubo due frecce uguali si spingono contro.',
+];
+---
+
+<Storia classe="storia-stevin" descrizioni={descrizioni}>
+  <!-- Stevin, nelle scene 0 e 2 -->
+  <g data-passi="0 2">
+    <g transform="translate(160 540)">
+      <Personaggio capelli="corti" colore_capelli="castani" barba="corta" baffi veste="giacca" colore_veste="nero" />
+    </g>
+  </g>
+
+  <!-- 0: Bruges -->
+  <g data-passi="0">
+    <line class="linea" x1="330" y1="470" x2="780" y2="470"></line>
+    <path class="tratto muro" d={casa(360, 120, 160)}></path>
+    <path class="tratto mattone" d={casa(490, 130, 200)}></path>
+    <path class="tratto muro" d={casa(630, 120, 140)}></path>
+    {[[390, 360], [440, 360], [525, 330], [585, 330], [660, 380], [710, 380]].map(([x, y]) => <rect class="tratto finestra" x={x} y={y} width="26" height="34" />)}
+  </g>
+  <text class="data" x="40" y="90" data-passi="0">1548</text>
+  <Etichetta testo="Bruges" x={40} y={140} passi="0" />
+
+  <!-- 1: il mare, la diga e i campi -->
+  <g data-passi="1">
+    <rect class="acqua" x="20" y="300" width="300" height="230"></rect>
+    <line class="pelo" x1="20" y1="300" x2="300" y2="300"></line>
+    <path class="tratto terra" d="M290 530L340 260H420L470 530Z"></path>
+    <rect class="tratto campo" x="470" y="420" width="310" height="110"></rect>
+    <line class="riferimento" x1="20" y1="300" x2="780" y2="300"></line>
+    <g transform="translate(640 420)">
+      <path class="tratto mulino" d="M-26 0L-16 -120H16L26 0Z"></path>
+      <path class="tratto carta" d="M0 -120L-12 -200H12ZM0 -120L-12 -40H12ZM0 -120L-80 -132V-108ZM0 -120L80 -132V-108Z"></path>
+      <circle class="tratto legno" cy="-120" r="7"></circle>
+    </g>
+  </g>
+  <Etichetta testo="Mare" x={170} y={230} allinea="centro" passi="1" />
+  <Etichetta testo="Diga" x={380} y={220} allinea="centro" passi="1" />
+  <Etichetta testo="Campi" x={560} y={400} allinea="centro" passi="1" />
+  <Etichetta testo="Livello del mare" x={30} y={285} passi="1" />
+
+  <!-- 2: il libro -->
+  <g data-passi="2">
+    <rect class="tratto copertina" x="400" y="130" width="300" height="360" rx="8"></rect>
+    <rect class="tratto carta" x="430" y="170" width="240" height="200" rx="4"></rect>
+    <text class="titolo-libro" x="550" y="245">De Beghinselen</text>
+    <text class="titolo-libro" x="550" y="285">des</text>
+    <text class="titolo-libro" x="550" y="325">Waterwichts</text>
+  </g>
+  <text class="data" x="40" y="90" data-passi="2">1586</text>
+  <Etichetta testo="Leida" x={40} y={140} passi="2" />
+  <Etichetta testo="«I princìpi del peso dell'acqua»" x={550} y={540} allinea="centro" passi="2" />
+
+  <!-- 3: il paradosso idrostatico -->
+  <g data-passi="3">
+    {
+      recipienti.map((v) => (
+        <g>
+          <path class="acqua" d={v.acqua} />
+          <path class="linea" d={v.pareti} />
+          <path class="linea spinta" d={freccia(v.x, FONDO - 60, v.x, FONDO - 8, 14)} />
+        </g>
+      ))
+    }
+    <line class="riferimento" x1="60" y1={LIV} x2="780" y2={LIV}></line>
+  </g>
+  <Etichetta testo="Stessa altezza" x={780} y={LIV - 16} allinea="fine" passi="3" />
+  <Etichetta testo="Stessa spinta sul fondo" x={350} y={540} allinea="centro" passi="3" />
+
+  <!-- 4: i vasi comunicanti -->
+  <g data-passi="4">
+    <path class="acqua" d="M200 300H340V440H460V300H500V480H200Z"></path>
+    <path class="linea" d="M200 160V480H500V160M340 160V440H460V160"></path>
+    <line class="riferimento" x1="150" y1="300" x2="560" y2="300"></line>
+    <path class="linea spinta" d={freccia(352, 462, 392, 462, 12)}></path>
+    <path class="linea spinta" d={freccia(448, 462, 408, 462, 12)}></path>
+  </g>
+  <Etichetta testo="Stesso livello" x={570} y={309} passi="4" />
+  <Etichetta testo="Spinte uguali" x={400} y={540} allinea="centro" passi="4" />
+</Storia>
+
+<style is:global>
+  .storia-stevin .muro {
+    fill: var(--muro);
+  }
+  .storia-stevin .mattone {
+    fill: var(--tetto);
+  }
+  .storia-stevin .finestra,
+  .storia-stevin .carta {
+    fill: var(--carta);
+  }
+  .storia-stevin .legno,
+  .storia-stevin .mulino {
+    fill: var(--legno);
+  }
+  .storia-stevin .terra {
+    fill: var(--deserto);
+  }
+  .storia-stevin .campo {
+    fill: var(--foglie);
+    fill-opacity: 0.5;
+  }
+  .storia-stevin .acqua {
+    fill: var(--acqua);
+    fill-opacity: 0.5;
+  }
+  .storia-stevin .pelo {
+    stroke: var(--acqua);
+    stroke-width: 3;
+  }
+  .storia-stevin .riferimento {
+    stroke: var(--accento);
+    stroke-width: 3;
+    stroke-dasharray: 10 8;
+  }
+  .storia-stevin .spinta {
+    stroke-width: 4;
+  }
+  .storia-stevin .copertina {
+    fill: var(--veste-marrone);
+  }
+  .storia-stevin .titolo-libro {
+    font-size: 26px;
+    text-anchor: middle;
+  }
+</style>
