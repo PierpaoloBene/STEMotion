@@ -1,0 +1,64 @@
+protagonista: Marcello Malpighi
+anni: 1628 – 1694
+richiamo: >
+  Gli alveoli sono troppo piccoli per vederli a occhio nudo.
+  Chi li ha visti per primo? Un medico di Bologna, con un microscopio e una rana.
+titolo: Marcello Malpighi e gli alveoli
+ritratto:
+  capelli: lunghi
+  colore_capelli: castani
+  barba: "no"
+  baffi: false
+  veste: giacca
+  colore_veste: nero
+passaggi:
+  - id: malpighi-bologna
+    titolo: Un medico di Bologna
+    breve: Marcello Malpighi nasce nel 1628 a Crevalcore, vicino a Bologna.
+    spiegazione: >
+      **Marcello Malpighi** studia medicina all'Università di Bologna.
+      Nello stesso anno in cui nasce, il medico inglese William Harvey dimostra che il sangue gira nel corpo.
+      Ma nessuno ha mai visto come il sangue passa dalle arterie alle vene.
+
+  - id: malpighi-carne
+    titolo: Un mistero nel petto
+    breve: Ai suoi tempi molti pensano che i polmoni siano una massa di carne.
+    spiegazione: >
+      Visti a occhio nudo, i polmoni sembrano un tessuto morbido e compatto.
+      Molti medici pensano che l'aria e il sangue si mescolino lì dentro, in qualche modo.
+      Nessuno sa davvero come sono fatti all'interno.
+
+  - id: malpighi-microscopio
+    titolo: Il microscopio
+    breve: Nel 1661 Malpighi osserva al microscopio i polmoni di una rana.
+    spiegazione: >
+      Il **microscopio** è un'invenzione recente e pochi lo usano per studiare il corpo.
+      Malpighi sceglie la rana: i suoi polmoni sono sottili e quasi trasparenti.
+      Così la luce li attraversa e si vede l'interno.
+
+  - id: malpighi-vescicole
+    titolo: Tante piccole bolle
+    breve: Vede che il polmone è fatto di minuscole bolle piene d'aria.
+    spiegazione: >
+      Il polmone non è una massa di carne: è fatto di tantissime piccole cavità piene d'aria.
+      Malpighi le chiama "vescichette".
+      Oggi le chiamiamo **alveoli**.
+
+  - id: malpighi-capillari
+    titolo: I capillari
+    breve: Sulle pareti delle bolle il sangue scorre in vasi sottilissimi.
+    spiegazione: >
+      Attorno alle bolle Malpighi vede il sangue scorrere in vasi sottilissimi, i **capillari**.
+      Collegano i vasi che portano il sangue al polmone a quelli che lo riportano al cuore.
+      È il pezzo che mancava alla scoperta di Harvey: il sangue non si mescola con l'aria, le scorre accanto.
+
+  - id: malpighi-lettere
+    titolo: Due lettere a un amico
+    breve: Malpighi racconta le sue scoperte in due lettere all'amico Borelli.
+    spiegazione: >
+      Nel 1661 Malpighi scrive due lettere al suo amico **Giovanni Alfonso Borelli**, professore a Pisa.
+      Le lettere vengono stampate a Bologna con il titolo *De pulmonibus*, "Sui polmoni".
+      Più tardi Malpighi studierà al microscopio anche reni, pelle e piante.
+fonti:
+  - "J. B. West, Marcello Malpighi and the discovery of the pulmonary capillaries and alveoli, American Journal of Physiology – Lung Cellular and Molecular Physiology, 2013"
+  - "H. B. Adelmann, Marcello Malpighi and the Evolution of Embryology, Cornell University Press, 1966"

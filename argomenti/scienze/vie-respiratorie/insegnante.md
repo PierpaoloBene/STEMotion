@@ -23,3 +23,8 @@
 ## Collegamenti
 - Prima: la cellula ha bisogno di ossigeno; la deglutizione (faringe, epiglottide)
 - Dopo: la respirazione (inspirazione ed espirazione, il diaframma); la circolazione del sangue; la respirazione cellulare
+
+## La storia: Marcello Malpighi
+- Malpighi descrisse alveoli e capillari nel polmone di rana, non in quello umano: la struttura è però la stessa.
+- Nel campo del microscopio le "bolle" sono disegnate tutte uguali e in file ordinate, per chiarezza.
+- I capillari passano dal blu al rosso: nel polmone il sangue arriva povero di ossigeno e riparte ricco, anche se il vaso che lo porta si chiama arteria polmonare.

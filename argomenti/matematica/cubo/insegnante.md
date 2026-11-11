@@ -20,3 +20,7 @@
 ## Collegamenti
 - Prima: il quadrato, il suo perimetro e la sua area; il centimetro quadrato
 - Dopo: il parallelepipedo; le altre unità di volume (dm³ e litro); gli altri solidi (prismi, piramidi, cilindro)
+
+## La storia: Euclide
+- Della vita di Euclide non si sa quasi nulla: il personaggio disegnato è una figura stilizzata, non un ritratto. Anche la data è approssimativa.
+- La definizione del cubo è la 25ª del libro XI degli Elementi; la dimostrazione che i solidi regolari sono solo cinque è alla fine del libro XIII.
