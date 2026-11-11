@@ -1,0 +1,619 @@
+---
+/**
+ * Il cubo: tre dimensioni uguali, facce, spigoli e vertici, lo sviluppo con l'area
+ * della superficie e il volume contato in cubetti da 1 cm³.
+ *
+ * Il cubo è un vero oggetto 3D fatto di sei quadrati HTML con le trasformazioni CSS:
+ * così si può aprire e richiudere come una scatola. Le facce sono incernierate alla
+ * faccia di sotto (e quella di sopra a quella di dietro), come in uno sviluppo di cartone.
+ * Numeri ed etichette stanno in un SVG sopra il cubo: le loro posizioni si calcolano qui
+ * proiettando i punti del cubo con la stessa inquadratura (vista senza prospettiva).
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Ciò che compare e scompare nell'SVG ha l'attributo
+ * data-passi con l'elenco dei passaggi (da 0) in cui si vede, come nelle storie.
+ *
+ * Un solo disegno 4:3 (800 × 600 unità): l'unità `--u` scala tutto con il contenitore,
+ * e sul telefono le scritte crescono (container query).
+ */
+
+type Punto = [number, number];
+type P3 = [number, number, number];
+
+const L = 240; // lato del cubo in unità del disegno: 3 cm, quindi 80 unità per cm
+const M = L / 2;
+const STACCO = 30; // di quanto si staccano le facce nel passaggio "facce"
+const CM = L / 3;
+
+/** Inquadrature: spostamento sullo schermo, rotazioni (gradi) e scala. Gli stessi valori sono nel CSS (.cubo__scena). */
+interface Camera {
+  tx: number;
+  ty: number;
+  ax: number;
+  by: number;
+  s: number;
+}
+const CENTRO: Punto = [400, 300];
+const CAMERE: Record<'cubo' | 'apertura' | 'pianta', Camera> = {
+  cubo: { tx: 40, ty: 10, ax: -24, by: -36, s: 1 },
+  apertura: { tx: 0, ty: 70, ax: -55, by: -25, s: 0.5 },
+  pianta: { tx: 0, ty: 60, ax: -90, by: 0, s: 0.5 },
+};
+
+const rad = (g: number) => (g * Math.PI) / 180;
+const r1 = (v: number) => +v.toFixed(1);
+
+/** Proietta un punto del cubo sul disegno, come fa il CSS (rotateX(ax) rotateY(by), senza prospettiva). */
+function proietta([x, y, z]: P3, c: Camera = CAMERE.cubo): Punto {
+  const [cb, sb, ca, sa] = [Math.cos(rad(c.by)), Math.sin(rad(c.by)), Math.cos(rad(c.ax)), Math.sin(rad(c.ax))];
+  const x1 = x * cb + z * sb;
+  const z1 = -x * sb + z * cb;
+  const y2 = y * ca - z1 * sa;
+  return [r1(CENTRO[0] + c.tx + c.s * x1), r1(CENTRO[1] + c.ty + c.s * y2)];
+}
+
+
+// --- Vertici e spigoli del cubo chiuso ---
+const vertici: P3[] = [];
+for (const y of [-M, M]) for (const z of [M, -M]) for (const x of [-M, M]) vertici.push([x, y, z]);
+const spigoli: [P3, P3][] = [];
+vertici.forEach((a, i) =>
+  vertici.slice(i + 1).forEach((b) => {
+    if (a.filter((v, k) => v !== b[k]).length === 1) spigoli.push([a, b]);
+  }),
+);
+const centroSchermo = proietta([0, 0, 0]);
+/** Sposta un punto del disegno lontano dal centro del cubo. */
+const fuori = ([x, y]: Punto, d: number): Punto => {
+  const [dx, dy] = [x - centroSchermo[0], y - centroSchermo[1]];
+  const n = Math.hypot(dx, dy) || 1;
+  return [r1(x + (dx / n) * d), r1(y + (dy / n) * d)];
+};
+const medio = (a: P3, b: P3): P3 => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2];
+// Il vertice nascosto (dietro, in basso a sinistra): i suoi spigoli si vedono attraverso le facce.
+const nascosto = (p: P3) => p[0] === -M && p[1] === M && p[2] === -M;
+
+// --- Passaggio 0: le tre misure, come quote parallele a tre spigoli ---
+const quote = [
+  { nome: 'lunghezza', da: [-M, M, M] as P3, a: [M, M, M] as P3, dove: 'sotto' },
+  { nome: 'larghezza', da: [M, M, M] as P3, a: [M, M, -M] as P3, dove: 'sotto' },
+  { nome: 'altezza', da: [-M, M, M] as P3, a: [-M, -M, M] as P3, dove: 'lato' },
+].map((q) => {
+  const [a, b] = [proietta(q.da), proietta(q.a)];
+  // Perpendicolare allo spigolo, verso l'esterno del cubo.
+  const [dx, dy] = [b[0] - a[0], b[1] - a[1]];
+  const n = Math.hypot(dx, dy);
+  let [px, py] = [-dy / n, dx / n];
+  const m: Punto = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  if ((m[0] - centroSchermo[0]) * px + (m[1] - centroSchermo[1]) * py < 0) [px, py] = [-px, -py];
+  const sposta = (p: Punto, d: number): Punto => [r1(p[0] + px * d), r1(p[1] + py * d)];
+  const [qa, qb] = [sposta(a, 34), sposta(b, 34)];
+  const t = sposta(m, q.dove === 'sotto' ? 100 : 104);
+  // La scritta della larghezza si sposta a destra, fuori dalla punta della sua quota.
+  const testo: Punto = q.nome === 'larghezza' ? [t[0] + 30, t[1]] : t;
+  return { ...q, a, b, qa, qb, testo, px, py };
+});
+
+// --- Passaggio 1: le facce staccate, con il loro numero ---
+const D = M + STACCO;
+const facce: { n: number; c: P3 }[] = [
+  { n: 1, c: [0, -D, 0] },
+  { n: 2, c: [0, 0, D] },
+  { n: 3, c: [D, 0, 0] },
+  { n: 4, c: [0, 0, -D] },
+  { n: 5, c: [-D, 0, 0] },
+  { n: 6, c: [0, D, 0] },
+];
+
+// --- Passaggio 5: lo sviluppo visto dall'alto (le facce stese sul piano y = M) ---
+const sviluppo: P3[] = [
+  [0, M, 0],
+  [0, M, L],
+  [0, M, -L],
+  [0, M, -2 * L],
+  [-L, M, 0],
+  [L, M, 0],
+];
+
+// --- Passaggi 6–8: i 27 cubetti da 1 cm³ ---
+// Il primo a comparire è quello davanti a destra sul fondo, il più visibile.
+const cubetti: { x: number; y: number; z: number; strato: number; ordine: number }[] = [];
+for (let k = 0; k < 3; k++)
+  for (let j = 0; j < 3; j++)
+    for (let i = 0; i < 3; i++) {
+      const primo = k === 0 && i === 2 && j === 2;
+      cubetti.push({ x: -CM + CM * i, y: CM - CM * k, z: -CM + CM * j, strato: primo ? -1 : k, ordine: i + j * 3 });
+    }
+const LATO_CUBETTO = CM - 6;
+const primoCubetto = cubetti.find((c) => c.strato === -1)!;
+const angoloCubetto = proietta([primoCubetto.x + CM / 2, primoCubetto.y + CM / 2, primoCubetto.z + CM / 2]);
+const latoCubetto = [proietta([M, M, M]), proietta([M - CM, M, M])];
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni = [
+  'Un cubo visto un po’ dall’alto, con le facce trasparenti. Tre quote misurano lunghezza, larghezza e altezza: tutte 3 cm.',
+  'Le facce del cubo si staccano un poco l’una dall’altra; ognuna ha un numero, da 1 a 6. In alto a sinistra la scritta 6 facce.',
+  'Gli spigoli del cubo si colorano e sono numerati da 1 a 12. In alto a sinistra la scritta 12 spigoli.',
+  'Sugli angoli del cubo compaiono 8 pallini, i vertici. In alto a sinistra la scritta 8 vertici.',
+  'Il cubo si apre come una scatola: le facce ruotano attorno agli spigoli e si appoggiano sul piano, formando una croce di 6 quadrati.',
+  'Lo sviluppo visto dall’alto: sei quadrati a forma di croce, in ognuno è scritto 9 cm². Accanto: area = 6 × 9 cm² = 54 cm².',
+  'Il cubo si richiude; sulle facce compare una quadrettatura di 3 per 3. In un angolo del fondo c’è un cubetto con il lato di 1 cm: 1 cm³.',
+  'Il fondo del cubo si riempie di cubetti: 3 file da 3, cioè 9 cubetti.',
+  'Sopra il primo strato se ne posano altri due uguali: il cubo è pieno di 27 cubetti. Scritto: volume = 3 × 3 × 3 = 27 cm³.',
+];
+---
+
+<div class="cubo">
+  <div class="cubo__mondo">
+    <div class="cubo__scena">
+      {/* La base è un piano invisibile: tutte le facce sono incernierate ai suoi lati. */}
+      <div class="cubo__base">
+        <div class="faccia faccia--sotto"></div>
+        <div class="faccia faccia--davanti"></div>
+        <div class="faccia faccia--destra"></div>
+        <div class="faccia faccia--sinistra"></div>
+        <div class="faccia faccia--dietro">
+          <div class="faccia faccia--sopra"></div>
+        </div>
+      </div>
+
+      {
+        cubetti.map((c) => (
+          <div
+            class={`cubetto cubetto--${c.strato === -1 ? 'primo' : `strato-${c.strato}`}`}
+            style={`--x: ${c.x}; --y: ${c.y}; --z: ${c.z}; --ordine: ${c.ordine}`}
+          >
+            <div class="cubetto__faccia cubetto__faccia--davanti" />
+            <div class="cubetto__faccia cubetto__faccia--dietro" />
+            <div class="cubetto__faccia cubetto__faccia--destra" />
+            <div class="cubetto__faccia cubetto__faccia--sinistra" />
+            <div class="cubetto__faccia cubetto__faccia--sopra" />
+            <div class="cubetto__faccia cubetto__faccia--sotto" />
+          </div>
+        ))
+      }
+    </div>
+
+    <svg class="cubo__segni" viewBox="0 0 800 600" aria-hidden="true" focusable="false">
+      {/* 0: le tre misure */}
+      {
+        quote.map((q) => (
+          <g class="quota" data-passi="0">
+            <line class="quota__richiamo" x1={q.a[0]} y1={q.a[1]} x2={q.qa[0]} y2={q.qa[1]} />
+            <line class="quota__richiamo" x1={q.b[0]} y1={q.b[1]} x2={q.qb[0]} y2={q.qb[1]} />
+            <line class="quota__linea" x1={q.qa[0]} y1={q.qa[1]} x2={q.qb[0]} y2={q.qb[1]} />
+            <text x={q.testo[0]} y={q.testo[1] - 10} text-anchor="middle">
+              {q.nome}
+            </text>
+            <text class="misura" x={q.testo[0]} y={q.testo[1] + 30} text-anchor="middle">
+              3 cm
+            </text>
+          </g>
+        ))
+      }
+
+      {/* 1: le facce */}
+      <text class="conteggio" x="40" y="80" data-passi="1">6 facce</text>
+      {
+        facce.map((f) => {
+          const [x, y] = proietta(f.c);
+          return (
+            <g class="distintivo distintivo--faccia" data-passi="1">
+              <circle cx={x} cy={y} r="19" />
+              <text x={x} y={y + 8}>
+                {f.n}
+              </text>
+            </g>
+          );
+        })
+      }
+
+      {/* 2: gli spigoli */}
+      <text class="conteggio" x="40" y="80" data-passi="2">12 spigoli</text>
+      {
+        spigoli.map(([a, b], i) => {
+          const m = proietta(medio(a, b));
+          const [x, y] = nascosto(a) || nascosto(b) ? m : fuori(m, 24);
+          return (
+            <g class="distintivo distintivo--spigolo" data-passi="2">
+              <circle cx={x} cy={y} r="17" />
+              <text x={x} y={y + 7}>
+                {i + 1}
+              </text>
+            </g>
+          );
+        })
+      }
+
+      {/* 3: i vertici */}
+      <text class="conteggio" x="40" y="80" data-passi="3">8 vertici</text>
+      {
+        vertici.map((v) => {
+          const [x, y] = proietta(v);
+          return <circle class="vertice" cx={x} cy={y} r="11" data-passi="3" />;
+        })
+      }
+
+      {/* 5: l'area dello sviluppo */}
+      {
+        sviluppo.map((c) => {
+          const [x, y] = proietta(c, CAMERE.pianta);
+          return (
+            <text class="area-faccia" x={x} y={y + 9} data-passi="5">
+              9 cm²
+            </text>
+          );
+        })
+      }
+      <g class="formula" data-passi="5">
+        <text x="790" y="490" text-anchor="end">area = 6 × 9 cm²</text>
+        <text x="790" y="540" text-anchor="end">= 54 cm²</text>
+      </g>
+
+      {/* 6–8: i cubetti */}
+      <g class="etichetta" data-passi="6">
+        <line x1={angoloCubetto[0] + 6} y1={angoloCubetto[1] + 4} x2="690" y2="520" />
+        <text x="696" y="530">1 cm³</text>
+        <text class="piccolo" x={(latoCubetto[0][0] + latoCubetto[1][0]) / 2 - 6} y={(latoCubetto[0][1] + latoCubetto[1][1]) / 2 + 44} text-anchor="middle">
+          1 cm
+        </text>
+      </g>
+      <g class="formula" data-passi="7">
+        <text x="40" y="80">3 × 3 = 9 cubetti</text>
+      </g>
+      <g class="formula" data-passi="8">
+        <text x="40" y="80">3 strati × 9 = 27 cubetti</text>
+        <text x="40" y="570">volume = 3 × 3 × 3 = 27 cm³</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="solo-lettori">
+    {
+      descrizioni.map((d, i) => (
+        <p class="descrizione" data-per={i}>
+          Disegno: {d}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .cubo {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+    overflow: hidden;
+  }
+  /* Un riquadro 4:3 centrato: 1 unità del disegno = --u. */
+  .cubo__mondo {
+    --u: min(calc(100cqw / 800), calc(100cqh / 600));
+    --lato: calc(var(--u) * 240);
+    position: absolute;
+    left: calc(50% - 400 * var(--u));
+    top: calc(50% - 300 * var(--u));
+    width: calc(800 * var(--u));
+    height: calc(600 * var(--u));
+  }
+  .cubo__segni {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .cubo__segni :is(line, circle) {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- La scena 3D e le inquadrature --- */
+
+  /* Le inquadrature: gli stessi valori di CAMERE, in alto. */
+  .cubo__scena {
+    --tx: 40;
+    --ty: 10;
+    --ax: -24deg;
+    --by: -36deg;
+    --s: 1;
+    position: absolute;
+    left: calc(400 * var(--u));
+    top: calc(300 * var(--u));
+    transform-style: preserve-3d;
+    transform: translate3d(calc(var(--tx) * var(--u)), calc(var(--ty) * var(--u)), 0) rotateX(var(--ax)) rotateY(var(--by))
+      scale3d(var(--s), var(--s), var(--s));
+    transition: transform 1.4s ease-in-out;
+  }
+  [data-indice='4'] .cubo__scena {
+    --tx: 0;
+    --ty: 70;
+    --ax: -55deg;
+    --by: -25deg;
+    --s: 0.5;
+  }
+  [data-indice='5'] .cubo__scena {
+    --tx: 0;
+    --ty: 60;
+    --ax: -90deg;
+    --by: 0deg;
+    --s: 0.5;
+  }
+
+  /* --- Le facce del cubo grande, incernierate alla base --- */
+
+  .cubo__base,
+  .faccia {
+    position: absolute;
+    width: var(--lato);
+    height: var(--lato);
+    transform-style: preserve-3d;
+  }
+  .cubo__base {
+    left: calc(var(--lato) / -2);
+    top: calc(var(--lato) / -2);
+    transform: translateY(calc(var(--lato) / 2)) rotateX(90deg);
+  }
+  .faccia {
+    left: 0;
+    top: 0;
+    background: color-mix(in srgb, var(--geo-faccia) 16%, transparent);
+    outline: 3px solid var(--contorno);
+    outline-offset: -1.5px;
+    --stacco: 0px;
+    transition:
+      transform 1.4s ease-in-out,
+      background-color 0.6s ease-in-out,
+      outline-color 0.6s ease-in-out;
+  }
+  /* La quadrettatura di 3 × 3 cm (passaggi 6–8). */
+  .faccia::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, transparent calc(33.33% - 1px), var(--testo-2) calc(33.33% - 1px), var(--testo-2) calc(33.33% + 1px), transparent calc(33.33% + 1px), transparent calc(66.67% - 1px), var(--testo-2) calc(66.67% - 1px), var(--testo-2) calc(66.67% + 1px), transparent calc(66.67% + 1px)),
+      linear-gradient(to bottom, transparent calc(33.33% - 1px), var(--testo-2) calc(33.33% - 1px), var(--testo-2) calc(33.33% + 1px), transparent calc(33.33% + 1px), transparent calc(66.67% - 1px), var(--testo-2) calc(66.67% - 1px), var(--testo-2) calc(66.67% + 1px), transparent calc(66.67% + 1px));
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+  .faccia--sotto {
+    transform: translateZ(calc(-1 * var(--stacco)));
+  }
+  .faccia--davanti {
+    top: 100%;
+    transform-origin: 50% 0;
+    transform: rotateX(var(--piega, 90deg)) translateZ(calc(-1 * var(--stacco)));
+  }
+  .faccia--dietro {
+    top: -100%;
+    transform-origin: 50% 100%;
+    transform: rotateX(calc(-1 * var(--piega, 90deg))) translateZ(calc(-1 * var(--stacco)));
+  }
+  .faccia--destra {
+    left: 100%;
+    transform-origin: 0 50%;
+    transform: rotateY(calc(-1 * var(--piega, 90deg))) translateZ(calc(-1 * var(--stacco)));
+  }
+  .faccia--sinistra {
+    left: -100%;
+    transform-origin: 100% 50%;
+    transform: rotateY(var(--piega, 90deg)) translateZ(calc(-1 * var(--stacco)));
+  }
+  /* La faccia di sopra segue quella di dietro: quando si stacca, torna avanti di quanto si è spostata quella. */
+  .faccia--sopra {
+    top: -100%;
+    transform-origin: 50% 100%;
+    transform: rotateX(calc(-1 * var(--piega, 90deg))) translateZ(calc(-1 * var(--stacco))) translateY(calc(-1 * var(--stacco)));
+  }
+
+  /* 1: le facce si staccano e si colorano di più */
+  [data-indice='1'] .cubo .faccia {
+    --stacco: calc(30 * var(--u));
+    background-color: color-mix(in srgb, var(--geo-faccia) 34%, transparent);
+  }
+  /* 2: gli spigoli */
+  [data-indice='2'] .cubo .faccia {
+    outline: 5px solid var(--geo-spigolo);
+    outline-offset: -2.5px;
+  }
+  /* 4–5: il cubo si apre (la faccia di sopra un attimo dopo le altre) */
+  :is([data-indice='4'], [data-indice='5']) .cubo .faccia {
+    --piega: 0deg;
+  }
+  [data-indice='4'] .cubo .faccia--sopra {
+    transition-delay: 0.4s;
+  }
+  [data-indice='3'] .cubo .faccia--sopra {
+    transition-delay: 0s;
+  }
+  /* 6–8: facce quasi trasparenti con la quadrettatura, per vedere i cubetti */
+  :is([data-indice='6'], [data-indice='7'], [data-indice='8']) .cubo .faccia {
+    background-color: color-mix(in srgb, var(--geo-faccia) 6%, transparent);
+  }
+  :is([data-indice='6'], [data-indice='7'], [data-indice='8']) .cubo .faccia::before {
+    opacity: 0.6;
+    transition-delay: 1s;
+  }
+
+  /* --- I cubetti da 1 cm³ --- */
+
+  .cubetto {
+    --c: calc(var(--u) * 74);
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-style: preserve-3d;
+    transform: translate3d(calc(var(--x) * var(--u)), calc(var(--y) * var(--u)), calc(var(--z) * var(--u))) scale3d(0.01, 0.01, 0.01);
+    visibility: hidden;
+    transition:
+      transform 0.5s ease-in-out,
+      visibility 0s linear 0.5s;
+  }
+  .cubetto__faccia {
+    position: absolute;
+    left: calc(var(--c) / -2);
+    top: calc(var(--c) / -2);
+    width: var(--c);
+    height: var(--c);
+    background: color-mix(in srgb, var(--geo-unita) 38%, white);
+    outline: 2px solid var(--geo-unita);
+    outline-offset: -1px;
+  }
+  .cubetto__faccia--sopra {
+    background: color-mix(in srgb, var(--geo-unita) 22%, white);
+    transform: rotateX(90deg) translateZ(calc(var(--c) / 2));
+  }
+  .cubetto__faccia--sotto {
+    transform: rotateX(-90deg) translateZ(calc(var(--c) / 2));
+  }
+  .cubetto__faccia--davanti {
+    transform: translateZ(calc(var(--c) / 2));
+  }
+  .cubetto__faccia--dietro {
+    transform: rotateY(180deg) translateZ(calc(var(--c) / 2));
+  }
+  .cubetto__faccia--destra {
+    background: color-mix(in srgb, var(--geo-unita) 55%, white);
+    transform: rotateY(90deg) translateZ(calc(var(--c) / 2));
+  }
+  .cubetto__faccia--sinistra {
+    background: color-mix(in srgb, var(--geo-unita) 55%, white);
+    transform: rotateY(-90deg) translateZ(calc(var(--c) / 2));
+  }
+  /* Quando compaiono, crescono dal loro centro, uno dopo l'altro. */
+  [data-indice='6'] .cubo .cubetto--primo,
+  :is([data-indice='7'], [data-indice='8']) .cubo :is(.cubetto--primo, .cubetto--strato-0),
+  [data-indice='8'] .cubo :is(.cubetto--strato-1, .cubetto--strato-2) {
+    transform: translate3d(calc(var(--x) * var(--u)), calc(var(--y) * var(--u)), calc(var(--z) * var(--u))) scale3d(1, 1, 1);
+    visibility: visible;
+    transition:
+      transform 0.5s ease-in-out var(--ritardo, 0s),
+      visibility 0s linear var(--ritardo, 0s);
+  }
+  [data-indice='6'] .cubo .cubetto--primo {
+    --ritardo: 1.2s;
+  }
+  [data-indice='7'] .cubo .cubetto--strato-0 {
+    --ritardo: calc(var(--ordine) * 0.12s);
+  }
+  [data-indice='8'] .cubo .cubetto--strato-1 {
+    --ritardo: calc(0.1s + var(--ordine) * 0.06s);
+  }
+  [data-indice='8'] .cubo .cubetto--strato-2 {
+    --ritardo: calc(0.9s + var(--ordine) * 0.06s);
+  }
+
+  /* --- Segni sopra il cubo --- */
+
+  .cubo [data-passi] {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  [data-indice='0'] .cubo [data-passi~='0'],
+  [data-indice='1'] .cubo [data-passi~='1'],
+  [data-indice='2'] .cubo [data-passi~='2'],
+  [data-indice='3'] .cubo [data-passi~='3'],
+  [data-indice='4'] .cubo [data-passi~='4'],
+  [data-indice='5'] .cubo [data-passi~='5'],
+  [data-indice='6'] .cubo [data-passi~='6'],
+  [data-indice='7'] .cubo [data-passi~='7'],
+  [data-indice='8'] .cubo [data-passi~='8'] {
+    opacity: 1;
+    transition-delay: 0.6s;
+  }
+  [data-indice='5'] .cubo [data-passi~='5'] {
+    transition-delay: 1.3s;
+  }
+  [data-indice='6'] .cubo [data-passi~='6'] {
+    transition-delay: 1.6s;
+  }
+
+  .cubo text {
+    font-size: 26px;
+    font-weight: 700;
+    fill: var(--testo);
+  }
+  .cubo .conteggio {
+    font-size: 40px;
+  }
+  .cubo .quota__linea {
+    stroke: var(--testo);
+    stroke-width: 2.5;
+  }
+  .cubo .quota__richiamo {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .cubo .misura {
+    fill: var(--testo-2);
+  }
+  .cubo .distintivo circle {
+    fill: var(--superficie);
+    stroke-width: 3;
+  }
+  .cubo .distintivo text {
+    font-size: 22px;
+    text-anchor: middle;
+  }
+  .cubo .distintivo--faccia circle {
+    stroke: var(--geo-faccia);
+  }
+  .cubo .distintivo--spigolo circle {
+    stroke: var(--geo-spigolo);
+  }
+  .cubo .vertice {
+    fill: var(--geo-vertice);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+  }
+  .cubo .area-faccia {
+    font-size: 22px;
+    text-anchor: middle;
+  }
+  .cubo .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .cubo .piccolo {
+    font-size: 22px;
+  }
+
+  /* Sul telefono il disegno è piccolo: le scritte crescono per restare leggibili. */
+  @container (max-width: 620px) {
+    .cubo text {
+      font-size: 36px;
+    }
+    .cubo .conteggio {
+      font-size: 44px;
+    }
+    .cubo :is(.distintivo, .vertice) {
+      transform-box: fill-box;
+      transform-origin: center;
+      scale: 1.3;
+    }
+    .cubo .distintivo text,
+    .cubo .area-faccia {
+      font-size: 24px;
+    }
+    .cubo .piccolo {
+      font-size: 30px;
+    }
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .cubo .descrizione {
+    display: none;
+  }
+  [data-indice='0'] .cubo .descrizione[data-per='0'],
+  [data-indice='1'] .cubo .descrizione[data-per='1'],
+  [data-indice='2'] .cubo .descrizione[data-per='2'],
+  [data-indice='3'] .cubo .descrizione[data-per='3'],
+  [data-indice='4'] .cubo .descrizione[data-per='4'],
+  [data-indice='5'] .cubo .descrizione[data-per='5'],
+  [data-indice='6'] .cubo .descrizione[data-per='6'],
+  [data-indice='7'] .cubo .descrizione[data-per='7'],
+  [data-indice='8'] .cubo .descrizione[data-per='8'] {
+    display: block;
+  }
+</style>

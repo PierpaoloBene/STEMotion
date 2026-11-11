@@ -60,3 +60,15 @@ Per l'apparato urinario: `AddomeFronte`, `VasiAddome`, `Reni`, `Vescica` (gli or
 
 Ordine consigliato: `Corpo`, `Polmoni`, `Diaframma`, `BoccaFaringe`, `Esofago`, `Laringe`, `Stomaco`.
 I colori sono i token "Illustrazioni" di `src/styles/global.css`.
+
+## Vista frontale del torace
+
+`PolmoniFronte` disegna trachea, bronchi, albero dei bronchioli e polmoni visti **di fronte**, in un sistema di riferimento suo:
+
+- la persona ci guarda: il polmone **destro** (più largo, con tre lobi) è **a sinistra** nel disegno; il sinistro ha l'incavo del cuore;
+- unità del disegno: da `x = 160` a `x = 640`, da `y = 20` (inizio della trachea) a `y = 515` (fondo dei polmoni); si usa con `viewBox="0 0 800 600"`;
+- riferimenti utili: biforcazione della trachea `(400, 230)`, fine del bronco destro `(336, 300)`, del sinistro `(474, 300)`.
+
+| Componente | Classi animabili | Note |
+|---|---|---|
+| `PolmoniFronte` | `.fronte__trachea`, `.fronte__bronchi` (con `.fronte__tubo--bordo` per il contorno), `.fronte__ramo` | ogni ramo dei bronchioli ha `pathLength="1"` e la variabile `--livello` (1–4, dal più grosso): cresce con `stroke-dasharray: 1` e `stroke-dashoffset` da 1 a 0 |

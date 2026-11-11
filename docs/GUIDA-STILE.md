@@ -96,6 +96,12 @@ In matematica i colori indicano il **ruolo** di un elemento. Le tinte sono poche
 | Corda | `--geo-corda` | `#B4532A` (terracotta) |
 | Arco minore | `--geo-arco-minore` | `#5B4B9A` (indaco) |
 | Arco maggiore | `--geo-arco-maggiore` | `#B88400` (oro) |
+| Facce di un solido | `--geo-faccia` | `#12827C` (verde petrolio), riempimento leggero |
+| Spigoli di un solido | `--geo-spigolo` | `#C2367A` (magenta) |
+| Vertici di un solido | `--geo-vertice` | `#B88400` (oro), pallini |
+| Unità di misura (cubetto da 1 cm³, quadretto da 1 cm²) | `--geo-unita` | `#5B4B9A` (indaco) |
+
+I solidi non compaiono mai nello stesso disegno della circonferenza: per questo riusano le stesse tinte con altri ruoli.
 
 Circonferenza, assi e retta dei numeri si disegnano con il colore del contorno (`--testo`); la superficie del cerchio con `--bordo`.
 

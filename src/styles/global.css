@@ -42,6 +42,11 @@
   --geo-corda: #b4532a;
   --geo-arco-minore: #5b4b9a;
   --geo-arco-maggiore: #b88400;
+  /* solidi */
+  --geo-faccia: #12827c;
+  --geo-spigolo: #c2367a;
+  --geo-vertice: #b88400;
+  --geo-unita: #5b4b9a;
 
   /* Illustrazioni: tessuti degli organi condivisi (src/components/anatomia) */
   --contorno: #1d1d1f;
@@ -61,6 +66,7 @@
   --rene: #c46a5a;
   --rene-midollare: #9e4b45;
   --grasso: #f5e9c8;
+  --muco: #e4ecc4;
 
   /* Illustrazioni: materiali degli oggetti di laboratorio (src/components/laboratorio).
      Il colore aiuta a riconoscerli, ma c'è sempre anche il nome scritto. */

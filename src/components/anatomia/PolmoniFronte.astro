@@ -1,0 +1,114 @@
+---
+// Trachea, bronchi, albero dei bronchioli e polmoni visti di fronte.
+// La persona ci guarda: il polmone destro (tre lobi, più largo) è a sinistra nel disegno,
+// il sinistro ha l'incavo per il cuore. Sistema di riferimento: vedi README.md in questa cartella.
+//
+// I rami dei bronchioli sono generati qui: ognuno è un tratto con pathLength="1" e la variabile
+// --livello (1 = il più grosso), così l'animazione può farli crescere livello per livello
+// con stroke-dashoffset.
+
+type Punto = [number, number];
+const r1 = (v: number) => +v.toFixed(1);
+
+/** Rami che partono da un punto in una direzione (gradi, 0 = destra, 90 = giù). */
+function rami(da: Punto, angolo: number, lungo: number, livello: number, max: number, apertura: number[]) {
+  const fuori: { d: string; livello: number; fine: Punto }[] = [];
+  if (livello > max) return fuori;
+  for (const delta of apertura) {
+    const a = ((angolo + delta) * Math.PI) / 180;
+    const fine: Punto = [r1(da[0] + lungo * Math.cos(a)), r1(da[1] + lungo * Math.sin(a))];
+    const curva: Punto = [r1(da[0] + lungo * 0.5 * Math.cos(a - 0.12)), r1(da[1] + lungo * 0.5 * Math.sin(a - 0.12))];
+    fuori.push({ d: `M${da[0]} ${da[1]}Q${curva[0]} ${curva[1]} ${fine[0]} ${fine[1]}`, livello, fine });
+    fuori.push(...rami(fine, angolo + delta, lungo * 0.64, livello + 1, max, [-30, 26]));
+  }
+  return fuori;
+}
+
+// Ogni bronco principale si divide nei bronchi dei lobi: tre a destra (sinistra nel disegno), due a sinistra.
+const BRONCO_DESTRO: Punto = [336, 300];
+const BRONCO_SINISTRO: Punto = [474, 300];
+const albero = [
+  ...rami(BRONCO_DESTRO, 212, 58, 1, 4, [0]),
+  ...rami(BRONCO_DESTRO, 128, 70, 1, 4, [0]),
+  ...rami(BRONCO_DESTRO, 100, 88, 1, 4, [0]),
+  ...rami(BRONCO_SINISTRO, -38, 60, 1, 4, [0]),
+  ...rami(BRONCO_SINISTRO, 66, 90, 1, 4, [0]),
+];
+const spessore = (livello: number) => [0, 12, 8, 5, 3][livello];
+const anelli = Array.from({ length: 11 }, (_, i) => 36 + i * 18);
+---
+
+<g class="polmoni-fronte">
+  <path
+    class="fronte__polmone"
+    d="M366 118C334 96 282 110 252 160C208 234 172 340 162 450C159 490 176 514 210 515C270 511 330 501 372 488C381 400 379 250 366 118Z"
+  ></path>
+  <path
+    class="fronte__polmone"
+    d="M434 118C468 96 518 110 548 160C592 234 628 340 638 450C641 490 624 514 590 515C542 513 502 506 472 498C456 470 470 442 456 422C442 402 432 372 434 340C437 262 430 190 434 118Z"
+  ></path>
+  <!-- scissure tra i lobi -->
+  <path class="fronte__scissura" d="M190 300C250 300 320 270 368 250M170 400C240 380 300 330 370 330M450 210C520 260 570 340 630 420"></path>
+
+  <g class="fronte__albero">
+    {albero.map((r) => <path class="fronte__ramo fronte__ramo--bordo" d={r.d} pathLength="1" style={`--livello: ${r.livello}; stroke-width: ${spessore(r.livello) + 3}px`} />)}
+    {albero.map((r) => <path class="fronte__ramo fronte__ramo--aria" d={r.d} pathLength="1" style={`--livello: ${r.livello}; stroke-width: ${spessore(r.livello)}px`} />)}
+  </g>
+
+  <g class="fronte__vie">
+    <path class="fronte__tubo fronte__tubo--bordo fronte__bronchi" d="M396 226C382 252 362 278 336 300M404 226C424 254 450 278 474 300"></path>
+    <path class="fronte__tubo fronte__tubo--bordo fronte__trachea" d="M400 20V230"></path>
+    <path class="fronte__tubo fronte__tubo--aria fronte__bronchi" d="M396 226C382 252 362 278 336 300M404 226C424 254 450 278 474 300"></path>
+    <path class="fronte__tubo fronte__tubo--aria fronte__trachea" d="M400 20V230"></path>
+    <path class="fronte__anelli" d={anelli.map((y) => `M386 ${y}H414`).join('')}></path>
+  </g>
+</g>
+
+<style>
+  .fronte__polmone {
+    fill: var(--tessuto-chiaro);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .fronte__scissura {
+    fill: none;
+    stroke: var(--tessuto);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+  .fronte__ramo {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .fronte__ramo--bordo {
+    stroke: var(--contorno);
+  }
+  .fronte__ramo--aria {
+    stroke: var(--aria);
+  }
+  .fronte__tubo {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .fronte__tubo--bordo {
+    stroke: var(--contorno);
+    stroke-width: 26px;
+  }
+  .fronte__tubo--aria {
+    stroke: var(--aria);
+    stroke-width: 20px;
+  }
+  .fronte__trachea.fronte__tubo--bordo {
+    stroke-width: 40px;
+  }
+  .fronte__trachea.fronte__tubo--aria {
+    stroke-width: 34px;
+  }
+  .fronte__anelli {
+    fill: none;
+    stroke: var(--osso);
+    stroke-width: 5;
+  }
+</style>

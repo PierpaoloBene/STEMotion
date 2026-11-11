@@ -1,0 +1,16 @@
+titolo: Il cubo
+sottotitolo: Il primo dei solidi, dalle facce al volume
+materia: matematica
+area: geometria
+modello: passaggi
+durata_minuti: 15
+prerequisiti: []
+obiettivi:
+  - Riconoscere il cubo come solido con tre dimensioni uguali
+  - Contare facce, spigoli e vertici del cubo
+  - Costruire lo sviluppo del cubo e calcolarne l'area della superficie
+  - Calcolare il volume del cubo contando i cubetti da 1 cm³
+parole_chiave: [solido, cubo, faccia, spigolo, vertice, sviluppo, area, volume, centimetro cubo]
+stato: bozza
+revisionato_da: null
+fonti: []

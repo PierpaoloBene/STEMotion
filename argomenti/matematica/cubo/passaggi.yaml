@@ -1,0 +1,72 @@
+passaggi:
+  - id: solido
+    titolo: Un solido
+    breve: Il cubo ha lunghezza, larghezza e altezza, tutte uguali.
+    spiegazione: >
+      Un quadrato sta tutto su un foglio: ha solo lunghezza e larghezza.
+      Il cubo invece occupa spazio, ha anche un'altezza: è un **solido**.
+      Nel cubo le tre misure sono uguali. Questo cubo ha il lato di 3 cm.
+
+  - id: facce
+    titolo: Le facce
+    breve: Il cubo ha 6 facce, tutte quadrati uguali.
+    spiegazione: >
+      Le superfici piatte che chiudono il cubo si chiamano **facce**.
+      Le facce del cubo sono 6: sopra, sotto, davanti, dietro, destra e sinistra.
+      Sono tutte quadrati con il lato di 3 cm.
+
+  - id: spigoli
+    titolo: Gli spigoli
+    breve: Il cubo ha 12 spigoli, tutti lunghi uguali.
+    spiegazione: >
+      Dove due facce si incontrano c'è uno **spigolo**.
+      Il cubo ha 12 spigoli: 4 sopra, 4 sotto e 4 in verticale.
+      Ogni spigolo è anche il lato di un quadrato, quindi sono lunghi tutti 3 cm.
+
+  - id: vertici
+    titolo: I vertici
+    breve: Il cubo ha 8 vertici; in ognuno si incontrano 3 spigoli.
+    spiegazione: >
+      Gli angoli del cubo, dove si incontrano gli spigoli, si chiamano **vertici**.
+      Sono 8: 4 sopra e 4 sotto.
+      In ogni vertice si incontrano 3 spigoli e 3 facce.
+
+  - id: sviluppo
+    titolo: Lo sviluppo
+    breve: Aprendo il cubo, le 6 facce si stendono sul piano.
+    spiegazione: >
+      Immagina che il cubo sia una scatola di cartone e di aprirla.
+      Le facce restano attaccate per uno spigolo e si appoggiano sul tavolo.
+      La figura piana che si ottiene si chiama **sviluppo** del cubo.
+
+  - id: area
+    titolo: L'area della superficie
+    breve: L'area del cubo è la somma delle aree delle 6 facce.
+    spiegazione: >
+      Ogni faccia è un quadrato di 3 cm per 3 cm: la sua area è 9 cm².
+      Le facce sono 6, quindi l'**area totale** è 6 × 9 = 54 cm².
+      In generale: area totale = 6 × lato × lato.
+
+  - id: cubetto
+    titolo: Il centimetro cubo
+    breve: Un cubetto con il lato di 1 cm è un centimetro cubo.
+    spiegazione: >
+      Il **volume** dice quanto spazio occupa un solido.
+      Per misurarlo si usa un cubetto con il lato di 1 cm: il **centimetro cubo**, cm³.
+      Il volume è il numero di cubetti che riempiono il solido.
+
+  - id: strato
+    titolo: Uno strato
+    breve: Sul fondo stanno 3 × 3 = 9 cubetti.
+    spiegazione: >
+      Il fondo del cubo è un quadrato di 3 cm per lato.
+      Ci stanno 3 file da 3 cubetti: 3 × 3 = 9 cubetti.
+      È lo stesso numero dei cm² dell'area del fondo.
+
+  - id: volume
+    titolo: Il volume
+    breve: Tre strati da 9 cubetti, 27 cm³ in tutto.
+    spiegazione: >
+      Il cubo è alto 3 cm, quindi ci stanno 3 strati uguali.
+      I cubetti sono 3 × 9 = 27: il volume è 27 cm³.
+      In generale: volume = lato × lato × lato, che si scrive anche lato³ ("lato al cubo").
