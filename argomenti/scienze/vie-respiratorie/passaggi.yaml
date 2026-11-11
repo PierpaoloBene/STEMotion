@@ -1,0 +1,90 @@
+passaggi:
+  - id: naso
+    fase: vie respiratorie superiori
+    titolo: Il naso
+    breve: L'aria entra dalle narici e passa nelle fosse nasali.
+    spiegazione: >
+      Quando inspiriamo, l'aria entra dalle **narici**.
+      Da lì passa nelle **fosse nasali**, due cavità dietro il naso, sopra il palato.
+      Si può respirare anche con la bocca, ma il naso prepara meglio l'aria.
+
+  - id: filtro
+    fase: vie respiratorie superiori
+    titolo: Peli e muco
+    breve: Peli e muco trattengono la polvere dell'aria.
+    spiegazione: >
+      All'ingresso del naso ci sono dei peli che fermano i granelli più grossi.
+      Più in dentro le pareti sono coperte di **muco**, un liquido appiccicoso.
+      La polvere e molti germi restano attaccati e non arrivano ai polmoni.
+
+  - id: aria-calda
+    fase: vie respiratorie superiori
+    titolo: L'aria si scalda
+    breve: Nel naso l'aria si scalda e diventa umida.
+    spiegazione: >
+      Sotto le pareti delle fosse nasali scorrono tanti vasi sanguigni.
+      Il sangue caldo scalda l'aria che passa, e il muco le cede vapore acqueo.
+      Così ai polmoni arriva aria tiepida e umida, che non li irrita.
+
+  - id: faringe
+    fase: vie respiratorie superiori
+    titolo: La faringe
+    breve: L'aria scende nella faringe, dove passa anche il cibo.
+    spiegazione: >
+      Dalle fosse nasali l'aria scende nella **faringe**, la gola.
+      La faringe è un incrocio: ci passano l'aria e il cibo.
+      Più in basso le due strade si separano: il cibo va nell'esofago, l'aria va avanti.
+
+  - id: laringe
+    fase: vie respiratorie superiori
+    titolo: La laringe
+    breve: L'aria passa nella laringe, dove ci sono le corde vocali.
+    spiegazione: >
+      La **laringe** è il passaggio tra la faringe e la trachea.
+      All'ingresso c'è l'**epiglottide**: quando respiriamo resta alzata, quando deglutiamo chiude la laringe.
+      Dentro ci sono le **corde vocali**: l'aria che esce le fa vibrare e produce la voce.
+
+  - id: trachea
+    fase: vie respiratorie inferiori
+    titolo: La trachea
+    breve: La trachea è un tubo rinforzato da anelli di cartilagine.
+    spiegazione: >
+      Dalla laringe l'aria scende nella **trachea**, un tubo lungo circa 12 cm davanti all'esofago.
+      Gli anelli di **cartilagine** la tengono sempre aperta, anche quando giriamo il collo.
+      Anche la trachea è coperta di muco, che trattiene la polvere sfuggita al naso.
+
+  - id: bronchi
+    fase: vie respiratorie inferiori
+    titolo: I bronchi
+    breve: La trachea si divide in due bronchi, uno per polmone.
+    spiegazione: >
+      In fondo, la trachea si divide in due tubi: i **bronchi**.
+      Il bronco destro va al polmone destro, il sinistro al polmone sinistro.
+      Nel disegno la persona ci guarda, quindi il suo lato destro è a sinistra.
+
+  - id: bronchioli
+    fase: vie respiratorie inferiori
+    titolo: I bronchioli
+    breve: Nei polmoni i bronchi si ramificano in bronchioli sempre più sottili.
+    spiegazione: >
+      Dentro i polmoni i bronchi si dividono tante volte, come i rami di un albero.
+      I rami più sottili si chiamano **bronchioli**.
+      Per questo l'insieme delle vie dell'aria nei polmoni si chiama "albero respiratorio".
+
+  - id: alveoli
+    fase: vie respiratorie inferiori
+    titolo: Gli alveoli
+    breve: I bronchioli finiscono in sacchetti minuscoli, gli alveoli.
+    spiegazione: >
+      In fondo a ogni bronchiolo c'è un grappolo di sacchetti pieni d'aria: gli **alveoli**.
+      Sono piccolissimi, ma nei due polmoni sono centinaia di milioni.
+      Ogni alveolo è avvolto da vasi sanguigni sottilissimi, i **capillari**.
+
+  - id: scambio
+    fase: vie respiratorie inferiori
+    titolo: Lo scambio dei gas
+    breve: L'ossigeno passa nel sangue, l'anidride carbonica esce.
+    spiegazione: >
+      La parete dell'alveolo e quella del capillare sono sottilissime.
+      L'**ossigeno** dell'aria le attraversa e passa nel sangue, che lo porta a tutto il corpo.
+      L'**anidride carbonica** fa la strada opposta: esce dal sangue e se ne va con l'aria espirata.

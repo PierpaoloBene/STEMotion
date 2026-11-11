@@ -1,0 +1,598 @@
+---
+/**
+ * Le vie respiratorie: il viaggio dell'aria dalle narici agli alveoli.
+ *
+ * Due scene:
+ * - di profilo (passaggi 0–5), con gli organi condivisi di src/components/anatomia:
+ *   naso, faringe, laringe e trachea; nei passaggi 1–2 una lente ingrandisce l'interno del naso;
+ * - di fronte (passaggi 6–9), con PolmoniFronte: bronchi e bronchioli; nei passaggi 8–9 una lente
+ *   ingrandisce gli alveoli e lo scambio dei gas.
+ *
+ * Ogni stato è disegnato solo con CSS a partire da [data-indice] del palco
+ * (docs/STRUTTURA-ARGOMENTO.md, §4). Ciò che compare e scompare ha l'attributo data-passi
+ * con l'elenco dei passaggi (da 0) in cui si vede, come nelle storie.
+ * Le scritte stanno fuori dalle inquadrature, in coordinate del disegno (800 × 600).
+ */
+import Corpo from '../../../src/components/anatomia/Corpo.astro';
+import Polmoni from '../../../src/components/anatomia/Polmoni.astro';
+import Diaframma from '../../../src/components/anatomia/Diaframma.astro';
+import BoccaFaringe from '../../../src/components/anatomia/BoccaFaringe.astro';
+import Esofago from '../../../src/components/anatomia/Esofago.astro';
+import Laringe from '../../../src/components/anatomia/Laringe.astro';
+import PolmoniFronte from '../../../src/components/anatomia/PolmoniFronte.astro';
+import { freccia } from '../../../src/components/storie/disegno';
+
+type Punto = [number, number];
+
+// --- Il percorso dell'aria nella scena di profilo (coordinate del corpo) ---
+// Ogni tratto compare nel suo passaggio e poi resta; la punta si vede solo nel tratto più recente.
+const percorso = [
+  { da: 0, d: 'M676 300L616 272C594 238 560 230 520 230L455 230', punta: 'M467 222L455 230L467 238', passi: '0 1 2' },
+  { da: 3, d: 'M455 230C405 230 392 250 392 290L392 360', punta: 'M384 348L392 360L400 348', passi: '3' },
+  { da: 4, d: 'M392 360C392 390 430 385 437 412L437 470', punta: 'M429 458L437 470L445 458', passi: '4' },
+  { da: 5, d: 'M437 470L437 760', punta: 'M429 748L437 760L445 748', passi: '5' },
+];
+
+// --- Lente sul naso (passaggi 1–2), centro e raggio in coordinate del disegno ---
+const NASO = { c: [640, 300] as Punto, r: 150 };
+const bordoSu = 'M-150 -76C-100 -86 -50 -68 0 -78C50 -88 100 -70 150 -80';
+const bordoGiu = 'M-150 76C-100 86 -50 68 0 78C50 88 100 70 150 80';
+const peli = [70, 95, 120, 140].flatMap((x, i) => [
+  `M${x} ${-76 + (i % 2) * 3}L${x - 12} ${-38}`,
+  `M${x} ${78 - (i % 2) * 3}L${x - 12} ${40}`,
+]);
+// Granelli di polvere: dove si fermano e da dove arrivano (da destra, con l'aria).
+const polvere = [
+  { fine: [92, -44], da: [178, -20] },
+  { fine: [118, 44], da: [178, 10] },
+  { fine: [66, 50], da: [178, 26] },
+  { fine: [-40, -66], da: [178, -6] },
+  { fine: [10, 70], da: [178, 18] },
+  { fine: [-100, -70], da: [178, -28] },
+];
+const vasi: Punto[] = [
+  [-110, -114],
+  [-40, -108],
+  [30, -118],
+  [100, -112],
+  [-80, 112],
+  [0, 118],
+  [80, 110],
+];
+const goccioline: Punto[] = [
+  [-118, -18],
+  [-84, 24],
+  [-46, -28],
+  [-128, 30],
+  [-20, 22],
+];
+const goccia = ([x, y]: Punto) => `M${x} ${y - 9}C${x + 4} ${y - 3} ${x + 6} ${y} ${x + 6} ${y + 3}A6 6 0 0 1 ${x - 6} ${y + 3}C${x - 6} ${y} ${x - 4} ${y - 3} ${x} ${y - 9}Z`;
+
+// --- Lente sugli alveoli (passaggi 8–9) ---
+const ALVEOLI = { c: [592, 300] as Punto, r: 178 };
+const alveoli: [number, number, number][] = [
+  [-30, -20, 40],
+  [34, -52, 36],
+  [52, 18, 42],
+  [-12, 48, 38],
+  [-74, 36, 32],
+  [100, -14, 30],
+  [-60, -64, 30],
+];
+const BRONCHIOLO = 'M-190 -160L-58 -50';
+const capillareVenoso = 'M-190 136C-110 128 -50 112 10 102';
+const capillareArterioso = 'M10 102C80 90 118 64 142 20C160 -16 168 -80 150 -150';
+// Ossigeno: dall'alveolo al capillare. Anidride carbonica: dal capillare all'alveolo.
+const ossigeno = [
+  { fine: [-14, 106], da: [-14, 44] },
+  { fine: [30, 98], da: [40, 26] },
+  { fine: [84, 80], da: [64, 14] },
+];
+const co2 = [
+  { fine: [-74, 44], da: [-80, 124] },
+  { fine: [-30, 52], da: [-40, 112] },
+];
+
+// Dove si guarda con la lente: un ramo del polmone sinistro (a destra nel disegno), in coordinate del disegno.
+const FRONTE = { s: 0.72, t: [-96, 84] as Punto };
+const sulDisegno = ([x, y]: Punto): Punto => [+(FRONTE.t[0] + FRONTE.s * x).toFixed(1), +(FRONTE.t[1] + FRONTE.s * y).toFixed(1)];
+const puntoLente = sulDisegno([548, 420]);
+
+interface Etichetta {
+  testo: string;
+  x: number;
+  y: number;
+  /** Linea dalla scritta al punto indicato; il pallino va sul punto. */
+  linea?: [number, number, number, number];
+  allinea?: 'start' | 'end';
+  passi: string;
+}
+
+const etichette: Etichetta[] = [
+  // 0: naso (inquadratura vicina: punto del corpo × 1,25 − (125, 62,5))
+  { testo: 'Narici', x: 790, y: 340, allinea: 'end', linea: [720, 314, 650, 280], passi: '0' },
+  { testo: 'Fosse nasali', x: 790, y: 120, allinea: 'end', linea: [660, 130, 525, 222], passi: '0' },
+  // 1–2: la lente sul naso
+  { testo: 'Polvere', x: 446, y: 510, linea: [540, 502, 732, 256], passi: '1' },
+  { testo: 'Peli', x: 446, y: 552, linea: [506, 544, 752, 382], passi: '1' },
+  { testo: 'Muco', x: 446, y: 594, linea: [520, 586, 650, 376], passi: '1' },
+  { testo: 'Vasi sanguigni', x: 446, y: 510, linea: [640, 502, 720, 410], passi: '2' },
+  { testo: 'Aria fredda', x: 446, y: 552, linea: [600, 544, 770, 300], passi: '2' },
+  { testo: 'Aria tiepida e umida', x: 446, y: 594, linea: [470, 570, 522, 318], passi: '2' },
+  // 3–4
+  { testo: 'Faringe', x: 20, y: 480, linea: [126, 472, 352, 350], passi: '3' },
+  { testo: 'Esofago', x: 20, y: 565, linea: [126, 557, 360, 540], passi: '3' },
+  { testo: 'Epiglottide', x: 600, y: 440, linea: [596, 432, 432, 392], passi: '4' },
+  { testo: 'Laringe', x: 560, y: 522, linea: [556, 514, 478, 468], passi: '4' },
+  { testo: 'Corde vocali', x: 560, y: 580, linea: [556, 572, 426, 494], passi: '4' },
+  // 5: inquadratura lontana (punto del corpo × 0,75 + (85, −187))
+  { testo: 'Trachea', x: 560, y: 300, linea: [554, 292, 436, 300], passi: '5' },
+  { testo: 'Anelli di', x: 20, y: 200, passi: '5' },
+  { testo: 'cartilagine', x: 20, y: 232, linea: [160, 224, 400, 240], passi: '5' },
+  { testo: 'Esofago', x: 20, y: 470, linea: [116, 462, 368, 470], passi: '5' },
+  // 6–7: vista di fronte
+  { testo: 'Trachea', x: 446, y: 150, linea: [440, 142, 422, 142], passi: '6' },
+  { testo: 'Bronco destro', x: 20, y: 60, linea: [120, 72, 352, 284], passi: '6' },
+  { testo: 'Bronco sinistro', x: 780, y: 60, allinea: 'end', linea: [680, 72, 458, 284], passi: '6' },
+  { testo: 'Polmone destro', x: 20, y: 580, linea: [120, 556, 196, 496], passi: '6' },
+  { testo: 'Polmone sinistro', x: 780, y: 580, allinea: 'end', linea: [690, 556, 604, 496], passi: '6' },
+  { testo: 'Bronchioli', x: 780, y: 580, allinea: 'end', linea: [690, 556, 560, 452], passi: '7' },
+  // 8–9: la lente sugli alveoli
+  { testo: 'Bronchiolo', x: 404, y: 96, linea: [460, 104, 470, 168], passi: '8' },
+  { testo: 'Alveoli', x: 790, y: 96, allinea: 'end', linea: [730, 104, 640, 250], passi: '8' },
+  { testo: 'Capillare', x: 790, y: 560, allinea: 'end', linea: [740, 536, 732, 340], passi: '8' },
+];
+
+// Cosa mostra il disegno a ogni passaggio, per chi usa uno screen reader.
+const descrizioni = [
+  'Testa vista in sezione, di profilo. Una freccia entra dalle narici e attraversa le fosse nasali, sopra il palato.',
+  'Una lente ingrandisce l’interno del naso, con l’aria che entra fredda da destra: dei granelli di polvere arrivano con l’aria e si fermano sui peli e sul muco che copre le pareti.',
+  'Nella stessa lente, sotto le pareti compaiono dei vasi sanguigni rossi che scaldano l’aria; nell’aria compaiono goccioline di vapore.',
+  'La freccia scende dalle fosse nasali nella faringe, la gola. Dietro c’è l’esofago, la strada del cibo.',
+  'La freccia entra nella laringe, sotto l’epiglottide alzata, e passa tra le corde vocali.',
+  'La vista si allarga su collo e torace. La freccia scende lungo la trachea, un tubo con tanti anelli di cartilagine, fino ai polmoni.',
+  'Trachea e polmoni visti di fronte. In fondo la trachea si divide in due bronchi: il destro va al polmone a sinistra nel disegno, il sinistro a quello a destra.',
+  'Dentro i polmoni i bronchi si dividono tante volte in rami sempre più sottili, i bronchioli, come un albero.',
+  'I polmoni si spostano a sinistra; una lente ingrandisce la fine di un bronchiolo: un grappolo di sacchetti pieni d’aria, gli alveoli, toccati da un capillare.',
+  'Pallini rossi di ossigeno passano dagli alveoli al capillare; pallini grigi di anidride carbonica passano dal capillare agli alveoli.',
+];
+---
+
+<div class="vie">
+  <svg class="vie__disegno" viewBox="0 0 800 600" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="vie-lente-naso"><circle r={NASO.r} /></clipPath>
+      <clipPath id="vie-lente-alveoli"><circle r={ALVEOLI.r} /></clipPath>
+    </defs>
+
+    {/* ------------------------- Scena di profilo ------------------------- */}
+    <g data-passi="0 1 2 3 4 5">
+      <g class="camera">
+        <Corpo />
+        <Polmoni />
+        <Diaframma />
+        <BoccaFaringe />
+        <Esofago />
+        <Laringe />
+        <rect class="evidenziato trachea-evidenziata" x="406" y="476" width="62" height="270" rx="12" data-passi="5" />
+        {
+          percorso.map((t) => (
+            <g class={`flusso flusso--${t.da}`}>
+              <path class="flusso__alone" d={t.d} />
+              <path class="flusso__linea" d={t.d} pathLength="1" />
+              <path class="flusso__punta" d={t.punta} data-passi={t.passi} />
+            </g>
+          ))
+        }
+        <circle class="mirino" cx="560" cy="232" r="22" data-passi="1 2" />
+      </g>
+    </g>
+
+    {/* La lente sul naso */}
+    <g data-passi="1 2">
+      <line class="lente__raggio" x1="425" y1="178" x2={NASO.c[0] - 60} y2={NASO.c[1] - NASO.r + 12} />
+      <line class="lente__raggio" x1="425" y1="210" x2={NASO.c[0] - 120} y2={NASO.c[1] + 90} />
+      <g transform={`translate(${NASO.c[0]} ${NASO.c[1]})`}>
+        <g clip-path="url(#vie-lente-naso)">
+          <rect class="lente__aria" x="-160" y="-160" width="320" height="320" />
+          <path class="parete" d={`${bordoSu}V-160H-150Z`} />
+          <path class="parete" d={`${bordoGiu}V160H-150Z`} />
+          {vasi.map(([x, y]) => <ellipse class="vaso" cx={x} cy={y} rx="13" ry="7" data-passi="2" />)}
+          <path class="muco" d={bordoSu} />
+          <path class="muco" d={bordoGiu} />
+          {peli.map((d) => <path class="pelo" d={d} />)}
+          <path class="lente__flusso" d={freccia(150, 0, -130, 0, 16)} />
+          {
+            polvere.map((g) => (
+              <g class="granello" style={`--dx: ${g.da[0] - g.fine[0]}px; --dy: ${g.da[1] - g.fine[1]}px`}>
+                <path d={`M${g.fine[0] - 6} ${g.fine[1] - 4}L${g.fine[0] + 4} ${g.fine[1] - 7}L${g.fine[0] + 7} ${g.fine[1] + 3}L${g.fine[0] - 2} ${g.fine[1] + 7}Z`} />
+              </g>
+            ))
+          }
+          <g data-passi="2">
+            {[-70, 0, 70].map((x) => <path class="calore" d={`M${x} -64c-6 8 6 14 0 22M${x - 6} -48L${x} -40L${x + 6} -48`} />)}
+            {[-30, 40, 110].map((x) => <path class="calore" d={`M${x} 64c-6 -8 6 -14 0 -22M${x - 6} 48L${x} 40L${x + 6} 48`} />)}
+            {goccioline.map((p) => <path class="gocciolina" d={goccia(p)} />)}
+          </g>
+        </g>
+        <circle class="lente__bordo" r={NASO.r} />
+      </g>
+    </g>
+
+    {/* ------------------------- Scena di fronte ------------------------- */}
+    <g data-passi="6 7 8 9">
+      <g class="camera-fronte">
+        <PolmoniFronte />
+        <circle class="mirino" cx="548" cy="420" r="26" data-passi="8 9" />
+      </g>
+    </g>
+
+    {/* La lente sugli alveoli */}
+    <g data-passi="8 9">
+      <line class="lente__raggio" x1={puntoLente[0] + 14} y1={puntoLente[1] - 14} x2={ALVEOLI.c[0] - 150} y2={ALVEOLI.c[1] - 96} />
+      <line class="lente__raggio" x1={puntoLente[0] + 18} y1={puntoLente[1] + 4} x2={ALVEOLI.c[0] - 120} y2={ALVEOLI.c[1] + 132} />
+      <g transform={`translate(${ALVEOLI.c[0]} ${ALVEOLI.c[1]})`}>
+        <g clip-path="url(#vie-lente-alveoli)">
+          <rect class="lente__tessuto" x="-190" y="-190" width="380" height="380" />
+          <path class="capillare__bordo" d={capillareVenoso} />
+          <path class="capillare__bordo" d={capillareArterioso} />
+          <path class="capillare capillare--venoso" d={capillareVenoso} />
+          <path class="capillare capillare--arterioso" d={capillareArterioso} />
+          {/* Contorno unico del grappolo: prima i bordi spessi, poi l'interno sopra. */}
+          <path class="bronchiolo__bordo" d={BRONCHIOLO} />
+          {alveoli.map(([x, y, r]) => <circle class="alveolo__bordo" cx={x} cy={y} r={r} />)}
+          <path class="bronchiolo" d={BRONCHIOLO} />
+          {alveoli.map(([x, y, r]) => <circle class="alveolo" cx={x} cy={y} r={r} />)}
+          {
+            ossigeno.map((g) => (
+              <g class="gas" style={`--dx: ${g.da[0] - g.fine[0]}px; --dy: ${g.da[1] - g.fine[1]}px`} data-passi="9">
+                <circle class="ossigeno" cx={g.fine[0]} cy={g.fine[1]} r="8" />
+              </g>
+            ))
+          }
+          {
+            co2.map((g) => (
+              <g class="gas" style={`--dx: ${g.da[0] - g.fine[0]}px; --dy: ${g.da[1] - g.fine[1]}px`} data-passi="9">
+                <circle class="co2" cx={g.fine[0]} cy={g.fine[1]} r="8" />
+              </g>
+            ))
+          }
+        </g>
+        <circle class="lente__bordo" r={ALVEOLI.r} />
+      </g>
+    </g>
+
+    {/* Legenda dei gas (passaggio 9) */}
+    <g class="etichetta" data-passi="9">
+      <circle class="ossigeno" cx="34" cy="530" r="10" />
+      <text x="54" y="539">Ossigeno (O₂)</text>
+      <circle class="co2" cx="34" cy="576" r="10" />
+      <text x="54" y="585">Anidride carbonica (CO₂)</text>
+    </g>
+
+    {/* ------------------------- Etichette ------------------------- */}
+    {
+      etichette.map((e) => (
+        <g class="etichetta" data-passi={e.passi}>
+          {e.linea && <line x1={e.linea[0]} y1={e.linea[1]} x2={e.linea[2]} y2={e.linea[3]} />}
+          {e.linea && <circle cx={e.linea[2]} cy={e.linea[3]} r="3.5" />}
+          <text x={e.x} y={e.y} text-anchor={e.allinea ?? 'start'}>
+            {e.testo}
+          </text>
+        </g>
+      ))
+    }
+  </svg>
+
+  <div class="solo-lettori">
+    {
+      descrizioni.map((d, i) => (
+        <p class="descrizione" data-per={i}>
+          Disegno: {d}
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .vie {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+  }
+  .vie__disegno {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* Nella scena di profilo i contorni restano dello stesso spessore anche quando l'inquadratura cambia. */
+  .vie .camera :is(path, rect, circle, ellipse, line),
+  .vie .etichetta :is(line, circle),
+  .vie .lente__raggio {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Che cosa si vede in ogni passaggio --- */
+
+  .vie [data-passi] {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  [data-indice='0'] .vie [data-passi~='0'],
+  [data-indice='1'] .vie [data-passi~='1'],
+  [data-indice='2'] .vie [data-passi~='2'],
+  [data-indice='3'] .vie [data-passi~='3'],
+  [data-indice='4'] .vie [data-passi~='4'],
+  [data-indice='5'] .vie [data-passi~='5'],
+  [data-indice='6'] .vie [data-passi~='6'],
+  [data-indice='7'] .vie [data-passi~='7'],
+  [data-indice='8'] .vie [data-passi~='8'],
+  [data-indice='9'] .vie [data-passi~='9'] {
+    opacity: 1;
+  }
+
+  /* --- Inquadrature --- */
+
+  .vie .camera {
+    /* vicina: naso e gola */
+    transform: translate(-125px, -62.5px) scale(1.25);
+    transition: transform 1.2s ease-in-out;
+  }
+  :is([data-indice='1'], [data-indice='2']) .vie .camera {
+    /* la testa si sposta a sinistra per fare posto alla lente */
+    transform: translate(-150px, -40px) scale(1);
+  }
+  [data-indice='5'] .vie .camera {
+    /* lontana: collo e torace */
+    transform: translate(85px, -187px) scale(0.75);
+  }
+  .vie .camera-fronte {
+    transform: translate(0, 0) scale(1);
+    transition: transform 1.2s ease-in-out;
+  }
+  :is([data-indice='8'], [data-indice='9']) .vie .camera-fronte {
+    transform: translate(-96px, 84px) scale(0.72);
+  }
+
+  /* --- Il percorso dell'aria --- */
+
+  .vie .flusso path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vie .flusso__alone {
+    stroke: #ffffff;
+    stroke-width: 9;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+  .vie .flusso__linea {
+    stroke: var(--contorno);
+    stroke-width: 4;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.2s ease-in-out;
+  }
+  .vie .flusso__punta {
+    stroke: var(--contorno);
+    stroke-width: 4;
+  }
+  /* Il tratto di un passaggio si disegna quando si arriva lì e resta nei passaggi dopo. */
+  :is([data-indice='0'], [data-indice='1'], [data-indice='2'], [data-indice='3'], [data-indice='4'], [data-indice='5']) .vie .flusso--0,
+  :is([data-indice='3'], [data-indice='4'], [data-indice='5']) .vie .flusso--3,
+  :is([data-indice='4'], [data-indice='5']) .vie .flusso--4,
+  [data-indice='5'] .vie .flusso--5 {
+    --disegnato: 1;
+  }
+  .vie .flusso {
+    --disegnato: 0;
+  }
+  .vie .flusso:is(.flusso--0, .flusso--3, .flusso--4, .flusso--5) .flusso__linea {
+    stroke-dashoffset: calc(1 - var(--disegnato));
+  }
+  .vie .flusso .flusso__alone {
+    opacity: var(--disegnato);
+  }
+  .vie .flusso__punta {
+    transition-delay: 0.9s;
+  }
+
+  .vie .evidenziato {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  .vie .mirino {
+    fill: none;
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+
+  /* --- Le lenti --- */
+
+  .vie .lente__bordo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 4;
+  }
+  .vie .lente__raggio {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 6;
+  }
+  .vie .lente__aria {
+    fill: var(--aria);
+  }
+  .vie .lente__tessuto {
+    fill: var(--tessuto-chiaro);
+  }
+  .vie .parete {
+    fill: var(--tessuto);
+    stroke: none;
+  }
+  .vie .muco {
+    fill: none;
+    stroke: var(--muco);
+    stroke-width: 12;
+  }
+  .vie .pelo {
+    fill: none;
+    stroke: var(--capelli-castani);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .vie .lente__flusso {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vie .vaso {
+    fill: var(--arterioso);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .vie .calore {
+    fill: none;
+    stroke: var(--calore);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vie .gocciolina {
+    fill: var(--acqua);
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+  }
+
+  /* La polvere arriva con l'aria e resta attaccata a peli e muco (passaggi 1 e 2). */
+  .vie .granello path {
+    fill: var(--roccia);
+    stroke: var(--contorno);
+    stroke-width: 1.5;
+  }
+  .vie .granello {
+    transform: translate(var(--dx), var(--dy));
+    transition: transform 1.4s ease-in-out 0.6s;
+  }
+  :is([data-indice='1'], [data-indice='2']) .vie .granello {
+    transform: translate(0, 0);
+  }
+
+  .vie .capillare,
+  .vie .capillare__bordo,
+  .vie .bronchiolo,
+  .vie .bronchiolo__bordo {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .vie .capillare__bordo {
+    stroke: var(--contorno);
+    stroke-width: 24;
+  }
+  .vie .capillare {
+    stroke-width: 18;
+  }
+  .vie .capillare--venoso {
+    stroke: var(--venoso);
+  }
+  .vie .capillare--arterioso {
+    stroke: var(--arterioso);
+  }
+  .vie .bronchiolo__bordo {
+    stroke: var(--contorno);
+    stroke-width: 36;
+  }
+  .vie .bronchiolo {
+    stroke: var(--aria);
+    stroke-width: 30;
+  }
+  .vie .alveolo__bordo {
+    fill: none;
+    stroke: var(--contorno);
+    stroke-width: 6;
+  }
+  .vie .alveolo {
+    fill: var(--aria);
+  }
+  .vie .ossigeno {
+    fill: var(--ossigeno);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  .vie .co2 {
+    fill: var(--co2);
+    stroke: var(--contorno);
+    stroke-width: 2;
+  }
+  /* I gas attraversano le pareti: l'ossigeno scende nel capillare, l'anidride carbonica sale nell'alveolo. */
+  .vie .gas {
+    transform: translate(var(--dx), var(--dy));
+    transition:
+      opacity 0.4s ease-in-out,
+      transform 1.6s ease-in-out 0.6s;
+  }
+  [data-indice='9'] .vie .gas {
+    transform: translate(0, 0);
+  }
+
+  /* --- I bronchioli crescono livello per livello (passaggio 7) --- */
+
+  .vie .fronte__ramo {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 0.4s ease-in-out;
+  }
+  :is([data-indice='7'], [data-indice='8'], [data-indice='9']) .vie .fronte__ramo {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.5s ease-out calc((var(--livello) - 1) * 0.45s);
+  }
+  [data-indice='6'] .vie :is(.fronte__bronchi, .fronte__trachea).fronte__tubo--bordo {
+    stroke: var(--accento);
+  }
+  .vie .fronte__tubo--bordo {
+    transition: stroke 0.4s ease-in-out;
+  }
+
+  /* --- Etichette --- */
+
+  .vie text {
+    font-size: 26px;
+    font-weight: 700;
+    fill: var(--testo);
+  }
+  .vie .etichetta line {
+    stroke: var(--testo-2);
+    stroke-width: 1.5;
+  }
+  .vie .etichetta circle:not(.ossigeno, .co2) {
+    fill: var(--testo-2);
+  }
+  /* Sul telefono il disegno è piccolo: le scritte crescono per restare leggibili. */
+  @container (max-width: 620px) {
+    .vie text {
+      font-size: 34px;
+    }
+  }
+
+  /* --- Descrizione per gli screen reader: solo quella del passaggio corrente --- */
+
+  .vie .descrizione {
+    display: none;
+  }
+  [data-indice='0'] .vie .descrizione[data-per='0'],
+  [data-indice='1'] .vie .descrizione[data-per='1'],
+  [data-indice='2'] .vie .descrizione[data-per='2'],
+  [data-indice='3'] .vie .descrizione[data-per='3'],
+  [data-indice='4'] .vie .descrizione[data-per='4'],
+  [data-indice='5'] .vie .descrizione[data-per='5'],
+  [data-indice='6'] .vie .descrizione[data-per='6'],
+  [data-indice='7'] .vie .descrizione[data-per='7'],
+  [data-indice='8'] .vie .descrizione[data-per='8'],
+  [data-indice='9'] .vie .descrizione[data-per='9'] {
+    display: block;
+  }
+</style>
