@@ -1,0 +1,56 @@
+protagonista: Euclide
+anni: circa 300 a.C.
+richiamo: >
+  Che cos'è, esattamente, un cubo? Più di duemila anni fa un matematico di Alessandria
+  lo scrisse in una riga, e dimostrò che i solidi "perfetti" sono soltanto cinque.
+titolo: Euclide e i cinque solidi regolari
+ritratto:
+  capelli: corti
+  colore_capelli: grigi
+  barba: lunga
+  baffi: true
+  veste: tunica
+  colore_veste: bianco
+passaggi:
+  - id: euclide-alessandria
+    titolo: Un matematico di Alessandria
+    breve: Intorno al 300 a.C. Euclide insegna matematica ad Alessandria d'Egitto.
+    spiegazione: >
+      Alessandria è una grande città greca in Egitto, piena di studiosi e di libri.
+      Della vita di **Euclide** sappiamo pochissimo: non conosciamo neanche le date di nascita e di morte.
+      Sappiamo però che cosa ha scritto.
+
+  - id: euclide-elementi
+    titolo: Gli Elementi
+    breve: Euclide raccoglie la matematica del suo tempo in 13 libri, gli Elementi.
+    spiegazione: >
+      Gli **Elementi** partono da poche definizioni e regole di base.
+      Da queste, passo dopo passo, Euclide **dimostra** tutto il resto.
+      Per più di duemila anni si è studiata la geometria su questi libri.
+
+  - id: euclide-definizione
+    titolo: La definizione del cubo
+    breve: Nell'undicesimo libro Euclide definisce il cubo con sei quadrati uguali.
+    spiegazione: >
+      Nel libro XI, dedicato ai solidi, si legge:
+      "Il cubo è una figura solida compresa da sei quadrati uguali".
+      È la stessa idea dello sviluppo: sei quadrati che, piegati, chiudono uno spazio.
+
+  - id: euclide-cinque
+    titolo: I solidi regolari
+    breve: I solidi con facce tutte uguali e regolari sono cinque.
+    spiegazione: >
+      In un **solido regolare** tutte le facce sono poligoni regolari uguali, e ogni vertice è uguale agli altri.
+      Sono cinque: tetraedro, cubo, ottaedro, dodecaedro e icosaedro.
+      Già Platone ne parlava; per questo si chiamano anche "solidi platonici".
+
+  - id: euclide-dimostrazione
+    titolo: Perché solo cinque
+    breve: Nell'ultimo libro Euclide dimostra che non ce ne sono altri.
+    spiegazione: >
+      In un vertice devono incontrarsi almeno 3 facce, e i loro angoli devono sommare meno di 360°.
+      Tre quadrati fanno 3 × 90° = 270°: si piegano e formano il vertice del cubo.
+      Quattro quadrati fanno 360°: restano piatti, e un solido non si chiude.
+fonti:
+  - "Euclide, Tutte le opere, a cura di F. Acerbi, Bompiani, 2007"
+  - "T. L. Heath, The Thirteen Books of Euclid's Elements, Cambridge University Press, 1908"

@@ -342,7 +342,7 @@ const descrizioni = [
   /* --- Le facce del cubo grande, incernierate alla base --- */
 
   .cubo__base,
-  .faccia {
+  .cubo .faccia {
     position: absolute;
     width: var(--lato);
     height: var(--lato);
@@ -353,7 +353,7 @@ const descrizioni = [
     top: calc(var(--lato) / -2);
     transform: translateY(calc(var(--lato) / 2)) rotateX(90deg);
   }
-  .faccia {
+  .cubo .faccia {
     left: 0;
     top: 0;
     background: color-mix(in srgb, var(--geo-faccia) 16%, transparent);
@@ -366,7 +366,7 @@ const descrizioni = [
       outline-color 0.6s ease-in-out;
   }
   /* La quadrettatura di 3 × 3 cm (passaggi 6–8). */
-  .faccia::before {
+  .cubo .faccia::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -376,31 +376,31 @@ const descrizioni = [
     opacity: 0;
     transition: opacity 0.6s ease-in-out;
   }
-  .faccia--sotto {
+  .cubo .faccia--sotto {
     transform: translateZ(calc(-1 * var(--stacco)));
   }
-  .faccia--davanti {
+  .cubo .faccia--davanti {
     top: 100%;
     transform-origin: 50% 0;
     transform: rotateX(var(--piega, 90deg)) translateZ(calc(-1 * var(--stacco)));
   }
-  .faccia--dietro {
+  .cubo .faccia--dietro {
     top: -100%;
     transform-origin: 50% 100%;
     transform: rotateX(calc(-1 * var(--piega, 90deg))) translateZ(calc(-1 * var(--stacco)));
   }
-  .faccia--destra {
+  .cubo .faccia--destra {
     left: 100%;
     transform-origin: 0 50%;
     transform: rotateY(calc(-1 * var(--piega, 90deg))) translateZ(calc(-1 * var(--stacco)));
   }
-  .faccia--sinistra {
+  .cubo .faccia--sinistra {
     left: -100%;
     transform-origin: 100% 50%;
     transform: rotateY(var(--piega, 90deg)) translateZ(calc(-1 * var(--stacco)));
   }
   /* La faccia di sopra segue quella di dietro: quando si stacca, torna avanti di quanto si è spostata quella. */
-  .faccia--sopra {
+  .cubo .faccia--sopra {
     top: -100%;
     transform-origin: 50% 100%;
     transform: rotateX(calc(-1 * var(--piega, 90deg))) translateZ(calc(-1 * var(--stacco))) translateY(calc(-1 * var(--stacco)));

@@ -1,0 +1,232 @@
+---
+/**
+ * Storia del cubo: Euclide, gli Elementi, la definizione del cubo (libro XI)
+ * e la dimostrazione che i solidi regolari sono solo cinque (libro XIII).
+ *
+ * Cinque scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Facce, spigoli e unità hanno i colori dei solidi della guida di stile (§3).
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+type P3 = [number, number, number];
+const r1 = (v: number) => +v.toFixed(1);
+
+/** Disegno a fil di ferro di un solido: vertici ruotati e proiettati, spigoli tra i vertici più vicini. */
+function filDiFerro(vertici: P3[], cx: number, cy: number, raggio: number) {
+  const [a, b] = [0.5, 0.35];
+  const ruota = ([x, y, z]: P3): P3 => {
+    const x1 = x * Math.cos(a) + z * Math.sin(a);
+    const z1 = -x * Math.sin(a) + z * Math.cos(a);
+    return [x1, y * Math.cos(b) - z1 * Math.sin(b), y * Math.sin(b) + z1 * Math.cos(b)];
+  };
+  const max = Math.max(...vertici.map((v) => Math.hypot(...v)));
+  const p = vertici.map(ruota).map(([x, y]) => [r1(cx + (x / max) * raggio), r1(cy + (y / max) * raggio)]);
+  const dist = (i: number, j: number) => Math.hypot(...vertici[i].map((v, k) => v - vertici[j][k]));
+  let minimo = Infinity;
+  vertici.forEach((_, i) => vertici.forEach((_, j) => i < j && (minimo = Math.min(minimo, dist(i, j)))));
+  let d = '';
+  vertici.forEach((_, i) =>
+    vertici.forEach((_, j) => {
+      if (i < j && dist(i, j) < minimo * 1.01) d += `M${p[i][0]} ${p[i][1]}L${p[j][0]} ${p[j][1]}`;
+    }),
+  );
+  return d;
+}
+
+const segni = [1, -1];
+const phi = (1 + Math.sqrt(5)) / 2;
+const cubo: P3[] = segni.flatMap((x) => segni.flatMap((y) => segni.map((z): P3 => [x, y, z])));
+const tetraedro: P3[] = [
+  [1, 1, 1],
+  [1, -1, -1],
+  [-1, 1, -1],
+  [-1, -1, 1],
+];
+const ottaedro: P3[] = [
+  [1, 0, 0],
+  [-1, 0, 0],
+  [0, 1, 0],
+  [0, -1, 0],
+  [0, 0, 1],
+  [0, 0, -1],
+];
+const cicli = (a: number, b: number): P3[] =>
+  segni.flatMap((s) =>
+    segni.flatMap((t): P3[] => [
+      [0, s * a, t * b],
+      [s * a, t * b, 0],
+      [t * b, 0, s * a],
+    ]),
+  );
+const icosaedro = cicli(1, phi);
+const dodecaedro = [...cubo, ...cicli(1 / phi, phi)];
+
+const solidi = [
+  { nome: 'Tetraedro', v: tetraedro },
+  { nome: 'Cubo', v: cubo },
+  { nome: 'Ottaedro', v: ottaedro },
+  { nome: 'Dodecaedro', v: dodecaedro },
+  { nome: 'Icosaedro', v: icosaedro },
+].map((s, i) => ({ ...s, x: 90 + i * 155, d: filDiFerro(s.v, 90 + i * 155, 290, 62) }));
+
+// Scena 2: lo sviluppo a croce e il cubo chiuso.
+const Q = 56;
+const croce = [
+  [1, 0],
+  [0, 1],
+  [1, 1],
+  [2, 1],
+  [1, 2],
+  [1, 3],
+].map(([c, r]) => [90 + c * Q, 170 + r * Q]);
+const iso = (x: number, y: number, z: number): [number, number] => [r1(580 + (x - z) * 0.87 * 110), r1(380 + (x + z) * 0.5 * 110 - y * 110)];
+const quadratoCubo = (pts: [number, number, number][]) => pts.map((p) => iso(...p).join(',')).join(' ');
+
+// Scena 4: tre quadrati attorno a un vertice, poi quattro.
+const L = 80;
+const quadrati3 = [
+  [0, -L],
+  [-L, -L],
+  [-L, 0],
+];
+const quadrati4 = [...quadrati3, [0, 0]];
+
+const descrizioni = [
+  'Euclide, con la barba e una tunica bianca, accanto a un edificio con le colonne. In alto la scritta circa 300 a.C. e Alessandria d’Egitto.',
+  'Euclide accanto a uno scaffale con 13 rotoli: i libri degli Elementi.',
+  'A sinistra sei quadrati uguali a forma di croce, a destra il cubo che formano piegati. In alto la frase di Euclide: il cubo è una figura solida compresa da sei quadrati uguali. Scritto: libro XI.',
+  'I cinque solidi regolari disegnati in fila, con il loro nome: tetraedro, cubo, ottaedro, dodecaedro e icosaedro. Il cubo è evidenziato.',
+  'A sinistra tre quadrati attorno a un punto, con uno spazio vuoto: 270°, si piegano e formano un vertice. A destra quattro quadrati attorno a un punto: 360°, restano piatti. Scritto: libro XIII.',
+];
+---
+
+<Storia classe="storia-euclide" descrizioni={descrizioni}>
+  <!-- Euclide, nelle scene 0 e 1 -->
+  <g data-passi="0 1">
+    <g transform="translate(150 540)">
+      <Personaggio capelli="corti" colore_capelli="grigi" barba="lunga" baffi veste="tunica" colore_veste="bianco" />
+    </g>
+  </g>
+
+  <!-- 0: Alessandria -->
+  <g data-passi="0">
+    <line class="linea" x1="340" y1="520" x2="780" y2="520"></line>
+    <path class="tratto marmo" d="M380 230L560 160L740 230Z"></path>
+    <rect class="tratto marmo" x="380" y="230" width="360" height="24"></rect>
+    {[400, 470, 540, 610, 680].map((x) => <rect class="tratto marmo" x={x} y="254" width="40" height="242" />)}
+    <rect class="tratto marmo" x="370" y="496" width="380" height="24"></rect>
+  </g>
+  <text class="data" x="40" y="90" data-passi="0">circa 300 a.C.</text>
+  <Etichetta testo="Alessandria d'Egitto" x={40} y={140} passi="0" />
+
+  <!-- 1: i tredici libri degli Elementi -->
+  <g data-passi="1">
+    <rect class="tratto legno" x="360" y="180" width="400" height="330" rx="6"></rect>
+    {[290, 400, 500].map((y) => <rect class="tratto legno-scuro" x="370" y={y} width="380" height="12" />)}
+    {
+      Array.from({ length: 13 }, (_, i) => {
+        const fila = i < 5 ? 0 : i < 9 ? 1 : 2;
+        const pos = i < 5 ? i : i < 9 ? i - 5 : i - 9;
+        const x = 390 + pos * 70 + (fila === 0 ? 0 : 35);
+        const y = [230, 340, 440][fila];
+        return (
+          <g>
+            <rect class="tratto rotolo" x={x} y={y} width="58" height="56" rx="10" />
+            <text class="numero-libro" x={x + 29} y={y + 38}>
+              {i + 1}
+            </text>
+          </g>
+        );
+      })
+    }
+  </g>
+  <Etichetta testo="Elementi: 13 libri" x={560} y={160} allinea="centro" passi="1" />
+
+  <!-- 2: la definizione del cubo -->
+  <g data-passi="2">
+    {croce.map(([x, y]) => <rect class="quadrato" x={x} y={y} width={Q} height={Q} />)}
+    <path class="linea" d={freccia(290, 360, 400, 360, 16)}></path>
+    <polygon class="quadrato" points={quadratoCubo([[0, 1, 0], [1, 1, 0], [1, 1, 1], [0, 1, 1]])}></polygon>
+    <polygon class="quadrato quadrato--ombra" points={quadratoCubo([[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]])}></polygon>
+    <polygon class="quadrato quadrato--scura" points={quadratoCubo([[1, 0, 0], [1, 0, 1], [1, 1, 1], [1, 1, 0]])}></polygon>
+  </g>
+  <text class="data" x="40" y="90" data-passi="2">Libro XI</text>
+  <Etichetta testo={'«Il cubo è una figura solida\ncompresa da sei quadrati uguali»'} x={400} y={530} allinea="centro" passi="2" />
+
+  <!-- 3: i cinque solidi regolari -->
+  <g data-passi="3">
+    {solidi.map((s) => <path class:list={['linea', 'solido', s.nome === 'Cubo' && 'solido--cubo']} d={s.d} />)}
+  </g>
+  {solidi.map((s, i) => <Etichetta testo={s.nome} x={s.x} y={i % 2 ? 450 : 405} allinea="centro" passi="3" />)}
+  <Etichetta testo="5 solidi regolari" x={400} y={150} allinea="centro" passi="3" />
+
+  <!-- 4: perché solo cinque -->
+  <g data-passi="4">
+    <g transform="translate(220 320)">
+      {quadrati3.map(([x, y]) => <rect class="quadrato" x={x} y={y} width={L} height={L} />)}
+      <path class="linea spazio" d={`M0 0H${L}V${L}H0Z`}></path>
+      <circle class="vertice" r="9"></circle>
+    </g>
+    <g transform="translate(580 320)">
+      {quadrati4.map(([x, y]) => <rect class="quadrato" x={x} y={y} width={L} height={L} />)}
+      <circle class="vertice" r="9"></circle>
+    </g>
+  </g>
+  <text class="data" x="40" y="90" data-passi="4">Libro XIII</text>
+  <Etichetta testo="3 × 90° = 270°" x={220} y={470} allinea="centro" passi="4" />
+  <Etichetta testo="si piegano: vertice" x={220} y={515} allinea="centro" passi="4" />
+  <Etichetta testo="4 × 90° = 360°" x={580} y={470} allinea="centro" passi="4" />
+  <Etichetta testo="restano piatti" x={580} y={515} allinea="centro" passi="4" />
+</Storia>
+
+<style is:global>
+  .storia-euclide .marmo {
+    fill: var(--muro);
+  }
+  .storia-euclide .legno {
+    fill: var(--legno);
+  }
+  .storia-euclide .legno-scuro {
+    fill: var(--tronco);
+  }
+  .storia-euclide .rotolo {
+    fill: var(--carta);
+  }
+  .storia-euclide .numero-libro {
+    font-size: 22px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .storia-euclide .quadrato {
+    fill: color-mix(in srgb, var(--geo-faccia) 25%, white);
+    stroke: var(--contorno);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+  .storia-euclide .quadrato--ombra {
+    fill: color-mix(in srgb, var(--geo-faccia) 45%, white);
+  }
+  .storia-euclide .quadrato--scura {
+    fill: color-mix(in srgb, var(--geo-faccia) 65%, white);
+  }
+  .storia-euclide .solido {
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+  .storia-euclide .solido--cubo {
+    stroke: var(--accento);
+    stroke-width: 4;
+  }
+  .storia-euclide .spazio {
+    stroke-dasharray: 8 6;
+    stroke: var(--testo-2);
+  }
+  .storia-euclide .vertice {
+    fill: var(--geo-vertice);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+  }
+</style>

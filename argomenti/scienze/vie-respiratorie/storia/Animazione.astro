@@ -1,0 +1,205 @@
+---
+/**
+ * Storia delle vie respiratorie: Marcello Malpighi scopre al microscopio gli alveoli
+ * e i capillari dei polmoni (De pulmonibus, 1661).
+ *
+ * Sei scene, una per passaggio (data-passi, vedi src/components/storie/Storia.astro).
+ * Aria azzurra; nei capillari il sangue arriva povero di ossigeno (blu) e riparte ricco (rosso),
+ * come nella guida di stile, §3.
+ */
+import Storia from '../../../../src/components/storie/Storia.astro';
+import Etichetta from '../../../../src/components/storie/Etichetta.astro';
+import Personaggio from '../../../../src/components/storie/Personaggio.astro';
+import PolmoniFronte from '../../../../src/components/anatomia/PolmoniFronte.astro';
+import { freccia } from '../../../../src/components/storie/disegno';
+
+// Il campo del microscopio (scene 3 e 4): bolle d'aria in file sfalsate.
+const CAMPO = { x: 530, y: 300, r: 210 };
+const bolle: [number, number][] = [];
+for (let riga = -4; riga <= 4; riga++)
+  for (let col = -4; col <= 4; col++) bolle.push([CAMPO.x + col * 64 + (riga % 2 ? 32 : 0), CAMPO.y + riga * 56]);
+// Capillari: linee ondulate negli spazi tra le file di bolle, più due vasi grandi ai lati.
+const capillari = [-3, -2, -1, 0, 1, 2, 3, 4].map((k) => {
+  const y = CAMPO.y + k * 56 - 28;
+  let d = `M${CAMPO.x - 220} ${y}`;
+  for (let x = CAMPO.x - 220; x < CAMPO.x + 220; x += 32) d += `Q${x + 16} ${y + (((x / 32) | 0) % 2 ? 8 : -8)} ${x + 32} ${y}`;
+  return d;
+});
+
+const descrizioni = [
+  'Marcello Malpighi accanto alle due torri di Bologna. In alto la data 1628 e la scritta Crevalcore, vicino a Bologna.',
+  'Due polmoni disegnati pieni, come un blocco compatto di carne, con un grande punto di domanda.',
+  'Malpighi accanto a un microscopio di ottone. Sul piatto del microscopio, un vetrino con il polmone di una rana. In alto la data 1661.',
+  'Il cerchio visto dentro il microscopio: tante piccole bolle piene d’aria, una accanto all’altra.',
+  'Nello stesso cerchio, tra le bolle scorrono vasi sottilissimi: il sangue entra blu da sinistra ed esce rosso a destra.',
+  'Malpighi a sinistra e Giovanni Alfonso Borelli a destra. Tra loro una lettera con la scritta De pulmonibus e una freccia da Bologna a Pisa.',
+];
+---
+
+<Storia classe="storia-malpighi" descrizioni={descrizioni}>
+  <defs>
+    <clipPath id="malpighi-campo"><circle cx={CAMPO.x} cy={CAMPO.y} r={CAMPO.r} /></clipPath>
+    <linearGradient id="malpighi-sangue" gradientUnits="userSpaceOnUse" x1={CAMPO.x - 160} y1="0" x2={CAMPO.x + 160} y2="0">
+      <stop offset="0" style="stop-color: var(--venoso)" />
+      <stop offset="1" style="stop-color: var(--arterioso)" />
+    </linearGradient>
+  </defs>
+
+  <!-- Malpighi, nelle scene 0, 2 e 5 -->
+  <g data-passi="0 2 5">
+    <g transform="translate(150 540)">
+      <Personaggio capelli="lunghi" colore_capelli="castani" veste="giacca" colore_veste="nero" />
+    </g>
+  </g>
+
+  <!-- 0: Bologna e le sue torri -->
+  <g data-passi="0">
+    <line class="linea" x1="360" y1="520" x2="780" y2="520"></line>
+    <path class="tratto mattone" d="M520 520V160H566V520Z"></path>
+    <path class="tratto mattone" d="M520 160L526 140H560L566 160"></path>
+    <path class="tratto mattone" d="M600 520L622 290H664L662 520Z"></path>
+    <path class="tratto muro" d="M380 520V420H480V520ZM680 520V400H770V520Z"></path>
+    {[400, 440, 700, 740].map((x) => <rect class="tratto finestra" x={x} y="440" width="20" height="30" />)}
+  </g>
+  <text class="data" x="40" y="90" data-passi="0">1628</text>
+  <Etichetta testo="Crevalcore, vicino a Bologna" x={40} y={140} passi="0" />
+
+  <!-- 1: i polmoni come una massa di carne -->
+  <g data-passi="1">
+    <g class="polmoni-pieni" transform="translate(60 70) scale(0.85)">
+      <PolmoniFronte />
+    </g>
+    <text class="domanda" x="660" y="360">?</text>
+  </g>
+  <Etichetta testo="Una massa di carne?" x={400} y={585} allinea="centro" passi="1" />
+
+  <!-- 2: il microscopio -->
+  <g data-passi="2">
+    <line class="linea" x1="330" y1="520" x2="780" y2="520"></line>
+    <rect class="tratto legno" x="460" y="490" width="220" height="30" rx="6"></rect>
+    <path class="tratto ottone" d="M560 490V330H580V490Z"></path>
+    <rect class="tratto ottone" x="500" y="380" width="140" height="14" rx="4"></rect>
+    <rect class="tratto vetrino" x="520" y="370" width="100" height="10" rx="2"></rect>
+    <ellipse class="tratto rana" cx="570" cy="368" rx="22" ry="6"></ellipse>
+    <g transform="rotate(-14 570 250)">
+      <rect class="tratto ottone" x="548" y="150" width="44" height="190" rx="8"></rect>
+      <rect class="tratto ottone" x="540" y="140" width="60" height="22" rx="6"></rect>
+      <rect class="tratto ottone" x="556" y="330" width="28" height="26" rx="4"></rect>
+    </g>
+  </g>
+  <text class="data" x="40" y="90" data-passi="2">1661</text>
+  <Etichetta testo="Polmone di rana" x={790} y={440} allinea="fine" linea={[700, 418, 594, 370]} passi="2" />
+
+  <!-- 3–4: dentro il microscopio -->
+  <g data-passi="3 4">
+    <g clip-path="url(#malpighi-campo)">
+      <circle class="campo" cx={CAMPO.x} cy={CAMPO.y} r={CAMPO.r}></circle>
+      {bolle.map(([x, y]) => <circle class="bolla" cx={x} cy={y} r="24" />)}
+      <g data-passi="4">
+        {capillari.map((d) => <path class="capillare" d={d} />)}
+      </g>
+    </g>
+    <circle class="linea oculare" cx={CAMPO.x} cy={CAMPO.y} r={CAMPO.r}></circle>
+  </g>
+  <Etichetta testo="Bolle piene d'aria" x={40} y={160} linea={[236, 152, 434, 272]} passi="3" />
+  <Etichetta testo="(oggi: alveoli)" x={40} y={200} passi="3" />
+  <Etichetta testo="Capillari" x={40} y={160} linea={[130, 172, 394, 244]} passi="4" />
+  <Etichetta testo="Sangue che arriva" x={40} y={570} passi="4" />
+  <Etichetta testo="Sangue che riparte" x={780} y={570} allinea="fine" passi="4" />
+  <g data-passi="4">
+    <path class="linea freccia-blu" d={freccia(250, 530, 330, 450, 14)}></path>
+    <path class="linea freccia-rossa" d={freccia(700, 480, 760, 530, 14)}></path>
+  </g>
+
+  <!-- 5: le lettere a Borelli -->
+  <g data-passi="5">
+    <g transform="translate(650 540)">
+      <Personaggio capelli="corti" colore_capelli="neri" barba="corta" baffi veste="giacca" colore_veste="marrone" />
+    </g>
+    <g transform="rotate(-5 400 250)">
+      <rect class="tratto carta" x="315" y="160" width="170" height="190" rx="4"></rect>
+      <text class="titolo-lettera" x="400" y="210">De</text>
+      <text class="titolo-lettera" x="400" y="246">pulmonibus</text>
+      {[280, 302, 324].map((y) => <line class="riga" x1="335" y1={y} x2="465" y2={y} />)}
+    </g>
+    <path class="linea" d={freccia(300, 400, 500, 400, 16)}></path>
+  </g>
+  <text class="data" x="40" y="90" data-passi="5">1661</text>
+  <Etichetta testo="Bologna" x={150} y={585} allinea="centro" passi="5" />
+  <Etichetta testo="Borelli, a Pisa" x={650} y={585} allinea="centro" passi="5" />
+</Storia>
+
+<style is:global>
+  .storia-malpighi .mattone {
+    fill: var(--tetto);
+  }
+  .storia-malpighi .muro,
+  .storia-malpighi .finestra,
+  .storia-malpighi .carta {
+    fill: var(--muro);
+  }
+  .storia-malpighi .finestra {
+    fill: var(--carta);
+  }
+  .storia-malpighi .legno {
+    fill: var(--legno);
+  }
+  .storia-malpighi .ottone {
+    fill: var(--oro);
+  }
+  .storia-malpighi .vetrino {
+    fill: #e8f1f6;
+  }
+  .storia-malpighi .rana {
+    fill: var(--tessuto);
+  }
+  /* L'idea antica: polmoni pieni, senza vie dell'aria. */
+  .storia-malpighi .polmoni-pieni .fronte__polmone {
+    fill: var(--tessuto);
+  }
+  .storia-malpighi .polmoni-pieni :is(.fronte__albero, .fronte__scissura, .fronte__vie) {
+    display: none;
+  }
+  .storia-malpighi .domanda {
+    font-size: 160px;
+    font-weight: 700;
+    fill: var(--testo-2);
+  }
+  .storia-malpighi .campo {
+    fill: var(--tessuto-chiaro);
+  }
+  .storia-malpighi .bolla {
+    fill: var(--aria);
+    stroke: var(--contorno);
+    stroke-width: 2.5;
+  }
+  .storia-malpighi .capillare {
+    fill: none;
+    stroke: url(#malpighi-sangue);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .storia-malpighi .oculare {
+    stroke-width: 6;
+  }
+  .storia-malpighi .freccia-blu {
+    stroke: var(--venoso);
+    stroke-width: 4;
+  }
+  .storia-malpighi .freccia-rossa {
+    stroke: var(--arterioso);
+    stroke-width: 4;
+  }
+  .storia-malpighi .carta {
+    fill: var(--carta);
+  }
+  .storia-malpighi .riga {
+    stroke: var(--testo-2);
+    stroke-width: 2;
+  }
+  .storia-malpighi .titolo-lettera {
+    font-size: 28px;
+    font-style: italic;
+    text-anchor: middle;
+  }
+</style>
